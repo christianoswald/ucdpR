@@ -7,7 +7,7 @@ Description: Discovers, downloads, and imports datasets published by the
     reads the official download catalog at run time, supports reproducible
     file downloads, and imports common tabular formats without bundling or
     modifying UCDP data.
-License: MIT + file LICENSE
+License: GPL (>= 3)
 URL: https://github.com/christianoswald/ucdpR, https://christianoswald.github.io/ucdpR/
 BugReports: https://github.com/christianoswald/ucdpR/issues
 Encoding: UTF-8
@@ -31,4 +31,3 @@ Suggests:
     withr
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-
