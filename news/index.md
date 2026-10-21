@@ -1,5 +1,14 @@
 # Changelog
 
+## ucdpR 0.2.3
+
+- CSV imports now detect type-guessing failures and automatically
+  re-read with full-file inference. This correctly treats occasionally
+  comma-separated UCDP identifier fields as character without slowing
+  every import by default.
+- Explicit `readr` controls such as `col_types` and `guess_max` remain
+  honored.
+
 ## ucdpR 0.2.2
 
 - Removed a non-ASCII character from executable R code.

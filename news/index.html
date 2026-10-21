@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,11 @@
       <small>Source: <a href="https://github.com/christianoswald/ucdpR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.3" id="ucdpr-023">ucdpR 0.2.3<a class="anchor" aria-label="anchor" href="#ucdpr-023"></a></h2>
+<ul><li>CSV imports now detect type-guessing failures and automatically re-read with full-file inference. This correctly treats occasionally comma-separated UCDP identifier fields as character without slowing every import by default.</li>
+<li>Explicit <code>readr</code> controls such as <code>col_types</code> and <code>guess_max</code> remain honored.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.2" id="ucdpr-022">ucdpR 0.2.2<a class="anchor" aria-label="anchor" href="#ucdpr-022"></a></h2>
 <ul><li>Removed a non-ASCII character from executable R code.</li>
