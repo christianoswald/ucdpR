@@ -1,0 +1,33 @@
+Package: ucdpR
+Title: Download Data from the Uppsala Conflict Data Program
+Version: 0.2.2
+Authors@R: person("Christian", "Oswald", email = "christian.oswald@unibw.de", role = c("aut", "cre"))
+Description: Discovers, downloads, and imports datasets published by the
+    Uppsala Conflict Data Program ('UCDP') <https://ucdp.uu.se/>. The package
+    reads the official download catalog at run time, supports reproducible
+    file downloads, and imports common tabular formats without bundling or
+    modifying UCDP data.
+License: MIT + file LICENSE
+URL: https://github.com/christianoswald/ucdpR, https://christianoswald.github.io/ucdpR/
+BugReports: https://github.com/christianoswald/ucdpR/issues
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Depends: R (>= 4.1.0)
+Imports:
+    cli,
+    httr2,
+    rvest,
+    tibble,
+    xml2
+Suggests:
+    covr,
+    haven,
+    knitr,
+    readr,
+    readxl,
+    rmarkdown,
+    testthat (>= 3.0.0),
+    withr
+Config/testthat/edition: 3
+VignetteBuilder: knitr
+Config/roxygen2/version: 8.0.0

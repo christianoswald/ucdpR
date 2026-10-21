@@ -1,0 +1,60 @@
+---
+title: "Downloading UCDP data reproducibly"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Downloading UCDP data reproducibly}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
+```
+
+`ucdpR` treats UCDP's official download page as the authoritative catalog.
+Start by discovering what is currently available:
+
+```{r}
+library(ucdpR)
+catalog <- ucdp_catalog()
+ucdp_search("Georeferenced|Candidate", catalog)
+```
+
+## Download or import
+
+`ucdp_download()` preserves the original file. `ucdp_get()` additionally
+imports supported tabular formats.
+
+```{r}
+file <- ucdp_download("prio", format = "csv", dest_dir = "data-raw")
+conflicts <- ucdp_get("prio", format = "csv")
+```
+
+When several files belong to one dataset, specify a variant:
+
+```{r}
+ucdp_search("Battle-Related Deaths", catalog)
+brd_dyad <- ucdp_get("brd", format = "csv", variant = "dyadic")
+```
+
+## Reproducibility
+
+Pin versions in analysis scripts and keep immutable input files. Search the
+historical page when necessary:
+
+```{r}
+ucdp_versions("prio", format = "csv")
+old <- ucdp_download("prio", version = "24.1", format = "csv",
+                     dest_dir = "data-raw")
+
+# Compare frozen releases to study retrospective revisions
+versions <- c("23.1", "24.1", "25.1")
+snapshots <- setNames(lapply(versions, function(v) {
+  ucdp_get("ged", version = v, format = "csv")
+}), versions)
+```
+
+UCDP asks users to cite the relevant dataset publication and report the data
+version. Retrieve the current guidance with `ucdp_cite("prio")` and consult the
+dataset's codebook before publication.
+

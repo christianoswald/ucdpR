@@ -1,0 +1,31 @@
+test_that("catalog helper has stable empty schema", {
+  x <- ucdpR:::empty_catalog()
+  expect_s3_class(x, "tbl_df")
+  expect_named(x, c("dataset", "version", "variant", "section", "format", "url", "file_name", "source"))
+})
+
+test_that("format inference handles supported types", {
+  expect_equal(ucdpR:::infer_format("CSV", "file"), "csv")
+  expect_equal(ucdpR:::infer_format("Excel", "file"), "xlsx")
+  expect_equal(ucdpR:::infer_format("Stata", "file"), "dta")
+  expect_equal(ucdpR:::infer_format("R", "file"), "rdata")
+  expect_equal(ucdpR:::infer_format("SHAPEFILE", "file"), "shapefile")
+  expect_equal(ucdpR:::infer_format("Codebook", "file.pdf"), "documentation")
+})
+
+test_that("versions and names are normalized", {
+  expect_equal(ucdpR:::extract_version("Dataset version 26.1"), "26.1")
+  expect_equal(ucdpR:::safe_name("One-sided Violence"), "one-sided-violence")
+})
+
+test_that("dataset names are recovered from stable download paths", {
+  expect_equal(
+    ucdpR:::canonical_dataset("Disaggregated Event Datasets", "https://ucdp.uu.se/downloads/ged/ged261.csv"),
+    "UCDP Georeferenced Event Dataset (GED)"
+  )
+  expect_equal(
+    ucdpR:::canonical_dataset("Disaggregated Event Datasets", "https://ucdp.uu.se/downloads/candidateged/file.csv"),
+    "UCDP Candidate Events Dataset (UCDP Candidate)"
+  )
+})
+

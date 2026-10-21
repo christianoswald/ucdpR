@@ -1,0 +1,11 @@
+url: https://christianoswald.github.io/ucdpR/
+template:
+  bootstrap: 5
+reference:
+- title: Discover
+  contents: [ucdp_catalog, ucdp_search, ucdp_versions]
+- title: Download and import
+  contents: [ucdp_download, ucdp_get]
+- title: Reproducibility
+  contents: [ucdp_cite, ucdp_update_available]
+

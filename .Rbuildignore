@@ -1,0 +1,11 @@
+^\.github$
+^_pkgdown\.yml$
+^cran-comments\.md$
+^README\.Rmd$
+^\.gitignore$
+^docs$
+^CODE_OF_CONDUCT\.md$
+^CONTRIBUTING\.md$
+^LICENSE\.md$
+^ucdpR\.Rproj$
+
