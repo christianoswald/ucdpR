@@ -52,7 +52,7 @@ ucdp_get <- function(dataset, format = "csv", variant = NULL, version = NULL,
   result <- switch(ext,
     csv = {
       require_reader("readr", "CSV")
-      readr::read_csv(path, show_col_types = FALSE, ...)
+      read_ucdp_csv(path, ...)
     },
     xls =, xlsx = {
       require_reader("readxl", "Excel")
@@ -68,6 +68,25 @@ ucdp_get <- function(dataset, format = "csv", variant = NULL, version = NULL,
   )
   attr(result, "ucdp_source") <- provenance
   result
+}
+
+read_ucdp_csv <- function(path, ...) {
+  dots <- list(...)
+  user_controls_types <- any(c("col_types", "guess_max") %in% names(dots))
+  args <- c(list(file = path), dots)
+  if (!"show_col_types" %in% names(dots)) args$show_col_types <- FALSE
+
+  if (user_controls_types) return(do.call(readr::read_csv, args))
+
+  # UCDP identifier columns may contain a single numeric-looking ID in most
+  # rows and comma-separated IDs in a few later rows. Try readr's fast default
+  # inference first, then inspect its recorded parsing problems and re-read
+  # with complete type inference only when necessary.
+  result <- suppressWarnings(do.call(readr::read_csv, args))
+  if (!nrow(readr::problems(result))) return(result)
+
+  args$guess_max <- Inf
+  do.call(readr::read_csv, args)
 }
 
 require_reader <- function(package, label) {
