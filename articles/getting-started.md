@@ -1,6 +1,10 @@
-# Downloading UCDP data reproducibly
+# Working with UCDP data reproducibly
 
-`ucdpR` treats UCDP’s official download page as the authoritative
+`ucdpR` provides a reproducible interface for acquiring and working with
+data from the Uppsala Conflict Data Program. Data access is its
+foundation, while convenience functions support recurring research tasks
+such as documenting sources and auditing revisions between releases. The
+package treats UCDP’s official download page as the authoritative
 catalog. Start by discovering what is currently available:
 
 ``` r
@@ -31,7 +35,7 @@ ucdp_search("Battle-Related Deaths", catalog)
 brd_dyad <- ucdp_get("brd", format = "csv", variant = "dyadic")
 ```
 
-## Reproducibility
+## Versions and provenance
 
 Pin versions in analysis scripts and keep immutable input files. Search
 the historical page when necessary:
@@ -41,13 +45,46 @@ the historical page when necessary:
 ucdp_versions("prio", format = "csv")
 old <- ucdp_download("prio", version = "24.1", format = "csv",
                      dest_dir = "data-raw")
-
-# Compare frozen releases to study retrospective revisions
-versions <- c("23.1", "24.1", "25.1")
-snapshots <- setNames(lapply(versions, function(v) {
-  ucdp_get("ged", version = v, format = "csv")
-}), versions)
 ```
+
+Imported objects retain source metadata in their `ucdp_source`
+attribute:
+
+``` r
+
+attr(conflicts, "ucdp_source")
+```
+
+## Compare releases
+
+Historical versions are analytically useful because UCDP may revise
+earlier observations as new information becomes available. A structured
+comparison can therefore document data updates or help treat
+retrospective revision as a source of measurement uncertainty:
+
+``` r
+
+comparison <- ucdp_compare_versions(
+  "ged", old_version = "24.1", new_version = "25.1"
+)
+comparison$overview
+comparison$variables
+comparison$modified
+```
+
+Use `detail = "cells"` to obtain old and new values for every changed
+cell, or `detail = "summary"` when only aggregate counts are needed. A
+unique observation key is inferred when possible and can otherwise be
+supplied with `key`.
+
+## A growing research toolkit
+
+The data-access functions provide stable inputs for additional UCDP
+workflows. As the package develops, convenience functions can extend
+this foundation while retaining explicit versions, transparent
+operations, and familiar data-frame outputs. This makes the package
+useful not only for obtaining UCDP data, but also for recurring
+data-management and research tasks built around them.
 
 UCDP asks users to cite the relevant dataset publication and report the
 data version. Retrieve the current guidance with `ucdp_cite("prio")` and

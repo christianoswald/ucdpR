@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Downloading UCDP data reproducibly • ucdpR</title>
+<title>Working with UCDP data reproducibly • ucdpR</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Downloading UCDP data reproducibly">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Working with UCDP data reproducibly">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,7 +33,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/getting-started.html">Downloading UCDP data reproducibly</a></li>
+<li><a class="dropdown-item" href="../articles/getting-started.html">Working with UCDP data reproducibly</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -56,7 +56,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Downloading UCDP data reproducibly</h1>
+      <h1>Working with UCDP data reproducibly</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/christianoswald/ucdpR/blob/main/vignettes/getting-started.Rmd" class="external-link"><code>vignettes/getting-started.Rmd</code></a></small>
@@ -65,8 +65,12 @@
 
     
     
-<p><code>ucdpR</code> treats UCDP’s official download page as the
-authoritative catalog. Start by discovering what is currently
+<p><code>ucdpR</code> provides a reproducible interface for acquiring
+and working with data from the Uppsala Conflict Data Program. Data
+access is its foundation, while convenience functions support recurring
+research tasks such as documenting sources and auditing revisions
+between releases. The package treats UCDP’s official download page as
+the authoritative catalog. Start by discovering what is currently
 available:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/christianoswald/ucdpR" class="external-link">ucdpR</a></span><span class="op">)</span></span>
@@ -87,20 +91,47 @@ formats.</p>
 <span><span class="va">brd_dyad</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ucdp_get.html">ucdp_get</a></span><span class="op">(</span><span class="st">"brd"</span>, format <span class="op">=</span> <span class="st">"csv"</span>, variant <span class="op">=</span> <span class="st">"dyadic"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="reproducibility">Reproducibility<a class="anchor" aria-label="anchor" href="#reproducibility"></a>
+<h2 id="versions-and-provenance">Versions and provenance<a class="anchor" aria-label="anchor" href="#versions-and-provenance"></a>
 </h2>
 <p>Pin versions in analysis scripts and keep immutable input files.
 Search the historical page when necessary:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/ucdp_versions.html">ucdp_versions</a></span><span class="op">(</span><span class="st">"prio"</span>, format <span class="op">=</span> <span class="st">"csv"</span><span class="op">)</span></span>
 <span><span class="va">old</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ucdp_download.html">ucdp_download</a></span><span class="op">(</span><span class="st">"prio"</span>, version <span class="op">=</span> <span class="st">"24.1"</span>, format <span class="op">=</span> <span class="st">"csv"</span>,</span>
-<span>                     dest_dir <span class="op">=</span> <span class="st">"data-raw"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Compare frozen releases to study retrospective revisions</span></span>
-<span><span class="va">versions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"23.1"</span>, <span class="st">"24.1"</span>, <span class="st">"25.1"</span><span class="op">)</span></span>
-<span><span class="va">snapshots</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">versions</span>, <span class="kw">function</span><span class="op">(</span><span class="va">v</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="../reference/ucdp_get.html">ucdp_get</a></span><span class="op">(</span><span class="st">"ged"</span>, version <span class="op">=</span> <span class="va">v</span>, format <span class="op">=</span> <span class="st">"csv"</span><span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span>, <span class="va">versions</span><span class="op">)</span></span></code></pre></div>
+<span>                     dest_dir <span class="op">=</span> <span class="st">"data-raw"</span><span class="op">)</span></span></code></pre></div>
+<p>Imported objects retain source metadata in their
+<code>ucdp_source</code> attribute:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">conflicts</span>, <span class="st">"ucdp_source"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="compare-releases">Compare releases<a class="anchor" aria-label="anchor" href="#compare-releases"></a>
+</h2>
+<p>Historical versions are analytically useful because UCDP may revise
+earlier observations as new information becomes available. A structured
+comparison can therefore document data updates or help treat
+retrospective revision as a source of measurement uncertainty:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ucdp_compare_versions.html">ucdp_compare_versions</a></span><span class="op">(</span></span>
+<span>  <span class="st">"ged"</span>, old_version <span class="op">=</span> <span class="st">"24.1"</span>, new_version <span class="op">=</span> <span class="st">"25.1"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">comparison</span><span class="op">$</span><span class="va">overview</span></span>
+<span><span class="va">comparison</span><span class="op">$</span><span class="va">variables</span></span>
+<span><span class="va">comparison</span><span class="op">$</span><span class="va">modified</span></span></code></pre></div>
+<p>Use <code>detail = "cells"</code> to obtain old and new values for
+every changed cell, or <code>detail = "summary"</code> when only
+aggregate counts are needed. A unique observation key is inferred when
+possible and can otherwise be supplied with <code>key</code>.</p>
+</div>
+<div class="section level2">
+<h2 id="a-growing-research-toolkit">A growing research toolkit<a class="anchor" aria-label="anchor" href="#a-growing-research-toolkit"></a>
+</h2>
+<p>The data-access functions provide stable inputs for additional UCDP
+workflows. As the package develops, convenience functions can extend
+this foundation while retaining explicit versions, transparent
+operations, and familiar data-frame outputs. This makes the package
+useful not only for obtaining UCDP data, but also for recurring
+data-management and research tasks built around them.</p>
 <p>UCDP asks users to cite the relevant dataset publication and report
 the data version. Retrieve the current guidance with
 <code>ucdp_cite("prio")</code> and consult the dataset’s codebook before

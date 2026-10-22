@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Download Data from the Uppsala Conflict Data Program • ucdpR</title>
+<title>Access and Work with Uppsala Conflict Data Program Data • ucdpR</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Download Data from the Uppsala Conflict Data Program">
-<meta name="description" content="Discovers, downloads, and imports datasets published by the Uppsala Conflict Data Program (UCDP) &lt;https://ucdp.uu.se/&gt;. The package reads the official download catalog at run time, supports reproducible file downloads, and imports common tabular formats without bundling or modifying UCDP data.">
-<meta property="og:description" content="Discovers, downloads, and imports datasets published by the Uppsala Conflict Data Program (UCDP) &lt;https://ucdp.uu.se/&gt;. The package reads the official download catalog at run time, supports reproducible file downloads, and imports common tabular formats without bundling or modifying UCDP data.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Access and Work with Uppsala Conflict Data Program Data">
+<meta name="description" content="Provides tools for reproducible research with datasets published by the Uppsala Conflict Data Program (UCDP) &lt;https://ucdp.uu.se/&gt;. It discovers the official download catalog at run time, downloads and imports current or historical releases, records source metadata, and helps examine changes between dataset versions. UCDP data are not bundled or modified.">
+<meta property="og:description" content="Provides tools for reproducible research with datasets published by the Uppsala Conflict Data Program (UCDP) &lt;https://ucdp.uu.se/&gt;. It discovers the official download catalog at run time, downloads and imports current or historical releases, records source metadata, and helps examine changes between dataset versions. UCDP data are not bundled or modified.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,7 +35,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/getting-started.html">Downloading UCDP data reproducibly</a></li>
+<li><a class="dropdown-item" href="articles/getting-started.html">Working with UCDP data reproducibly</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
@@ -57,7 +57,17 @@
 </h1></div>
 <!-- badges: start -->
 
-<p><code>ucdpR</code> discovers, downloads, and imports datasets from the official <a href="https://ucdp.uu.se/downloads/" class="external-link">Uppsala Conflict Data Program download center</a>. Because the catalog is discovered at run time, new UCDP releases generally do not require a package update.</p>
+<p><code>ucdpR</code> is a toolkit for reproducible research with data from the <a href="https://ucdp.uu.se/" class="external-link">Uppsala Conflict Data Program</a>. It provides a consistent R interface for finding, downloading, importing, documenting, and comparing UCDP datasets. Downloading data is the foundation, but the package is designed to grow around the wider tasks that applied researchers repeatedly encounter when working with UCDP data.</p>
+<p>The package currently helps researchers:</p>
+<ul>
+<li>discover available datasets without hard-coding download URLs;</li>
+<li>download or directly import current and historical releases;</li>
+<li>pin exact versions for reproducible research;</li>
+<li>preserve source URLs, versions, retrieval details, and file checksums;</li>
+<li>retrieve dataset citation guidance; and</li>
+<li>audit retrospective changes between two releases.</li>
+</ul>
+<p>Because the catalog is read from the official download center at run time, new UCDP releases generally do not require a package update. <code>ucdpR</code> does not bundle or redistribute UCDP data.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -66,7 +76,7 @@
 <span><span class="co"># pak::pak("christianoswald/ucdpR")</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
+<h2 id="find-and-import-data">Find and import data<a class="anchor" aria-label="anchor" href="#find-and-import-data"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/christianoswald/ucdpR" class="external-link">ucdpR</a></span><span class="op">)</span></span>
@@ -93,6 +103,29 @@
 <span><span class="co"># Select a specific file when a dataset has multiple variants</span></span>
 <span><span class="va">brd</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ucdp_get.html">ucdp_get</a></span><span class="op">(</span><span class="st">"brd"</span>, variant <span class="op">=</span> <span class="st">"dyadic"</span>, format <span class="op">=</span> <span class="st">"csv"</span><span class="op">)</span></span></code></pre></div>
 <p>For reproducible research, specify <code>version</code> explicitly and record the returned filename, source metadata, and checksum. Imported objects retain these details in their <code>ucdp_source</code> attribute. Cite the dataset as requested by UCDP and avoid silently replacing frozen research data. <code>ucdp_cite("ged")</code> retrieves the current citation guidance.</p>
+</div>
+<div class="section level2">
+<h2 id="compare-releases">Compare releases<a class="anchor" aria-label="anchor" href="#compare-releases"></a>
+</h2>
+<p>UCDP datasets can be retrospectively revised. <code><a href="reference/ucdp_compare_versions.html">ucdp_compare_versions()</a></code> turns two official releases into a structured revision audit:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ucdp_compare_versions.html">ucdp_compare_versions</a></span><span class="op">(</span></span>
+<span>  <span class="st">"ged"</span>,</span>
+<span>  old_version <span class="op">=</span> <span class="st">"24.1"</span>,</span>
+<span>  new_version <span class="op">=</span> <span class="st">"25.1"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">comparison</span><span class="op">$</span><span class="va">overview</span>   <span class="co"># added, removed, modified, and unchanged rows</span></span>
+<span><span class="va">comparison</span><span class="op">$</span><span class="va">variables</span>  <span class="co"># number of revisions by variable</span></span>
+<span><span class="va">comparison</span><span class="op">$</span><span class="va">added</span>      <span class="co"># complete newly added observations</span></span>
+<span><span class="va">comparison</span><span class="op">$</span><span class="va">removed</span>    <span class="co"># complete removed observations</span></span>
+<span><span class="va">comparison</span><span class="op">$</span><span class="va">modified</span>   <span class="co"># keys and variables changed in matched observations</span></span></code></pre></div>
+<p>For cell-level old and new values, set <code>detail = "cells"</code>. For large releases where only counts are required, use <code>detail = "summary"</code> to limit memory use.</p>
+</div>
+<div class="section level2">
+<h2 id="package-direction">Package direction<a class="anchor" aria-label="anchor" href="#package-direction"></a>
+</h2>
+<p>Future convenience functions will build on the same principles: reproducible inputs, explicit versions, transparent transformations, and outputs that fit ordinary R workflows. The aim is to reduce recurring data-management work for UCDP users while keeping analytical choices visible and under the researcher’s control.</p>
 </div>
 <div class="section level2">
 <h2 id="scope-and-attribution">Scope and attribution<a class="anchor" aria-label="anchor" href="#scope-and-attribution"></a>

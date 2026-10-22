@@ -1,5 +1,50 @@
 # Changelog
 
+## ucdpR 0.3.4
+
+- Reframed the package documentation around reproducible UCDP research
+  workflows and present and future convenience functions, rather than
+  data downloading alone.
+- Expanded the README and introductory vignette with a dedicated
+  release- comparison workflow and clearer guidance on package scope and
+  direction.
+
+## ucdpR 0.3.3
+
+- Corrected the synthetic HTML fixture used to test catalog text
+  extraction. The fixture now spells “Yearly Datasets” correctly while
+  retaining the nested-element structure that guards against dropped
+  letters.
+
+## ucdpR 0.3.2
+
+- Corrected `clean_text()`: its former regular expression removed the
+  literal lower-case letters `n`, `r`, and `t` under R’s default regex
+  engine. Whitespace normalization now relies solely on the portable
+  POSIX space class.
+- Documented the [`print()`](https://rdrr.io/r/base/print.html) and
+  [`summary()`](https://rdrr.io/r/base/summary.html) methods separately
+  so their method arguments no longer produce an `R CMD check` warning.
+
+## ucdpR 0.3.1
+
+- Fixed catalog titles losing lower-case `n`, `r`, and `t` characters
+  because CSS-aware text extraction treated UCDP’s one-letter markup as
+  hidden.
+- Restricted URL-based canonical naming to genuine fallback cases,
+  preventing auxiliary datasets from being relabeled as similarly named
+  core datasets.
+- Applied the same robust text extraction to citation discovery.
+
+## ucdpR 0.3.0
+
+- Added
+  [`ucdp_compare_versions()`](https://christianoswald.github.io/ucdpR/reference/ucdp_compare_versions.md)
+  to audit retrospective changes between two downloaded or preloaded
+  UCDP releases. It reports schema changes and added, removed, modified,
+  and unchanged observations, with optional cell-level details and
+  numeric tolerance.
+
 ## ucdpR 0.2.3
 
 - CSV imports now detect type-guessing failures and automatically

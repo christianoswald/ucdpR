@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,7 +18,7 @@
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/getting-started.html">Downloading UCDP data reproducibly</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/getting-started.html">Working with UCDP data reproducibly</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -36,6 +36,30 @@
       <small>Source: <a href="https://github.com/christianoswald/ucdpR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.4" id="ucdpr-034">ucdpR 0.3.4<a class="anchor" aria-label="anchor" href="#ucdpr-034"></a></h2>
+<ul><li>Reframed the package documentation around reproducible UCDP research workflows and present and future convenience functions, rather than data downloading alone.</li>
+<li>Expanded the README and introductory vignette with a dedicated release- comparison workflow and clearer guidance on package scope and direction.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.3" id="ucdpr-033">ucdpR 0.3.3<a class="anchor" aria-label="anchor" href="#ucdpr-033"></a></h2>
+<ul><li>Corrected the synthetic HTML fixture used to test catalog text extraction. The fixture now spells “Yearly Datasets” correctly while retaining the nested-element structure that guards against dropped letters.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.2" id="ucdpr-032">ucdpR 0.3.2<a class="anchor" aria-label="anchor" href="#ucdpr-032"></a></h2>
+<ul><li>Corrected <code>clean_text()</code>: its former regular expression removed the literal lower-case letters <code>n</code>, <code>r</code>, and <code>t</code> under R’s default regex engine. Whitespace normalization now relies solely on the portable POSIX space class.</li>
+<li>Documented the <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> and <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> methods separately so their method arguments no longer produce an <code>R CMD check</code> warning.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.1" id="ucdpr-031">ucdpR 0.3.1<a class="anchor" aria-label="anchor" href="#ucdpr-031"></a></h2>
+<ul><li>Fixed catalog titles losing lower-case <code>n</code>, <code>r</code>, and <code>t</code> characters because CSS-aware text extraction treated UCDP’s one-letter markup as hidden.</li>
+<li>Restricted URL-based canonical naming to genuine fallback cases, preventing auxiliary datasets from being relabeled as similarly named core datasets.</li>
+<li>Applied the same robust text extraction to citation discovery.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.0" id="ucdpr-030">ucdpR 0.3.0<a class="anchor" aria-label="anchor" href="#ucdpr-030"></a></h2>
+<ul><li>Added <code><a href="../reference/ucdp_compare_versions.html">ucdp_compare_versions()</a></code> to audit retrospective changes between two downloaded or preloaded UCDP releases. It reports schema changes and added, removed, modified, and unchanged observations, with optional cell-level details and numeric tolerance.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.3" id="ucdpr-023">ucdpR 0.2.3<a class="anchor" aria-label="anchor" href="#ucdpr-023"></a></h2>
 <ul><li>CSV imports now detect type-guessing failures and automatically re-read with full-file inference. This correctly treats occasionally comma-separated UCDP identifier fields as character without slowing every import by default.</li>

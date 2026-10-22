@@ -22,3 +22,10 @@
   : Retrieve citation guidance for a UCDP dataset
 - [`ucdp_update_available()`](https://christianoswald.github.io/ucdpR/reference/ucdp_update_available.md)
   : Check whether a downloaded UCDP file has a newer catalog version
+
+## Work with UCDP data
+
+Convenience functions for recurring research tasks.
+
+- [`ucdp_compare_versions()`](https://christianoswald.github.io/ucdpR/reference/ucdp_compare_versions.md)
+  : Compare two releases of a UCDP dataset

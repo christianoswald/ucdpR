@@ -9,14 +9,14 @@
 Source:
 [`inst/CITATION`](https://github.com/christianoswald/ucdpR/blob/main/inst/CITATION)
 
-Oswald C (2026). *ucdpR: Download Data from the Uppsala Conflict Data
-Program*. R package version 0.2.3,
+Oswald C (2026). *ucdpR: Access and Work with Uppsala Conflict Data
+Program Data*. R package version 0.3.4,
 <https://github.com/christianoswald/ucdpR>.
 
     @Manual{,
-      title = {ucdpR: Download Data from the Uppsala Conflict Data Program},
+      title = {ucdpR: Access and Work with Uppsala Conflict Data Program Data},
       author = {Christian Oswald},
       year = {2026},
-      note = {R package version 0.2.3},
+      note = {R package version 0.3.4},
       url = {https://github.com/christianoswald/ucdpR},
     }

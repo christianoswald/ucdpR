@@ -1,10 +1,24 @@
 # ucdpR
 
-`ucdpR` discovers, downloads, and imports datasets from the official
-[Uppsala Conflict Data Program download
-center](https://ucdp.uu.se/downloads/). Because the catalog is
-discovered at run time, new UCDP releases generally do not require a
-package update.
+`ucdpR` is a toolkit for reproducible research with data from the
+[Uppsala Conflict Data Program](https://ucdp.uu.se/). It provides a
+consistent R interface for finding, downloading, importing, documenting,
+and comparing UCDP datasets. Downloading data is the foundation, but the
+package is designed to grow around the wider tasks that applied
+researchers repeatedly encounter when working with UCDP data.
+
+The package currently helps researchers:
+
+- discover available datasets without hard-coding download URLs;
+- download or directly import current and historical releases;
+- pin exact versions for reproducible research;
+- preserve source URLs, versions, retrieval details, and file checksums;
+- retrieve dataset citation guidance; and
+- audit retrospective changes between two releases.
+
+Because the catalog is read from the official download center at run
+time, new UCDP releases generally do not require a package update.
+`ucdpR` does not bundle or redistribute UCDP data.
 
 ## Installation
 
@@ -14,7 +28,7 @@ package update.
 # pak::pak("christianoswald/ucdpR")
 ```
 
-## Quick start
+## Find and import data
 
 ``` r
 
@@ -49,6 +63,39 @@ retain these details in their `ucdp_source` attribute. Cite the dataset
 as requested by UCDP and avoid silently replacing frozen research data.
 `ucdp_cite("ged")` retrieves the current citation guidance.
 
+## Compare releases
+
+UCDP datasets can be retrospectively revised.
+[`ucdp_compare_versions()`](https://christianoswald.github.io/ucdpR/reference/ucdp_compare_versions.md)
+turns two official releases into a structured revision audit:
+
+``` r
+
+comparison <- ucdp_compare_versions(
+  "ged",
+  old_version = "24.1",
+  new_version = "25.1"
+)
+
+comparison$overview   # added, removed, modified, and unchanged rows
+comparison$variables  # number of revisions by variable
+comparison$added      # complete newly added observations
+comparison$removed    # complete removed observations
+comparison$modified   # keys and variables changed in matched observations
+```
+
+For cell-level old and new values, set `detail = "cells"`. For large
+releases where only counts are required, use `detail = "summary"` to
+limit memory use.
+
+## Package direction
+
+Future convenience functions will build on the same principles:
+reproducible inputs, explicit versions, transparent transformations, and
+outputs that fit ordinary R workflows. The aim is to reduce recurring
+data-management work for UCDP users while keeping analytical choices
+visible and under the researcher’s control.
+
 ## Scope and attribution
 
 This package is an independent community client. It is not affiliated
@@ -81,9 +128,16 @@ citation guidance, and terms.
 - [`ucdp_update_available()`](https://christianoswald.github.io/ucdpR/reference/ucdp_update_available.md)
   : Check whether a downloaded UCDP file has a newer catalog version
 
+## Work with UCDP data
+
+Convenience functions for recurring research tasks.
+
+- [`ucdp_compare_versions()`](https://christianoswald.github.io/ucdpR/reference/ucdp_compare_versions.md)
+  : Compare two releases of a UCDP dataset
+
 # Articles
 
 ### All vignettes
 
-- [Downloading UCDP data
+- [Working with UCDP data
   reproducibly](https://christianoswald.github.io/ucdpR/articles/getting-started.md):
