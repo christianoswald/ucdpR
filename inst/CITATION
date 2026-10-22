@@ -1,9 +1,9 @@
 bibentry(
   bibtype = "Manual",
-  title = "ucdpR: Download Data from the Uppsala Conflict Data Program",
+  title = "ucdpR: Access and Work with Uppsala Conflict Data Program Data",
   author = person("Christian", "Oswald"),
   year = "2026",
-  note = "R package version 0.2.3",
+  note = "R package version 0.3.4",
   url = "https://github.com/christianoswald/ucdpR"
 )
 

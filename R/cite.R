@@ -14,15 +14,16 @@ ucdp_cite <- function(dataset, quiet = FALSE) {
   if (!quiet) cli::cli_inform("Reading citation guidance from UCDP...")
   response <- ucdp_request(.ucdp_base) |> httr2::req_perform()
   page <- httr2::resp_body_html(response)
-  headings <- rvest::html_elements(page, "h3")
+  headings <- rvest::html_elements(page, "h2, h3")
   query <- resolve_alias(dataset)
-  hit <- headings[grepl(query, rvest::html_text2(headings), ignore.case = TRUE)]
+  heading_text <- vapply(headings, node_text, character(1))
+  hit <- headings[grepl(query, heading_text, ignore.case = TRUE)]
   if (!length(hit)) cli::cli_abort("No dataset matching {.val {dataset}} was found.")
   if (length(hit) > 1L) cli::cli_abort("More than one dataset matches {.val {dataset}}; use a more specific name.")
   nodes <- rvest::html_elements(hit, xpath = "following-sibling::*")
-  next_heading <- which(xml2::xml_name(nodes) == "h3")[1L]
+  next_heading <- which(xml2::xml_name(nodes) %in% c("h2", "h3"))[1L]
   if (!is.na(next_heading)) nodes <- nodes[seq_len(next_heading - 1L)]
-  txt <- clean_text(rvest::html_text2(nodes))
+  txt <- vapply(nodes, node_text, character(1))
   start <- which(grepl("Please cite", txt, ignore.case = TRUE))[1L]
   if (is.na(start)) return(character())
   unique(txt[seq.int(start, length(txt))][nzchar(txt[seq.int(start, length(txt))])])

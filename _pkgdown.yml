@@ -8,4 +8,7 @@ reference:
   contents: [ucdp_download, ucdp_get]
 - title: Reproducibility
   contents: [ucdp_cite, ucdp_update_available]
+- title: Work with UCDP data
+  desc: Convenience functions for recurring research tasks.
+  contents: [ucdp_compare_versions]
 

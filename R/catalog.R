@@ -48,7 +48,7 @@ parse_catalog_page <- function(url, source = "current") {
   if (!length(links)) return(empty_catalog())
 
   rows <- lapply(links, function(link) {
-    label <- clean_text(rvest::html_text2(link))
+    label <- clean_text(xml2::xml_text(link))
     href <- rvest::html_attr(link, "href")
     # UCDP has used both h2 and h3 for dataset titles. Selecting the nearest
     # preceding heading makes discovery robust to either page structure.
@@ -92,6 +92,12 @@ parse_catalog_page <- function(url, source = "current") {
 }
 
 canonical_dataset <- function(dataset, url) {
+  generic <- is.na(dataset) || !nzchar(dataset) || grepl(
+    "^(Disaggregated Event Datasets|Yearly Datasets|Other UCDP Datasets|UCDP Dataset Download Center)",
+    dataset
+  )
+  if (!generic) return(dataset)
+
   path <- tolower(url)
   rules <- list(
     "candidateged" = "UCDP Candidate Events Dataset (UCDP Candidate)",
@@ -113,7 +119,10 @@ canonical_dataset <- function(dataset, url) {
 
 node_text <- function(node) {
   if (inherits(node, "xml_missing") || length(node) == 0L) return(NA_character_)
-  clean_text(rvest::html_text2(node))
+  # xml_text() deliberately ignores CSS display rules. UCDP's page uses
+  # one-letter markup elements that html_text2() may treat as hidden, causing
+  # every lower-case n, r, and t in some headings to disappear.
+  clean_text(xml2::xml_text(node))
 }
 
 infer_variant <- function(label, context) {

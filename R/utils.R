@@ -18,7 +18,6 @@ absolute_url <- function(href, base) {
 }
 
 clean_text <- function(x) {
-  x <- gsub("[\\r\\n\\t]+", " ", x)
   trimws(gsub("[[:space:]]+", " ", x))
 }
 

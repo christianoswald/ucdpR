@@ -29,3 +29,18 @@ test_that("dataset names are recovered from stable download paths", {
   )
 })
 
+test_that("node text retains letters hidden by page display rules", {
+  page <- xml2::read_html(paste0(
+    "<style>n, r, t { display: none; }</style>",
+    "<h2>Yea<r>r</r>ly Da<t>t</t>ase<t>t</t>s</h2>"
+  ))
+  heading <- xml2::xml_find_first(page, ".//h2")
+  expect_equal(ucdpR:::node_text(heading), "Yearly Datasets")
+})
+
+test_that("specific auxiliary dataset titles are not overwritten", {
+  title <- "UCDP Non-state Conflict Issues and Actors Dataset"
+  url <- "https://ucdp.uu.se/downloads/nonstate/issues-and-actors.csv"
+  expect_equal(ucdpR:::canonical_dataset(title, url), title)
+})
+

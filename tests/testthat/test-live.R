@@ -6,6 +6,21 @@ test_that("live UCDP catalog remains discoverable", {
   expect_gt(nrow(x), 10)
   expect_true(any(grepl("Georeferenced", x$dataset)))
   expect_true(any(grepl("/ged/", x$url, fixed = TRUE)))
+  expected_datasets <- c(
+    "UCDP One-sided Violence Dataset",
+    "UCDP Non-State Conflict Dataset",
+    "UCDP Violent Political Protest Dataset",
+    "UCDP Conflict Termination Dataset",
+    "UCDP Peace Agreement Dataset"
+  )
+  expect_true(all(expected_datasets %in% x$dataset))
+  expected_sections <- c(
+    "Disaggregated Event Datasets",
+    "Yearly Datasets covering 1946\u20132025",
+    "Yearly Datasets covering 1989\u20132025",
+    "Other UCDP Datasets"
+  )
+  expect_true(all(expected_sections %in% x$section))
   expect_true(all(grepl("^https://", x$url)))
 })
 
