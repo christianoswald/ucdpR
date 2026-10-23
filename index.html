@@ -11,8 +11,8 @@
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Access and Work with Uppsala Conflict Data Program Data">
-<meta name="description" content="Provides tools for reproducible research with datasets published by the Uppsala Conflict Data Program (UCDP) &lt;https://ucdp.uu.se/&gt;. It discovers the official download catalog at run time, downloads and imports current or historical releases, records source metadata, and helps examine changes between dataset versions. UCDP data are not bundled or modified.">
-<meta property="og:description" content="Provides tools for reproducible research with datasets published by the Uppsala Conflict Data Program (UCDP) &lt;https://ucdp.uu.se/&gt;. It discovers the official download catalog at run time, downloads and imports current or historical releases, records source metadata, and helps examine changes between dataset versions. UCDP data are not bundled or modified.">
+<meta name="description" content="Provides tools for reproducible research with datasets published by the Uppsala Conflict Data Program (UCDP) &lt;https://ucdp.uu.se/&gt;. It discovers the official download catalog at run time, downloads and imports current or historical releases, retrieves official codebooks, records and summarizes source metadata, validates common data structures and ranges, and helps examine changes between dataset versions. UCDP data are not bundled or modified.">
+<meta property="og:description" content="Provides tools for reproducible research with datasets published by the Uppsala Conflict Data Program (UCDP) &lt;https://ucdp.uu.se/&gt;. It discovers the official download catalog at run time, downloads and imports current or historical releases, retrieves official codebooks, records and summarizes source metadata, validates common data structures and ranges, and helps examine changes between dataset versions. UCDP data are not bundled or modified.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,8 @@
 <li>download or directly import current and historical releases;</li>
 <li>pin exact versions for reproducible research;</li>
 <li>preserve source URLs, versions, retrieval details, and file checksums;</li>
-<li>retrieve dataset citation guidance; and</li>
+<li>retrieve official codebooks and dataset citation guidance;</li>
+<li>validate common identifiers, dates, fatality estimates, coordinates, and codes; and</li>
 <li>audit retrospective changes between two releases.</li>
 </ul>
 <p>Because the catalog is read from the official download center at run time, new UCDP releases generally do not require a package update. <code>ucdpR</code> does not bundle or redistribute UCDP data.</p>
@@ -105,10 +106,34 @@
 <p>For reproducible research, specify <code>version</code> explicitly and record the returned filename, source metadata, and checksum. Imported objects retain these details in their <code>ucdp_source</code> attribute. Cite the dataset as requested by UCDP and avoid silently replacing frozen research data. <code>ucdp_cite("ged")</code> retrieves the current citation guidance.</p>
 </div>
 <div class="section level2">
+<h2 id="document-provenance-and-retrieve-codebooks">Document provenance and retrieve codebooks<a class="anchor" aria-label="anchor" href="#document-provenance-and-retrieve-codebooks"></a>
+</h2>
+<p>Objects imported with <code><a href="reference/ucdp_get.html">ucdp_get()</a></code> retain their source record, exact version, retrieval time, checksum, and the package version used. Summarize these details alongside basic data coverage with:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/ucdp_metadata.html">ucdp_metadata</a></span><span class="op">(</span><span class="va">ged</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Metadata can also be inspected before downloading a release</span></span>
+<span><span class="fu"><a href="reference/ucdp_metadata.html">ucdp_metadata</a></span><span class="op">(</span><span class="st">"ged"</span>, version <span class="op">=</span> <span class="st">"24.1"</span><span class="op">)</span></span></code></pre></div>
+<p>Download the official codebook listed with a dataset:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/ucdp_codebook.html">ucdp_codebook</a></span><span class="op">(</span><span class="st">"ged"</span>, dest_dir <span class="op">=</span> <span class="st">"documentation"</span><span class="op">)</span></span></code></pre></div>
+<p>When several distinct documents match, refine the request with <code>variant</code>. Historical requests return only codebooks explicitly associated with the requested version and never silently substitute current documentation.</p>
+</div>
+<div class="section level2">
+<h2 id="validate-imported-data">Validate imported data<a class="anchor" aria-label="anchor" href="#validate-imported-data"></a>
+</h2>
+<p><code><a href="reference/ucdp_validate.html">ucdp_validate()</a></code> performs transparent, non-destructive diagnostics:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">validation</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ucdp_validate.html">ucdp_validate</a></span><span class="op">(</span><span class="va">ged</span><span class="op">)</span></span>
+<span><span class="va">validation</span><span class="op">$</span><span class="va">summary</span></span>
+<span><span class="va">validation</span><span class="op">$</span><span class="va">issues</span></span></code></pre></div>
+<p>The function checks plausible observation keys, date consistency, fatality bounds, coordinate ranges, and selected UCDP categorical codes when the relevant variables are present. Warnings flag values for inspection rather than asserting that UCDP made a coding error. Use <code>strict = TRUE</code> when warnings should also make the overall result invalid.</p>
+</div>
+<div class="section level2">
 <h2 id="compare-releases">Compare releases<a class="anchor" aria-label="anchor" href="#compare-releases"></a>
 </h2>
 <p>UCDP datasets can be retrospectively revised. <code><a href="reference/ucdp_compare_versions.html">ucdp_compare_versions()</a></code> turns two official releases into a structured revision audit:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ucdp_compare_versions.html">ucdp_compare_versions</a></span><span class="op">(</span></span>
 <span>  <span class="st">"ged"</span>,</span>
 <span>  old_version <span class="op">=</span> <span class="st">"24.1"</span>,</span>

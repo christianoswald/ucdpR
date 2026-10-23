@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,17 @@
       <small>Source: <a href="https://github.com/christianoswald/ucdpR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.1" id="ucdpr-041">ucdpR 0.4.1<a class="anchor" aria-label="anchor" href="#ucdpr-041"></a></h2>
+<ul><li>Excluded the suggested local <code>documentation/</code> download directory from source builds and version control so saved codebooks do not trigger an <code>R CMD check</code> NOTE.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.0" id="ucdpr-040">ucdpR 0.4.0<a class="anchor" aria-label="anchor" href="#ucdpr-040"></a></h2>
+<ul><li>Added <code><a href="../reference/ucdp_metadata.html">ucdp_metadata()</a></code> to summarize dataset provenance, dimensions, temporal coverage, and coordinate coverage from imported objects, downloaded paths, or catalog records.</li>
+<li>Added <code><a href="../reference/ucdp_codebook.html">ucdp_codebook()</a></code> to locate and download official UCDP codebooks, including exact-version safeguards and support for documentation variants.</li>
+<li>Added <code><a href="../reference/ucdp_validate.html">ucdp_validate()</a></code> with structured diagnostics for observation keys, dates, fatality estimates, coordinates, and selected UCDP codes.</li>
+<li>New downloads now retain retrieval time and the <code>ucdpR</code> package version in addition to the catalog record, dataset version, and checksum.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.4" id="ucdpr-034">ucdpR 0.3.4<a class="anchor" aria-label="anchor" href="#ucdpr-034"></a></h2>
 <ul><li>Reframed the package documentation around reproducible UCDP research workflows and present and future convenience functions, rather than data downloading alone.</li>

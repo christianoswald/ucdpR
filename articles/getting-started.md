@@ -3,9 +3,10 @@
 `ucdpR` provides a reproducible interface for acquiring and working with
 data from the Uppsala Conflict Data Program. Data access is its
 foundation, while convenience functions support recurring research tasks
-such as documenting sources and auditing revisions between releases. The
-package treats UCDP’s official download page as the authoritative
-catalog. Start by discovering what is currently available:
+such as documenting sources, validating common structures, and auditing
+revisions between releases. The package treats UCDP’s official download
+page as the authoritative catalog. Start by discovering what is
+currently available:
 
 ``` r
 
@@ -53,7 +54,44 @@ attribute:
 ``` r
 
 attr(conflicts, "ucdp_source")
+ucdp_metadata(conflicts)
 ```
+
+The metadata summary combines recorded provenance with dimensions and
+available temporal or geographic coverage. It can also inspect a catalog
+release before download with `ucdp_metadata("prio", version = "24.1")`.
+
+## Documentation
+
+Official codebooks can be kept alongside the corresponding data:
+
+``` r
+
+ucdp_codebook("prio", dest_dir = "documentation")
+ucdp_cite("prio")
+```
+
+An exact historical request succeeds only when the catalog explicitly
+lists matching documentation. This prevents a current codebook from
+being mistaken for the documentation of a frozen older release.
+
+## Validate data
+
+Run common structural and range diagnostics without modifying the data:
+
+``` r
+
+validation <- ucdp_validate(conflicts)
+validation$summary
+validation$issues
+```
+
+Checks are performed only when relevant variables are present. They
+cover observation keys, dates, fatality estimates, coordinates, and
+selected coded variables. A warning identifies a value worth inspecting;
+it does not by itself establish a data error. Set `strict = TRUE` if
+warnings should make the overall result invalid in an automated
+workflow.
 
 ## Compare releases
 

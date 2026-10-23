@@ -18,6 +18,10 @@
 
 ## Reproducibility
 
+- [`ucdp_metadata()`](https://christianoswald.github.io/ucdpR/reference/ucdp_metadata.md)
+  : Summarize UCDP provenance and data coverage
+- [`ucdp_codebook()`](https://christianoswald.github.io/ucdpR/reference/ucdp_codebook.md)
+  : Download an official UCDP codebook
 - [`ucdp_cite()`](https://christianoswald.github.io/ucdpR/reference/ucdp_cite.md)
   : Retrieve citation guidance for a UCDP dataset
 - [`ucdp_update_available()`](https://christianoswald.github.io/ucdpR/reference/ucdp_update_available.md)
@@ -27,5 +31,7 @@
 
 Convenience functions for recurring research tasks.
 
+- [`ucdp_validate()`](https://christianoswald.github.io/ucdpR/reference/ucdp_validate.md)
+  : Validate a UCDP dataset
 - [`ucdp_compare_versions()`](https://christianoswald.github.io/ucdpR/reference/ucdp_compare_versions.md)
   : Compare two releases of a UCDP dataset
