@@ -1,3 +1,21 @@
+# ucdpR 0.4.1
+
+* Excluded the suggested local `documentation/` download directory from source
+  builds and version control so saved codebooks do not trigger an `R CMD check`
+  NOTE.
+
+# ucdpR 0.4.0
+
+* Added `ucdp_metadata()` to summarize dataset provenance, dimensions, temporal
+  coverage, and coordinate coverage from imported objects, downloaded paths,
+  or catalog records.
+* Added `ucdp_codebook()` to locate and download official UCDP codebooks,
+  including exact-version safeguards and support for documentation variants.
+* Added `ucdp_validate()` with structured diagnostics for observation keys,
+  dates, fatality estimates, coordinates, and selected UCDP codes.
+* New downloads now retain retrieval time and the `ucdpR` package version in
+  addition to the catalog record, dataset version, and checksum.
+
 # ucdpR 0.3.4
 
 * Reframed the package documentation around reproducible UCDP research

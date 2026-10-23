@@ -65,6 +65,8 @@ ucdp_download <- function(dataset, format = "csv", variant = NULL,
   attr(result, "ucdp_record") <- choice
   attr(result, "ucdp_version") <- choice$version[[1L]]
   attr(result, "md5") <- unname(tools::md5sum(result))
+  attr(result, "retrieved_at") <- ucdp_timestamp()
+  attr(result, "ucdpR_version") <- ucdp_package_version()
   invisible(result)
 }
 

@@ -13,6 +13,14 @@ ucdp_request <- function(url) {
     httr2::req_timeout(60)
 }
 
+ucdp_timestamp <- function() {
+  format(Sys.time(), tz = "UTC", usetz = TRUE)
+}
+
+ucdp_package_version <- function() {
+  as.character(utils::packageVersion("ucdpR"))
+}
+
 absolute_url <- function(href, base) {
   xml2::url_absolute(href, base)
 }

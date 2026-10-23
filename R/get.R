@@ -21,7 +21,9 @@ ucdp_get <- function(dataset, format = "csv", variant = NULL, version = NULL,
     dest_dir = dest_dir, overwrite = overwrite,
     include_historical = include_historical, quiet = quiet, catalog = catalog
   )
-  provenance <- attributes(path)[c("ucdp_record", "ucdp_version", "md5")]
+  provenance <- attributes(path)[c(
+    "ucdp_record", "ucdp_version", "md5", "retrieved_at", "ucdpR_version"
+  )]
   original_path <- path
   if (!keep_file) on.exit(unlink(original_path), add = TRUE)
   ext <- tolower(tools::file_ext(path))

@@ -24,3 +24,13 @@ test_that("live UCDP catalog remains discoverable", {
   expect_true(all(grepl("^https://", x$url)))
 })
 
+test_that("live catalog exposes official codebooks", {
+  skip_on_cran()
+  skip_if_offline(host = "ucdp.uu.se")
+  x <- ucdp_catalog(include_documentation = TRUE, quiet = TRUE)
+  docs <- x[x$format == "documentation", , drop = FALSE]
+  expect_gt(nrow(docs), 5)
+  expect_true(any(grepl("Georeferenced", docs$dataset)))
+  expect_true(all(grepl("^https://", docs$url)))
+})
+

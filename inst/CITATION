@@ -3,7 +3,7 @@ bibentry(
   title = "ucdpR: Access and Work with Uppsala Conflict Data Program Data",
   author = person("Christian", "Oswald"),
   year = "2026",
-  note = "R package version 0.3.4",
+  note = "R package version 0.4.1",
   url = "https://github.com/christianoswald/ucdpR"
 )
 

@@ -18,7 +18,9 @@ The package currently helps researchers:
 * download or directly import current and historical releases;
 * pin exact versions for reproducible research;
 * preserve source URLs, versions, retrieval details, and file checksums;
-* retrieve dataset citation guidance; and
+* retrieve official codebooks and dataset citation guidance;
+* validate common identifiers, dates, fatality estimates, coordinates, and
+  codes; and
 * audit retrospective changes between two releases.
 
 Because the catalog is read from the official download center at run time, new
@@ -65,6 +67,45 @@ filename, source metadata, and checksum. Imported objects retain these details
 in their `ucdp_source` attribute. Cite the dataset as requested by UCDP and
 avoid silently replacing frozen research data. `ucdp_cite("ged")` retrieves
 the current citation guidance.
+
+## Document provenance and retrieve codebooks
+
+Objects imported with `ucdp_get()` retain their source record, exact version,
+retrieval time, checksum, and the package version used. Summarize these details
+alongside basic data coverage with:
+
+```r
+ucdp_metadata(ged)
+
+# Metadata can also be inspected before downloading a release
+ucdp_metadata("ged", version = "24.1")
+```
+
+Download the official codebook listed with a dataset:
+
+```r
+ucdp_codebook("ged", dest_dir = "documentation")
+```
+
+When several distinct documents match, refine the request with `variant`.
+Historical requests return only codebooks explicitly associated with the
+requested version and never silently substitute current documentation.
+
+## Validate imported data
+
+`ucdp_validate()` performs transparent, non-destructive diagnostics:
+
+```r
+validation <- ucdp_validate(ged)
+validation$summary
+validation$issues
+```
+
+The function checks plausible observation keys, date consistency, fatality
+bounds, coordinate ranges, and selected UCDP categorical codes when the
+relevant variables are present. Warnings flag values for inspection rather
+than asserting that UCDP made a coding error. Use `strict = TRUE` when warnings
+should also make the overall result invalid.
 
 ## Compare releases
 
