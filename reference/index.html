@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -16,10 +16,7 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/getting-started.html">Working with UCDP data reproducibly</a></li>
-  </ul></li>
+<li class="nav-item"><a class="nav-link" href="../articles/index.html">Articles</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -107,10 +104,38 @@
 
         <dt>
 
+          <code><a href="ucdp_schema.html">ucdp_schema()</a></code>
+
+        </dt>
+        <dd>Inspect the structure of a UCDP dataset</dd>
+
+        <dt>
+
           <code><a href="ucdp_codebook.html">ucdp_codebook()</a></code>
 
         </dt>
         <dd>Download an official UCDP codebook</dd>
+
+        <dt>
+
+          <code><a href="ucdp_version_history.html">ucdp_version_history()</a></code>
+
+        </dt>
+        <dd>Download an official UCDP version history</dd>
+
+        <dt>
+
+          <code><a href="ucdp_replication_catalog.html">ucdp_replication_catalog()</a></code>
+
+        </dt>
+        <dd>List publication-specific UCDP replication files</dd>
+
+        <dt>
+
+          <code><a href="ucdp_replication_download.html">ucdp_replication_download()</a></code>
+
+        </dt>
+        <dd>Download files from the UCDP replication archive</dd>
 
         <dt>
 
@@ -125,6 +150,36 @@
 
         </dt>
         <dd>Check whether a downloaded UCDP file has a newer catalog version</dd>
+      </dl></div><div class="section level2">
+      <h2 id="spatial-and-precision-workflows">Spatial and precision workflows<a class="anchor" aria-label="anchor" href="#spatial-and-precision-workflows"></a></h2>
+
+
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="ucdp_as_sf.html">ucdp_as_sf()</a></code>
+
+        </dt>
+        <dd>Convert georeferenced UCDP data to an sf object</dd>
+
+        <dt>
+
+          <code><a href="ucdp_precision.html">ucdp_precision()</a></code>
+
+        </dt>
+        <dd>Summarize spatial and temporal precision in UCDP event data</dd>
+
+        <dt>
+
+          <code><a href="ucdp_filter_precision.html">ucdp_filter_precision()</a></code>
+
+        </dt>
+        <dd>Filter UCDP events by spatial and temporal precision</dd>
       </dl></div><div class="section level2">
       <h2 id="work-with-ucdp-data">Work with UCDP data<a class="anchor" aria-label="anchor" href="#work-with-ucdp-data"></a></h2>
 

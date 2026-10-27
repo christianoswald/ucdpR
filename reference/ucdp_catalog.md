@@ -37,7 +37,9 @@ A tibble with one row per downloadable file.
 
 ``` r
 if (FALSE) { # \dontrun{
+# This function reads the live UCDP website.
 catalog <- ucdp_catalog()
-catalog[catalog$format == "csv", ]
+head(catalog)
+ucdp_catalog(include_historical = TRUE)
 } # }
 ```

@@ -1,0 +1,136 @@
+# Accessing and versioning UCDP data
+
+This vignette explains how `ucdpR` separates discovery, selection,
+download, and import. The examples first use a small synthetic catalog
+so that the vignette can be rebuilt without network access.
+
+``` r
+
+library(ucdpR)
+
+catalog <- tibble::tibble(
+  dataset = c(
+    "UCDP Georeferenced Event Dataset (GED)",
+    "UCDP Georeferenced Event Dataset (GED)",
+    "UCDP/PRIO Armed Conflict Dataset"
+  ),
+  version = c("25.1", "24.1", "25.1"),
+  variant = NA_character_,
+  section = c(
+    "Disaggregated Event Datasets",
+    "Disaggregated Event Datasets",
+    "Yearly Datasets"
+  ),
+  format = "csv",
+  url = c(
+    "https://example.org/ged-251.csv",
+    "https://example.org/ged-241.csv",
+    "https://example.org/prio-251.csv"
+  ),
+  file_name = c("ged-251.csv", "ged-241.csv", "prio-251.csv"),
+  source = c("current", "historical", "current")
+)
+```
+
+## Discover and search
+
+[`ucdp_catalog()`](https://christianoswald.github.io/ucdpR/reference/ucdp_catalog.md)
+reads UCDP’s official download pages rather than relying on a hard-coded
+package inventory. A regular-expression search can then narrow the
+catalog by dataset, variant, version, or section.
+
+``` r
+
+ucdp_search("Georeferenced|GED", catalog)
+#> # A tibble: 2 × 8
+#>   dataset                  version variant section format url   file_name source
+#>   <chr>                    <chr>   <chr>   <chr>   <chr>  <chr> <chr>     <chr> 
+#> 1 UCDP Georeferenced Even… 25.1    NA      Disagg… csv    http… ged-251.… curre…
+#> 2 UCDP Georeferenced Even… 24.1    NA      Disagg… csv    http… ged-241.… histo…
+ucdp_search("Yearly", catalog)
+#> # A tibble: 1 × 8
+#>   dataset                  version variant section format url   file_name source
+#>   <chr>                    <chr>   <chr>   <chr>   <chr>  <chr> <chr>     <chr> 
+#> 1 UCDP/PRIO Armed Conflic… 25.1    NA      Yearly… csv    http… prio-251… curre…
+```
+
+The equivalent live workflow is:
+
+``` r
+
+current <- ucdp_catalog()
+all_releases <- ucdp_catalog(include_historical = TRUE)
+ucdp_search("Battle[- ]Related Deaths", current)
+```
+
+## Inspect and pin releases
+
+[`ucdp_versions()`](https://christianoswald.github.io/ucdpR/reference/ucdp_versions.md)
+sorts matching releases from newer to older. Supplying an exact version
+to a download or import call prevents a later UCDP update from silently
+changing an analysis.
+
+``` r
+
+ucdp_versions("ged", format = "csv", catalog = catalog)
+#> # A tibble: 2 × 8
+#>   dataset                  version variant section format url   file_name source
+#>   <chr>                    <chr>   <chr>   <chr>   <chr>  <chr> <chr>     <chr> 
+#> 1 UCDP Georeferenced Even… 25.1    NA      Disagg… csv    http… ged-251.… curre…
+#> 2 UCDP Georeferenced Even… 24.1    NA      Disagg… csv    http… ged-241.… histo…
+ucdp_update_available("ged", version = "24.1", catalog = catalog)
+#> # A tibble: 1 × 4
+#>   dataset installed_version current_version update_available
+#>   <chr>   <chr>             <chr>           <lgl>           
+#> 1 ged     24.1              25.1            TRUE
+ucdp_update_available("ged", version = "25.1", catalog = catalog)
+#> # A tibble: 1 × 4
+#>   dataset installed_version current_version update_available
+#>   <chr>   <chr>             <chr>           <lgl>           
+#> 1 ged     25.1              25.1            FALSE
+```
+
+``` r
+
+ged_path <- ucdp_download(
+  "ged", version = "25.1", format = "csv", dest_dir = "data-raw"
+)
+
+ged <- ucdp_get("ged", version = "25.1", format = "csv")
+attr(ged_path, "md5")
+attr(ged, "ucdp_source")
+```
+
+Use
+[`ucdp_download()`](https://christianoswald.github.io/ucdpR/reference/ucdp_download.md)
+when the original file should remain in the project. Use
+[`ucdp_get()`](https://christianoswald.github.io/ucdpR/reference/ucdp_get.md)
+when the immediate goal is an imported R object. Historical monthly
+Candidate releases can be pinned in the same way, for example with
+`version = "25.0.12"`.
+
+## Resolve variants explicitly
+
+Some datasets contain several downloadable variants. Search first, then
+make the intended level visible in the analysis script.
+
+``` r
+
+ucdp_search("Battle[- ]Related Deaths")
+brd_dyadic <- ucdp_get("brd", variant = "dyadic", format = "csv")
+```
+
+## Record citation guidance
+
+The data version and UCDP’s requested dataset citation should both be
+recorded.
+
+``` r
+
+ucdp_cite("ged")
+ucdp_codebook("ged", version = "25.1", dest_dir = "documentation")
+```
+
+Catalog discovery is dynamic, but analytical inputs should be static. A
+useful project therefore combines live discovery with an exact version,
+a retained file or checksum, and the corresponding documentation.

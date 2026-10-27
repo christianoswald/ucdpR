@@ -85,6 +85,9 @@ files return the objects produced by `readxl` and `haven`.
 
 ``` r
 if (FALSE) { # \dontrun{
-ged <- ucdp_get("ged", format = "csv")
+ged <- ucdp_get("ged", version = "25.1", format = "csv")
+attr(ged, "ucdp_source")
+# Select a variant when one dataset has multiple files.
+brd <- ucdp_get("brd", variant = "dyadic", format = "csv")
 } # }
 ```

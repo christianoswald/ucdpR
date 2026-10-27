@@ -28,5 +28,8 @@ A character vector containing the citation guidance.
 ## Examples
 
 ``` r
-if (FALSE) ucdp_cite("ged") # \dontrun{}
+if (FALSE) { # \dontrun{
+# Citation guidance is read from the live UCDP download page.
+ucdp_cite("ged")
+} # }
 ```

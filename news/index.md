@@ -1,5 +1,42 @@
 # Changelog
 
+## ucdpR 0.5.1
+
+- Added four focused vignettes covering data access and versioning,
+  spatial workflows, uncertainty and revisions, and reproducible
+  research.
+- Reworked the getting-started vignette into a concise package overview.
+- Expanded help-page examples for every exported function, using
+  runnable synthetic data and catalogs wherever the function does not
+  require network access or file downloads.
+
+## ucdpR 0.5.0
+
+- Added
+  [`ucdp_as_sf()`](https://christianoswald.github.io/ucdpR/reference/ucdp_as_sf.md)
+  for provenance-preserving conversion of georeferenced UCDP data to
+  optional `sf` point objects.
+- Added
+  [`ucdp_precision()`](https://christianoswald.github.io/ucdpR/reference/ucdp_precision.md)
+  and
+  [`ucdp_filter_precision()`](https://christianoswald.github.io/ucdpR/reference/ucdp_filter_precision.md)
+  to describe and filter GED spatial and temporal precision codes.
+- Added
+  [`ucdp_version_history()`](https://christianoswald.github.io/ucdpR/reference/ucdp_version_history.md)
+  to retrieve official current or historical dataset version histories.
+- Added
+  [`ucdp_replication_catalog()`](https://christianoswald.github.io/ucdpR/reference/ucdp_replication_catalog.md)
+  and
+  [`ucdp_replication_download()`](https://christianoswald.github.io/ucdpR/reference/ucdp_replication_download.md)
+  for publication-specific frozen data, codebooks, version histories,
+  and supplementary files in UCDP’s official replication archive.
+- Added
+  [`ucdp_schema()`](https://christianoswald.github.io/ucdpR/reference/ucdp_schema.md)
+  to inspect variable classes, missingness, uniqueness, ranges,
+  examples, and attached provenance.
+- Added `sf` as an optional dependency and excluded the default local
+  `replication/` download directory from builds and version control.
+
 ## ucdpR 0.4.1
 
 - Excluded the suggested local `documentation/` download directory from
