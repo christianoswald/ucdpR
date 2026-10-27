@@ -11,8 +11,10 @@
 #' @export
 #' @examples
 #' \dontrun{
+#' # This function reads the live UCDP website.
 #' catalog <- ucdp_catalog()
-#' catalog[catalog$format == "csv", ]
+#' head(catalog)
+#' ucdp_catalog(include_historical = TRUE)
 #' }
 ucdp_catalog <- function(include_documentation = FALSE,
                          include_historical = FALSE,
@@ -149,7 +151,16 @@ infer_variant <- function(label, context) {
 #' @return A filtered catalog tibble.
 #' @export
 #' @examples
-#' \dontrun{ucdp_search("georeferenced|GED")}
+#' catalog <- tibble::tibble(
+#'   dataset = c("UCDP Georeferenced Event Dataset (GED)",
+#'               "UCDP/PRIO Armed Conflict Dataset"),
+#'   version = c("25.1", "25.1"), variant = NA_character_,
+#'   section = c("Disaggregated Event Datasets", "Yearly Datasets"),
+#'   format = "csv", url = "https://example.org/data.csv",
+#'   file_name = "data.csv", source = "current"
+#' )
+#' ucdp_search("Georeferenced|GED", catalog)
+#' \dontrun{ucdp_search("Georeferenced|GED")}
 ucdp_search <- function(query, catalog = NULL, ...) {
   if (!is.character(query) || length(query) != 1L || !nzchar(query)) {
     cli::cli_abort("{.arg query} must be one non-empty character string.")
@@ -171,6 +182,16 @@ ucdp_search <- function(query, catalog = NULL, ...) {
 #' @return A catalog tibble sorted from newer to older releases where possible.
 #' @export
 #' @examples
+#' catalog <- tibble::tibble(
+#'   dataset = "UCDP Georeferenced Event Dataset (GED)",
+#'   version = c("25.1", "24.1"), variant = NA_character_,
+#'   section = "Disaggregated Event Datasets", format = "csv",
+#'   url = c("https://example.org/ged-251.csv",
+#'           "https://example.org/ged-241.csv"),
+#'   file_name = c("ged-251.csv", "ged-241.csv"),
+#'   source = c("current", "historical")
+#' )
+#' ucdp_versions("ged", format = "csv", catalog = catalog)
 #' \dontrun{
 #' ucdp_versions("ged", format = "csv")
 #' ucdp_versions("candidate", format = "csv")

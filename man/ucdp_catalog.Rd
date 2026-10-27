@@ -27,7 +27,9 @@ so newly released datasets can be discovered without a package update.
 }
 \examples{
 \dontrun{
+# This function reads the live UCDP website.
 catalog <- ucdp_catalog()
-catalog[catalog$format == "csv", ]
+head(catalog)
+ucdp_catalog(include_historical = TRUE)
 }
 }

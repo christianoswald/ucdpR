@@ -20,5 +20,8 @@ official UCDP download page. Always report the dataset version in your own
 work and consult the downloaded codebook for dataset-specific guidance.
 }
 \examples{
-\dontrun{ucdp_cite("ged")}
+\dontrun{
+# Citation guidance is read from the live UCDP download page.
+ucdp_cite("ged")
+}
 }

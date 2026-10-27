@@ -10,7 +10,10 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' ged <- ucdp_get("ged", format = "csv")
+#' ged <- ucdp_get("ged", version = "25.1", format = "csv")
+#' attr(ged, "ucdp_source")
+#' # Select a variant when one dataset has multiple files.
+#' brd <- ucdp_get("brd", variant = "dyadic", format = "csv")
 #' }
 ucdp_get <- function(dataset, format = "csv", variant = NULL, version = NULL,
                      dest_dir = tempdir(), overwrite = TRUE,

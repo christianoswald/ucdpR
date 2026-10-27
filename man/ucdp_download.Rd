@@ -49,6 +49,11 @@ Download an official UCDP data file
 }
 \examples{
 \dontrun{
-path <- ucdp_download("ged", format = "csv", dest_dir = tempdir())
+# Pin a release and retain the original file for reproducibility.
+path <- ucdp_download(
+  "ged", version = "25.1", format = "csv", dest_dir = "data-raw"
+)
+attr(path, "ucdp_version")
+attr(path, "md5")
 }
 }

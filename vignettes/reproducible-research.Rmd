@@ -1,0 +1,132 @@
+---
+title: "Reproducible research with UCDP data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Reproducible research with UCDP data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+A reproducible UCDP workflow records the exact release, inspects the imported
+structure, checks analytical assumptions, and retains the corresponding
+documentation. `ucdpR` keeps these tasks separate so that each decision remains
+visible.
+
+```{r}
+library(ucdpR)
+
+conflicts <- data.frame(
+  conflict_id = c(1, 2, 3),
+  year = c(2020, 2021, 2021),
+  location = c("A", "B", "C"),
+  low = c(0, 2, 1),
+  best = c(1, 3, 2),
+  high = c(2, 4, 3),
+  latitude = c(10, 20, 30),
+  longitude = c(40, 50, 60)
+)
+```
+
+## Describe the object and its coverage
+
+`ucdp_metadata()` gives a compact record of dimensions and available temporal
+or coordinate coverage. Imported UCDP objects additionally report their source
+record, checksum, retrieval time, and package version.
+
+```{r}
+ucdp_metadata(conflicts, dataset = "Synthetic conflict data")
+```
+
+`ucdp_schema()` works at the variable level and is useful before joins,
+transformations, or model preparation.
+
+```{r}
+schema <- ucdp_schema(conflicts)
+schema[c("variable", "class", "n_missing", "n_unique", "minimum", "maximum")]
+```
+
+## Validate assumptions without altering data
+
+Validation checks are applied only when their required variables are present.
+The result separates a compact summary from record-level issues.
+
+```{r}
+validation <- ucdp_validate(conflicts, key = "conflict_id")
+validation$valid
+validation$summary
+validation$issues
+```
+
+Warnings identify observations for inspection; they do not establish that
+UCDP made a coding error. With `strict = TRUE`, warnings also make the overall
+validation result invalid, which can be useful in automated pipelines.
+
+## Retain provenance with live data
+
+```{r, eval = FALSE}
+prio <- ucdp_get("prio", version = "25.1", format = "csv")
+ucdp_metadata(prio)
+ucdp_schema(prio)
+ucdp_validate(prio)
+```
+
+If the original source file should remain alongside the analysis, use
+`ucdp_download()` and store it in a project directory rather than relying on a
+temporary import.
+
+## Keep documentation with the release
+
+Codebooks explain variables and coding rules; version histories explain
+changes between releases; citation guidance records the attribution requested
+by UCDP.
+
+```{r, eval = FALSE}
+ucdp_codebook(
+  "prio", version = "25.1", dest_dir = "documentation"
+)
+ucdp_version_history(
+  "prio", version = "25.1", dest_dir = "documentation"
+)
+ucdp_cite("prio")
+```
+
+Exact historical documentation is returned only when UCDP explicitly lists a
+matching artifact. The package does not silently substitute a current
+codebook for an older release.
+
+## Use publication-specific replication files
+
+UCDP's replication archive is distinct from its ordinary dataset catalog. It
+contains frozen files associated with particular publications.
+
+```{r, eval = FALSE}
+replication <- ucdp_replication_catalog(
+  query = "Georeferenced", year = 2025, type = "data"
+)
+
+paths <- ucdp_replication_download(
+  "ged", version = "25.1", year = 2025,
+  dest_dir = "replication"
+)
+
+attr(paths, "ucdp_records")
+attr(paths, "md5")
+```
+
+## A practical project record
+
+For each empirical analysis, retain at least:
+
+1. the dataset name, exact version, and variant;
+2. the original file or its source URL and checksum;
+3. the retrieval date and `ucdpR` version;
+4. the matching codebook and version history;
+5. validation output and explicit filtering decisions; and
+6. UCDP's requested citation.
+
+These records do not eliminate all sources of uncertainty, but they make the
+analytical input reconstructable and revisions auditable.

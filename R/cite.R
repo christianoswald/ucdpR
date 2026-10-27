@@ -9,7 +9,10 @@
 #' @return A character vector containing the citation guidance.
 #' @export
 #' @examples
-#' \dontrun{ucdp_cite("ged")}
+#' \dontrun{
+#' # Citation guidance is read from the live UCDP download page.
+#' ucdp_cite("ged")
+#' }
 ucdp_cite <- function(dataset, quiet = FALSE) {
   if (!quiet) cli::cli_inform("Reading citation guidance from UCDP...")
   response <- ucdp_request(.ucdp_base) |> httr2::req_perform()
@@ -37,6 +40,14 @@ ucdp_cite <- function(dataset, quiet = FALSE) {
 #' @return A one-row tibble with the supplied and current versions and a
 #'   logical `update_available` value.
 #' @export
+#' @examples
+#' catalog <- tibble::tibble(
+#'   dataset = "UCDP Georeferenced Event Dataset (GED)", version = "25.1",
+#'   variant = NA_character_, section = "Disaggregated Event Datasets",
+#'   format = "csv", url = "https://example.org/ged.csv",
+#'   file_name = "ged.csv", source = "current"
+#' )
+#' ucdp_update_available("ged", version = "24.1", catalog = catalog)
 ucdp_update_available <- function(dataset, version, catalog = NULL) {
   if (is.null(catalog)) catalog <- ucdp_catalog(quiet = TRUE)
   x <- ucdp_search(resolve_alias(dataset), catalog)

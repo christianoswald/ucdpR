@@ -5,6 +5,7 @@
 ^\.gitignore$
 ^docs$
 ^documentation$
+^replication$
 ^CODE_OF_CONDUCT\.md$
 ^CONTRIBUTING\.md$
 ^LICENSE\.md$

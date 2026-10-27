@@ -22,5 +22,14 @@ A filtered catalog tibble.
 Search the UCDP catalog
 }
 \examples{
-\dontrun{ucdp_search("georeferenced|GED")}
+catalog <- tibble::tibble(
+  dataset = c("UCDP Georeferenced Event Dataset (GED)",
+              "UCDP/PRIO Armed Conflict Dataset"),
+  version = c("25.1", "25.1"), variant = NA_character_,
+  section = c("Disaggregated Event Datasets", "Yearly Datasets"),
+  format = "csv", url = "https://example.org/data.csv",
+  file_name = "data.csv", source = "current"
+)
+ucdp_search("Georeferenced|GED", catalog)
+\dontrun{ucdp_search("Georeferenced|GED")}
 }

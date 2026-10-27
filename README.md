@@ -3,14 +3,16 @@
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/christianoswald/ucdpR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/christianoswald/ucdpR/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/christianoswald/ucdpR/branch/main/graph/badge.svg)](https://app.codecov.io/gh/christianoswald/ucdpR)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 <!-- badges: end -->
 
 `ucdpR` is a toolkit for reproducible research with data from the [Uppsala
 Conflict Data Program](https://ucdp.uu.se/). It provides a consistent R
-interface for finding, downloading, importing, documenting, and comparing UCDP
-datasets. Downloading data is the foundation, but the package is designed to
-grow around the wider tasks that applied researchers repeatedly encounter when
-working with UCDP data.
+interface for finding, downloading, importing, documenting, validating,
+spatially preparing, and comparing UCDP datasets. Downloading data is the
+foundation, but the package is designed to grow around the wider tasks that
+applied researchers repeatedly encounter when working with UCDP data.
 
 The package currently helps researchers:
 
@@ -19,8 +21,11 @@ The package currently helps researchers:
 * pin exact versions for reproducible research;
 * preserve source URLs, versions, retrieval details, and file checksums;
 * retrieve official codebooks and dataset citation guidance;
+* discover official version histories and publication replication materials;
 * validate common identifiers, dates, fatality estimates, coordinates, and
-  codes; and
+  codes;
+* inspect schemas and summarize or filter event precision;
+* create provenance-preserving `sf` point data; and
 * audit retrospective changes between two releases.
 
 Because the catalog is read from the official download center at run time, new
@@ -32,6 +37,19 @@ or redistribute UCDP data.
 ```r
 # install.packages("ucdpR") # after CRAN release
 # pak::pak("christianoswald/ucdpR")
+```
+
+## Guides
+
+The package includes a concise getting-started guide and four detailed
+vignettes:
+
+```r
+vignette("getting-started", package = "ucdpR")
+vignette("accessing-and-versioning", package = "ucdpR")
+vignette("spatial-workflows", package = "ucdpR")
+vignette("uncertainty-and-revisions", package = "ucdpR")
+vignette("reproducible-research", package = "ucdpR")
 ```
 
 ## Find and import data
@@ -90,6 +108,67 @@ ucdp_codebook("ged", dest_dir = "documentation")
 When several distinct documents match, refine the request with `variant`.
 Historical requests return only codebooks explicitly associated with the
 requested version and never silently substitute current documentation.
+
+Retrieve the corresponding official version history where one exists:
+
+```r
+ucdp_version_history("prio", version = "24.1")
+```
+
+## Inspect structure and precision
+
+Inspect variable classes, missingness, uniqueness, ranges, and examples:
+
+```r
+ucdp_schema(ged)
+```
+
+For GED-style event data, summarize spatial and temporal precision:
+
+```r
+ucdp_precision(ged)
+ucdp_precision(ged, by = "year")
+
+precise <- ucdp_filter_precision(
+  ged,
+  where_prec = 1:2,
+  date_prec = 1:3
+)
+```
+
+Precision filters are explicit: the requested numeric codes remain visible in
+the analysis script, and missing values can be dropped, retained, or treated as
+an error.
+
+## Prepare spatial data
+
+Convert event coordinates to an `sf` object while retaining UCDP provenance:
+
+```r
+ged_sf <- ucdp_as_sf(ged)
+```
+
+`sf` is optional and is only required for spatial conversion. The resulting
+EPSG 4326 point data provide a stable basis for later spatial joins, including
+workflows with `priogridR`.
+
+## Retrieve publication replication files
+
+UCDP maintains a publication-specific archive containing frozen datasets,
+codebooks, version histories, appendices, and special data variants:
+
+```r
+replication <- ucdp_replication_catalog(year = 2025)
+
+ucdp_replication_download(
+  "ged",
+  version = "25.1",
+  dest_dir = "replication"
+)
+```
+
+Ambiguous download requests fail unless they are refined or
+`download_all = TRUE` is supplied.
 
 ## Validate imported data
 

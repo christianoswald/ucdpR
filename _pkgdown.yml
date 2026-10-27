@@ -1,13 +1,26 @@
 url: https://christianoswald.github.io/ucdpR/
 template:
   bootstrap: 5
+articles:
+- title: Get started
+  contents: [getting-started]
+- title: Research workflows
+  contents:
+  - accessing-and-versioning
+  - spatial-workflows
+  - uncertainty-and-revisions
+  - reproducible-research
 reference:
 - title: Discover
   contents: [ucdp_catalog, ucdp_search, ucdp_versions]
 - title: Download and import
   contents: [ucdp_download, ucdp_get]
 - title: Reproducibility
-  contents: [ucdp_metadata, ucdp_codebook, ucdp_cite, ucdp_update_available]
+  contents: [ucdp_metadata, ucdp_schema, ucdp_codebook, ucdp_version_history,
+             ucdp_replication_catalog, ucdp_replication_download, ucdp_cite,
+             ucdp_update_available]
+- title: Spatial and precision workflows
+  contents: [ucdp_as_sf, ucdp_precision, ucdp_filter_precision]
 - title: Work with UCDP data
   desc: Convenience functions for recurring research tasks.
   contents: [ucdp_validate, ucdp_compare_versions]

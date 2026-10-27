@@ -1,0 +1,124 @@
+---
+title: "Uncertainty, precision, and retrospective revisions"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Uncertainty, precision, and retrospective revisions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+UCDP data expose more than one form of uncertainty. Event records include
+spatial and temporal precision codes, while successive releases may revise
+previously published observations. `ucdpR` makes both dimensions inspectable
+without converting them into a single substantive uncertainty measure.
+
+```{r}
+library(ucdpR)
+
+events <- data.frame(
+  id = 1:5,
+  year = c(2020, 2020, 2021, 2021, 2021),
+  where_prec = c(1, 2, 3, 6, NA),
+  date_prec = c(1, 2, 4, 5, 1),
+  best = c(4, 8, 2, 12, 1)
+)
+```
+
+## Precision as reported uncertainty
+
+Begin by showing the distribution rather than immediately discarding less
+precise observations.
+
+```{r}
+ucdp_precision(events)
+ucdp_precision(events, by = "year")
+```
+
+An analysis can then define transparent thresholds and compare results across
+them.
+
+```{r}
+strict_sample <- ucdp_filter_precision(
+  events, where_prec = 1, date_prec = 1:2
+)
+
+broader_sample <- ucdp_filter_precision(
+  events, where_prec = 1:3, date_prec = 1:4
+)
+
+nrow(strict_sample)
+nrow(broader_sample)
+```
+
+## Revisions between releases
+
+The comparison function accepts preloaded data frames, which makes the core
+operation reproducible and easy to demonstrate without downloading data.
+
+```{r}
+old <- data.frame(
+  id = 1:4,
+  year = c(2020, 2020, 2021, 2021),
+  best = c(4, 8, 2, 12),
+  where_prec = c(1, 2, 3, 6),
+  version = "24.1"
+)
+
+new <- data.frame(
+  id = 2:5,
+  year = c(2020, 2021, 2021, 2021),
+  best = c(8, 3, 12, 1),
+  where_prec = c(2, 2, 6, 1),
+  version = "25.1"
+)
+
+comparison <- ucdp_compare_versions(
+  "ged",
+  old_version = "24.1",
+  new_version = "25.1",
+  key = "id",
+  old_data = old,
+  new_data = new
+)
+
+comparison$overview
+comparison$variables
+comparison$added
+comparison$removed
+comparison$modified
+```
+
+Cell-level output is useful when the direction and magnitude of individual
+changes matter.
+
+```{r}
+cell_comparison <- ucdp_compare_versions(
+  "ged", "24.1", "25.1",
+  key = "id", old_data = old, new_data = new,
+  detail = "cells"
+)
+cell_comparison$cell_changes
+```
+
+For official releases, omit `old_data` and `new_data` and supply exact version
+identifiers:
+
+```{r, eval = FALSE}
+official_comparison <- ucdp_compare_versions(
+  "ged", old_version = "24.1", new_version = "25.1"
+)
+```
+
+Revision frequency is not automatically measurement error: changes may reflect
+new information, corrected coding, altered definitions, or expanded coverage.
+The comparison identifies what changed; substantive interpretation still
+requires the relevant codebooks and version histories.
+
+Direct integration with `uncertainUCDP` will be documented after its current
+API and the meaning of the exchanged objects have been verified. Until then,
+the outputs remain ordinary tibbles that can be inspected or transformed by
+downstream uncertainty workflows without an undocumented dependency.

@@ -34,3 +34,24 @@ test_that("live catalog exposes official codebooks", {
   expect_true(all(grepl("^https://", docs$url)))
 })
 
+test_that("live replication catalog remains discoverable", {
+  skip_on_cran()
+  skip_if_offline(host = "ucdp.uu.se")
+  x <- ucdp_replication_catalog(quiet = TRUE)
+  expect_s3_class(x, "tbl_df")
+  expect_gt(nrow(x), 50)
+  expect_true(any(x$file_type == "data"))
+  expect_true(any(x$file_type == "codebook"))
+  expect_true(any(x$file_type == "version_history"))
+  expect_true(any(x$year >= 2025))
+})
+
+test_that("live version histories remain discoverable", {
+  skip_on_cran()
+  skip_if_offline(host = "ucdp.uu.se")
+  x <- ucdpR:::version_history_catalog(quiet = TRUE)
+  expect_gt(nrow(x), 3)
+  expect_true(any(grepl("Armed Conflict", x$dataset)))
+  expect_true(all(x$file_type == "version_history"))
+})
+

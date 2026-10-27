@@ -1,0 +1,101 @@
+---
+title: "Spatial and precision-aware workflows"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Spatial and precision-aware workflows}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+Georeferenced conflict events differ in how precisely their locations and
+dates are known. Spatial conversion should therefore be paired with an
+explicit precision decision rather than treated as a purely technical step.
+
+```{r}
+library(ucdpR)
+
+events <- data.frame(
+  id = 1:6,
+  country = c("A", "A", "A", "B", "B", "B"),
+  year = c(2020, 2020, 2021, 2020, 2021, 2021),
+  longitude = c(10.0, 10.4, 11.0, 20.0, 20.5, NA),
+  latitude = c(50.0, 50.2, 51.0, 40.0, 40.4, NA),
+  where_prec = c(1, 2, 4, 1, 3, 6),
+  date_prec = c(1, 3, 4, 2, 5, 1)
+)
+```
+
+## Describe precision before filtering
+
+`where_prec` describes spatial precision and `date_prec` temporal precision.
+The summary reports counts and within-group shares while retaining the numeric
+codes used by UCDP.
+
+```{r}
+ucdp_precision(events)
+ucdp_precision(events, by = "country")
+ucdp_precision(events, by = "year", include_missing = FALSE)
+```
+
+## Make the analytical threshold explicit
+
+Filtering by named arguments keeps the decision visible in the script. Here,
+only events with relatively precise locations and dates are retained.
+
+```{r}
+precise_events <- ucdp_filter_precision(
+  events,
+  where_prec = 1:2,
+  date_prec = 1:3,
+  missing = "drop"
+)
+precise_events
+```
+
+There is no universally correct cutoff. The defensible choice depends on the
+spatial resolution, research design, and consequences of assigning an
+imprecise event to one spatial unit. Sensitivity analyses can repeat the same
+workflow under alternative thresholds.
+
+## Convert coordinates to `sf`
+
+`ucdp_as_sf()` recognizes common longitude and latitude names, uses EPSG 4326
+by default, and retains the `ucdp_source` provenance attribute when present.
+The chunk is evaluated only when the optional `sf` package is installed.
+
+```{r, eval = requireNamespace("sf", quietly = TRUE)}
+events_sf <- ucdp_as_sf(precise_events)
+events_sf
+sf::st_crs(events_sf)
+sf::st_coordinates(events_sf)
+```
+
+Missing coordinates can be retained as empty geometries, dropped, or treated
+as an error:
+
+```{r, eval = requireNamespace("sf", quietly = TRUE)}
+ucdp_as_sf(events, missing = "keep")
+ucdp_as_sf(events, missing = "drop")
+```
+
+## Prepare for downstream spatial packages
+
+The resulting object is an ordinary `sf` data frame. It can therefore be
+transformed, intersected, or spatially joined using standard `sf` operations.
+It also provides the appropriate input shape for workflows that attach grid
+identifiers or other geographic units.
+
+Direct examples for `priogridR` will be added after its current public API has
+been verified and a stable handoff has been implemented. For now, `ucdpR`
+deliberately stops at a standards-based `sf` object rather than claiming an
+integration that the package does not yet provide.
+
+```{r, eval = FALSE}
+ged <- ucdp_get("ged", version = "25.1")
+ged_precise <- ucdp_filter_precision(ged, where_prec = 1:2)
+ged_sf <- ucdp_as_sf(ged_precise)
+```
