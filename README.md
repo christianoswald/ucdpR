@@ -25,6 +25,8 @@ The package currently helps researchers:
 * validate common identifiers, dates, fatality estimates, coordinates, and
   codes;
 * inspect schemas and summarize or filter event precision;
+* aggregate events and fatality bounds to common analytical units;
+* construct complete, explicitly labelled yearly and monthly panels;
 * create provenance-preserving `sf` point data; and
 * audit retrospective changes between two releases.
 
@@ -139,6 +141,42 @@ precise <- ucdp_filter_precision(
 Precision filters are explicit: the requested numeric codes remain visible in
 the analysis script, and missing values can be dropped, retained, or treated as
 an error.
+
+## Aggregate events and construct panels
+
+Aggregate event counts and available low, best, and high fatality estimates to
+country, PRIO-GRID, conflict, or dyad units:
+
+```r
+country_year <- ucdp_aggregate(ged, unit = "country-year")
+
+fatalities <- ucdp_fatalities(
+  ged,
+  by = c("country_id", "country", "year")
+)
+```
+
+Yearly and monthly units are supported. For monthly aggregation, existing
+`year` and `month` columns are used when available; otherwise the period can be
+derived from a date column.
+
+Construct a complete panel directly from raw data or from an aggregation:
+
+```r
+country_panel <- ucdp_panel(
+  ged,
+  unit = "country-year",
+  start = 1989,
+  end = 2025,
+  fill = "zero"
+)
+```
+
+Inserted rows are marked with `.ucdp_observed = FALSE` and
+`.ucdp_fill = "zero_filled"`. This distinction is important: a zero-filled
+combination is an analytical construction and is not presented as an observed
+source record. Use `fill = "missing"` when absence should remain `NA`, and pass
+an explicit `universe` to include entities that never occur in the input.
 
 ## Prepare spatial data
 

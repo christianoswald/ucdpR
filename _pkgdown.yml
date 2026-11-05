@@ -23,5 +23,6 @@ reference:
   contents: [ucdp_as_sf, ucdp_precision, ucdp_filter_precision]
 - title: Work with UCDP data
   desc: Convenience functions for recurring research tasks.
-  contents: [ucdp_validate, ucdp_compare_versions]
+  contents: [ucdp_validate, ucdp_fatalities, ucdp_aggregate, ucdp_panel,
+             ucdp_compare_versions]
 

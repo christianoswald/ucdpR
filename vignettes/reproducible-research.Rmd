@@ -65,6 +65,50 @@ Warnings identify observations for inspection; they do not establish that
 UCDP made a coding error. With `strict = TRUE`, warnings also make the overall
 validation result invalid, which can be useful in automated pipelines.
 
+## Aggregate events and retain fatality uncertainty
+
+Fatality estimates should be aggregated as a low, best, and high triplet rather
+than reducing every observation to its best estimate alone.
+
+```{r}
+ucdp_fatalities(conflicts, by = "year")
+
+conflict_year <- ucdp_aggregate(
+  conflicts,
+  unit = "conflict-year"
+)
+conflict_year
+```
+
+`ucdp_aggregate()` also supports country, PRIO-GRID, and dyad units with yearly
+or monthly periods. Common entity and fatality columns are detected, while
+`id`, `date`, `low`, `best`, and `high` provide explicit overrides.
+
+## Construct complete panels transparently
+
+```{r}
+panel_events <- data.frame(
+  conflict_id = c(1, 1, 2),
+  year = c(2020, 2022, 2021),
+  low = c(0, 1, 2), best = c(1, 2, 3), high = c(2, 3, 4)
+)
+
+panel <- ucdp_panel(
+  panel_events,
+  unit = "conflict-year",
+  start = 2020,
+  end = 2022,
+  fill = "zero"
+)
+panel[c("conflict_id", "year", "n_events", ".ucdp_observed", ".ucdp_fill")]
+```
+
+Rows introduced to complete the panel remain identifiable. A zero-filled row
+does not prove that UCDP observed a true zero; it records the analyst's chosen
+completion rule. Use `fill = "missing"` when unobserved combinations should
+remain missing, and supply `universe` when the panel must include entities that
+never appear in the event data.
+
 ## Retain provenance with live data
 
 ```{r, eval = FALSE}

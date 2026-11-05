@@ -49,6 +49,8 @@ events <- data.frame(
 ucdp_schema(events)
 ucdp_precision(events)
 ucdp_filter_precision(events, where_prec = 1:2, date_prec = 1:3)
+ucdp_aggregate(events, unit = "conflict-year", id = "id",
+               include_fatalities = FALSE)
 ```
 
 Four focused vignettes provide the detailed workflows:
