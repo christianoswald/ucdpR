@@ -65,6 +65,14 @@ ucdp_filter_precision(events, where_prec = 1:2, date_prec = 1:3)
 #>   id year where_prec date_prec latitude longitude
 #> 1  1 2020          1         1       50        10
 #> 2  2 2021          2         3       51        11
+ucdp_aggregate(events, unit = "conflict-year", id = "id",
+               include_fatalities = FALSE)
+#> # A tibble: 3 × 3
+#>      id  year n_events
+#>   <int> <int>    <int>
+#> 1     1  2020        1
+#> 2     2  2021        1
+#> 3     3  2021        1
 ```
 
 Four focused vignettes provide the detailed workflows:

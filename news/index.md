@@ -1,5 +1,23 @@
 # Changelog
 
+## ucdpR 0.6.0
+
+- Added
+  [`ucdp_aggregate()`](https://christianoswald.github.io/ucdpR/reference/ucdp_aggregate.md)
+  for event counts and fatality-bound aggregation at country, PRIO-GRID,
+  conflict, and dyad units with yearly or monthly periods.
+- Added
+  [`ucdp_panel()`](https://christianoswald.github.io/ucdpR/reference/ucdp_panel.md)
+  to construct complete analytical panels from raw or aggregated data.
+  Inserted combinations are explicitly identified as zero-filled or
+  missing and never silently presented as observed groups.
+- Added
+  [`ucdp_fatalities()`](https://christianoswald.github.io/ucdpR/reference/ucdp_fatalities.md)
+  to summarize low, best, and high UCDP fatality estimates with
+  completeness diagnostics and configurable missing-value behavior.
+- Expanded tests, examples, README guidance, and the
+  reproducible-research vignette for aggregation and panel workflows.
+
 ## ucdpR 0.5.1
 
 - Added four focused vignettes covering data access and versioning,

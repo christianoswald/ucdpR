@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -140,9 +140,77 @@ also make the overall validation result invalid, which can be useful in
 automated pipelines.</p>
 </div>
 <div class="section level2">
+<h2 id="aggregate-events-and-retain-fatality-uncertainty">Aggregate events and retain fatality uncertainty<a class="anchor" aria-label="anchor" href="#aggregate-events-and-retain-fatality-uncertainty"></a>
+</h2>
+<p>Fatality estimates should be aggregated as a low, best, and high
+triplet rather than reducing every observation to its best estimate
+alone.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/ucdp_fatalities.html">ucdp_fatalities</a></span><span class="op">(</span><span class="va">conflicts</span>, by <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 7</span></span></span>
+<span><span class="co">#&gt;    year n_observations n_complete n_missing fatalities_low fatalities_best</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>  <span style="text-decoration: underline;">2</span>020              1          1         0              0               1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>  <span style="text-decoration: underline;">2</span>021              2          2         0              3               5</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1 more variable: fatalities_high &lt;dbl&gt;</span></span></span>
+<span></span>
+<span><span class="va">conflict_year</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ucdp_aggregate.html">ucdp_aggregate</a></span><span class="op">(</span></span>
+<span>  <span class="va">conflicts</span>,</span>
+<span>  unit <span class="op">=</span> <span class="st">"conflict-year"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">conflict_year</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 8</span></span></span>
+<span><span class="co">#&gt;   conflict_id  year n_events n_fatality_complete n_fatality_missing</span></span>
+<span><span class="co">#&gt;         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>           1  <span style="text-decoration: underline;">2</span>020        1                   1                  0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>           2  <span style="text-decoration: underline;">2</span>021        1                   1                  0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>           3  <span style="text-decoration: underline;">2</span>021        1                   1                  0</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 more variables: fatalities_low &lt;dbl&gt;, fatalities_best &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   fatalities_high &lt;dbl&gt;</span></span></span></code></pre></div>
+<p><code><a href="../reference/ucdp_aggregate.html">ucdp_aggregate()</a></code> also supports country, PRIO-GRID, and
+dyad units with yearly or monthly periods. Common entity and fatality
+columns are detected, while <code>id</code>, <code>date</code>,
+<code>low</code>, <code>best</code>, and <code>high</code> provide
+explicit overrides.</p>
+</div>
+<div class="section level2">
+<h2 id="construct-complete-panels-transparently">Construct complete panels transparently<a class="anchor" aria-label="anchor" href="#construct-complete-panels-transparently"></a>
+</h2>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">panel_events</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  conflict_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,</span>
+<span>  year <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2020</span>, <span class="fl">2022</span>, <span class="fl">2021</span><span class="op">)</span>,</span>
+<span>  low <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, best <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>, high <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">panel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ucdp_panel.html">ucdp_panel</a></span><span class="op">(</span></span>
+<span>  <span class="va">panel_events</span>,</span>
+<span>  unit <span class="op">=</span> <span class="st">"conflict-year"</span>,</span>
+<span>  start <span class="op">=</span> <span class="fl">2020</span>,</span>
+<span>  end <span class="op">=</span> <span class="fl">2022</span>,</span>
+<span>  fill <span class="op">=</span> <span class="st">"zero"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">panel</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"conflict_id"</span>, <span class="st">"year"</span>, <span class="st">"n_events"</span>, <span class="st">".ucdp_observed"</span>, <span class="st">".ucdp_fill"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 5</span></span></span>
+<span><span class="co">#&gt;   conflict_id  year n_events .ucdp_observed .ucdp_fill </span></span>
+<span><span class="co">#&gt;         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>           1  <span style="text-decoration: underline;">2</span>020        1 TRUE           observed   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>           1  <span style="text-decoration: underline;">2</span>021        0 FALSE          zero_filled</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>           1  <span style="text-decoration: underline;">2</span>022        1 TRUE           observed   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>           2  <span style="text-decoration: underline;">2</span>020        0 FALSE          zero_filled</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>           2  <span style="text-decoration: underline;">2</span>021        1 TRUE           observed   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>           2  <span style="text-decoration: underline;">2</span>022        0 FALSE          zero_filled</span></span></code></pre></div>
+<p>Rows introduced to complete the panel remain identifiable. A
+zero-filled row does not prove that UCDP observed a true zero; it
+records the analyst’s chosen completion rule. Use
+<code>fill = "missing"</code> when unobserved combinations should remain
+missing, and supply <code>universe</code> when the panel must include
+entities that never appear in the event data.</p>
+</div>
+<div class="section level2">
 <h2 id="retain-provenance-with-live-data">Retain provenance with live data<a class="anchor" aria-label="anchor" href="#retain-provenance-with-live-data"></a>
 </h2>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">prio</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ucdp_get.html">ucdp_get</a></span><span class="op">(</span><span class="st">"prio"</span>, version <span class="op">=</span> <span class="st">"25.1"</span>, format <span class="op">=</span> <span class="st">"csv"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/ucdp_metadata.html">ucdp_metadata</a></span><span class="op">(</span><span class="va">prio</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/ucdp_schema.html">ucdp_schema</a></span><span class="op">(</span><span class="va">prio</span><span class="op">)</span></span>
@@ -157,7 +225,7 @@ than relying on a temporary import.</p>
 <p>Codebooks explain variables and coding rules; version histories
 explain changes between releases; citation guidance records the
 attribution requested by UCDP.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/ucdp_codebook.html">ucdp_codebook</a></span><span class="op">(</span></span>
 <span>  <span class="st">"prio"</span>, version <span class="op">=</span> <span class="st">"25.1"</span>, dest_dir <span class="op">=</span> <span class="st">"documentation"</span></span>
 <span><span class="op">)</span></span>
@@ -175,7 +243,7 @@ current codebook for an older release.</p>
 <p>UCDP’s replication archive is distinct from its ordinary dataset
 catalog. It contains frozen files associated with particular
 publications.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">replication</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ucdp_replication_catalog.html">ucdp_replication_catalog</a></span><span class="op">(</span></span>
 <span>  query <span class="op">=</span> <span class="st">"Georeferenced"</span>, year <span class="op">=</span> <span class="fl">2025</span>, type <span class="op">=</span> <span class="st">"data"</span></span>
 <span><span class="op">)</span></span>

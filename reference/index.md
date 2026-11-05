@@ -50,5 +50,11 @@ Convenience functions for recurring research tasks.
 
 - [`ucdp_validate()`](https://christianoswald.github.io/ucdpR/reference/ucdp_validate.md)
   : Validate a UCDP dataset
+- [`ucdp_fatalities()`](https://christianoswald.github.io/ucdpR/reference/ucdp_fatalities.md)
+  : Summarize UCDP fatality estimates
+- [`ucdp_aggregate()`](https://christianoswald.github.io/ucdpR/reference/ucdp_aggregate.md)
+  : Aggregate UCDP event data to common analytical units
+- [`ucdp_panel()`](https://christianoswald.github.io/ucdpR/reference/ucdp_panel.md)
+  : Construct complete UCDP analytical panels
 - [`ucdp_compare_versions()`](https://christianoswald.github.io/ucdpR/reference/ucdp_compare_versions.md)
   : Compare two releases of a UCDP dataset

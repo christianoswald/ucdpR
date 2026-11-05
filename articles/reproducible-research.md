@@ -93,6 +93,76 @@ that UCDP made a coding error. With `strict = TRUE`, warnings also make
 the overall validation result invalid, which can be useful in automated
 pipelines.
 
+## Aggregate events and retain fatality uncertainty
+
+Fatality estimates should be aggregated as a low, best, and high triplet
+rather than reducing every observation to its best estimate alone.
+
+``` r
+
+ucdp_fatalities(conflicts, by = "year")
+#> # A tibble: 2 × 7
+#>    year n_observations n_complete n_missing fatalities_low fatalities_best
+#>   <dbl>          <int>      <int>     <int>          <dbl>           <dbl>
+#> 1  2020              1          1         0              0               1
+#> 2  2021              2          2         0              3               5
+#> # ℹ 1 more variable: fatalities_high <dbl>
+
+conflict_year <- ucdp_aggregate(
+  conflicts,
+  unit = "conflict-year"
+)
+conflict_year
+#> # A tibble: 3 × 8
+#>   conflict_id  year n_events n_fatality_complete n_fatality_missing
+#>         <dbl> <int>    <int>               <int>              <int>
+#> 1           1  2020        1                   1                  0
+#> 2           2  2021        1                   1                  0
+#> 3           3  2021        1                   1                  0
+#> # ℹ 3 more variables: fatalities_low <dbl>, fatalities_best <dbl>,
+#> #   fatalities_high <dbl>
+```
+
+[`ucdp_aggregate()`](https://christianoswald.github.io/ucdpR/reference/ucdp_aggregate.md)
+also supports country, PRIO-GRID, and dyad units with yearly or monthly
+periods. Common entity and fatality columns are detected, while `id`,
+`date`, `low`, `best`, and `high` provide explicit overrides.
+
+## Construct complete panels transparently
+
+``` r
+
+panel_events <- data.frame(
+  conflict_id = c(1, 1, 2),
+  year = c(2020, 2022, 2021),
+  low = c(0, 1, 2), best = c(1, 2, 3), high = c(2, 3, 4)
+)
+
+panel <- ucdp_panel(
+  panel_events,
+  unit = "conflict-year",
+  start = 2020,
+  end = 2022,
+  fill = "zero"
+)
+panel[c("conflict_id", "year", "n_events", ".ucdp_observed", ".ucdp_fill")]
+#> # A tibble: 6 × 5
+#>   conflict_id  year n_events .ucdp_observed .ucdp_fill 
+#>         <dbl> <int>    <int> <lgl>          <chr>      
+#> 1           1  2020        1 TRUE           observed   
+#> 2           1  2021        0 FALSE          zero_filled
+#> 3           1  2022        1 TRUE           observed   
+#> 4           2  2020        0 FALSE          zero_filled
+#> 5           2  2021        1 TRUE           observed   
+#> 6           2  2022        0 FALSE          zero_filled
+```
+
+Rows introduced to complete the panel remain identifiable. A zero-filled
+row does not prove that UCDP observed a true zero; it records the
+analyst’s chosen completion rule. Use `fill = "missing"` when unobserved
+combinations should remain missing, and supply `universe` when the panel
+must include entities that never appear in the event data.
+
 ## Retain provenance with live data
 
 ``` r
