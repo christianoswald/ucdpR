@@ -27,7 +27,10 @@ The package currently helps researchers:
 * inspect schemas and summarize or filter event precision;
 * aggregate events and fatality bounds to common analytical units;
 * construct complete, explicitly labelled yearly and monthly panels;
-* create provenance-preserving `sf` point data; and
+* create provenance-preserving `sf` point data;
+* assign georeferenced events to cells from the released `priogrid` package;
+* harmonize year-sensitive Gleditsch-Ward and CoW country codes; 
+* prepare state-year and dyad-year data for `peacesciencer`; and
 * audit retrospective changes between two releases.
 
 Because the catalog is read from the official download center at run time, new
@@ -43,7 +46,7 @@ or redistribute UCDP data.
 
 ## Guides
 
-The package includes a concise getting-started guide and four detailed
+The package includes a concise getting-started guide and five detailed
 vignettes:
 
 ```r
@@ -52,6 +55,7 @@ vignette("accessing-and-versioning", package = "ucdpR")
 vignette("spatial-workflows", package = "ucdpR")
 vignette("uncertainty-and-revisions", package = "ucdpR")
 vignette("reproducible-research", package = "ucdpR")
+vignette("interoperability", package = "ucdpR")
 ```
 
 ## Find and import data
@@ -178,6 +182,44 @@ combination is an analytical construction and is not presented as an observed
 source record. Use `fill = "missing"` when absence should remain `NA`, and pass
 an explicit `universe` to include entities that never occur in the input.
 
+## Interoperate with priogrid and peacesciencer
+
+Assign GED events to the configured half-degree grid from the released
+[`priogrid`](https://prio-data.github.io/priogrid/) package:
+
+```r
+# priogrid is currently installed from GitHub; sf and terra are also required
+# renv::install("prio-data/priogrid")
+ged_pg <- ucdp_to_priogrid(ged)
+
+grid_year <- ucdp_aggregate(ged_pg, unit = "grid-year", id = "pgid")
+```
+
+Country-code conversion is year-sensitive. By default, the mapping is built
+from `peacesciencer`; a frozen `year`/`gwcode`/`ccode` table may instead be
+supplied through `crosswalk` for exact replication:
+
+```r
+country_year <- ucdp_country_crosswalk(
+  country_year,
+  from = "gw",
+  code = "country_id"
+)
+
+ps_country_year <- ucdp_to_peacesciencer(
+  country_year,
+  type = "state-year",
+  system = "gw",
+  code = "country_id"
+)
+```
+
+The bridge standardizes keys and declares `peacesciencer` attributes; it does
+not silently aggregate duplicate observations. This makes unit-of-analysis
+decisions visible in the research script. The output conventions (`pgid`,
+`gwcode`, `ccode`, and `year`) are intentionally simple so a future
+`priogridR` package can support them without breaking existing workflows.
+
 ## Prepare spatial data
 
 Convert event coordinates to an `sf` object while retaining UCDP provenance:
@@ -188,7 +230,7 @@ ged_sf <- ucdp_as_sf(ged)
 
 `sf` is optional and is only required for spatial conversion. The resulting
 EPSG 4326 point data provide a stable basis for later spatial joins, including
-workflows with `priogridR`.
+workflows with the released `priogrid` package and the planned `priogridR`.
 
 ## Retrieve publication replication files
 

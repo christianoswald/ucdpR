@@ -1,3 +1,18 @@
+# ucdpR 0.7.0
+
+* Ensured `ucdp_to_priogrid()` works across supported `terra` releases whose
+  matrix-coordinate extraction method does not accept an `ID` argument.
+* Added `ucdp_to_priogrid()` to assign georeferenced UCDP observations to the
+  `pgid` cells produced by the released `priogrid` package. Custom or frozen
+  grid rasters are supported for reproducible and future-compatible workflows.
+* Added `ucdp_country_crosswalk()` for explicit, year-sensitive conversion
+  between Gleditsch-Ward and Correlates of War country identifiers, using
+  `peacesciencer` or a user-supplied frozen crosswalk.
+* Added `ucdp_to_peacesciencer()` to standardize state-year and dyad-year keys,
+  verify their uniqueness, and declare the attributes expected by
+  `peacesciencer`.
+* Added an interoperability vignette, help-page examples, and synthetic tests.
+
 # ucdpR 0.6.0
 
 * Added `ucdp_aggregate()` for event counts and fatality-bound aggregation at

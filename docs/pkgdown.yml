@@ -1,0 +1,14 @@
+pandoc: 3.8.3
+pkgdown: 2.2.0
+pkgdown_sha: ~
+articles:
+  accessing-and-versioning: accessing-and-versioning.html
+  getting-started: getting-started.html
+  interoperability: interoperability.html
+  reproducible-research: reproducible-research.html
+  spatial-workflows: spatial-workflows.html
+  uncertainty-and-revisions: uncertainty-and-revisions.html
+last_built: 2026-11-06T22:55Z
+urls:
+  reference: https://christianoswald.github.io/ucdpR/reference
+  article: https://christianoswald.github.io/ucdpR/articles

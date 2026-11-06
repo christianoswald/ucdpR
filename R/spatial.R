@@ -3,7 +3,8 @@
 #' `ucdp_as_sf()` recognizes common UCDP coordinate columns and converts them
 #' to point geometry. The original `ucdp_source` provenance attribute is
 #' retained, making the result suitable for later spatial joins, including
-#' workflows built around `priogridR`.
+#' workflows built around the released `priogrid` package or a future
+#' `priogridR` package.
 #'
 #' @param data A data frame containing coordinates, or an existing `sf` object.
 #' @param longitude,latitude Coordinate column names. When omitted, common UCDP

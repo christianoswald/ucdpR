@@ -34,7 +34,8 @@ An \code{sf} object with point geometry.
 \code{ucdp_as_sf()} recognizes common UCDP coordinate columns and converts them
 to point geometry. The original \code{ucdp_source} provenance attribute is
 retained, making the result suitable for later spatial joins, including
-workflows built around \code{priogridR}.
+workflows built around the released \code{priogrid} package or a future
+\code{priogridR} package.
 }
 \examples{
 events <- data.frame(

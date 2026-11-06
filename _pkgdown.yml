@@ -10,6 +10,7 @@ articles:
   - spatial-workflows
   - uncertainty-and-revisions
   - reproducible-research
+  - interoperability
 reference:
 - title: Discover
   contents: [ucdp_catalog, ucdp_search, ucdp_versions]
@@ -20,7 +21,10 @@ reference:
              ucdp_replication_catalog, ucdp_replication_download, ucdp_cite,
              ucdp_update_available]
 - title: Spatial and precision workflows
-  contents: [ucdp_as_sf, ucdp_precision, ucdp_filter_precision]
+  contents: [ucdp_as_sf, ucdp_to_priogrid, ucdp_precision,
+             ucdp_filter_precision]
+- title: Interoperability
+  contents: [ucdp_country_crosswalk, ucdp_to_peacesciencer]
 - title: Work with UCDP data
   desc: Convenience functions for recurring research tasks.
   contents: [ucdp_validate, ucdp_fatalities, ucdp_aggregate, ucdp_panel,

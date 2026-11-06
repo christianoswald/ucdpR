@@ -1,6 +1,6 @@
 Package: ucdpR
 Title: Access and Work with Uppsala Conflict Data Program Data
-Version: 0.6.0
+Version: 0.7.0
 Authors@R: person("Christian", "Oswald", email = "christian.oswald@unibw.de", role = c("aut", "cre"))
 Description: Provides tools for reproducible research with datasets published
     by the Uppsala Conflict Data Program ('UCDP') <https://ucdp.uu.se/>. It
@@ -9,7 +9,9 @@ Description: Provides tools for reproducible research with datasets published
     summarizes source metadata, validates common data structures and ranges,
     supports spatial and precision-aware workflows, aggregates events and
     fatality estimates, constructs explicitly labelled analytical panels,
-    exposes official replication materials and version histories, and helps
+    harmonizes country codes and prepares data for 'priogrid' and
+    'peacesciencer' workflows, exposes official replication materials and
+    version histories, and helps
     examine changes between dataset versions. UCDP data are not bundled or
     modified.
 License: GPL (>= 3)
@@ -29,10 +31,12 @@ Suggests:
     covr,
     haven,
     knitr,
+    peacesciencer,
     readr,
     readxl,
     rmarkdown,
     sf,
+    terra,
     testthat (>= 3.0.0),
     withr
 Config/testthat/edition: 3
