@@ -15,3 +15,5 @@
   revisions](https://christianoswald.github.io/ucdpR/articles/uncertainty-and-revisions.md):
 - [Reproducible research with UCDP
   data](https://christianoswald.github.io/ucdpR/articles/reproducible-research.md):
+- [Interoperability with priogrid and
+  peacesciencer](https://christianoswald.github.io/ucdpR/articles/interoperability.md):

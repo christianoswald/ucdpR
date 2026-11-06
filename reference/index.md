@@ -39,10 +39,19 @@
 
 - [`ucdp_as_sf()`](https://christianoswald.github.io/ucdpR/reference/ucdp_as_sf.md)
   : Convert georeferenced UCDP data to an sf object
+- [`ucdp_to_priogrid()`](https://christianoswald.github.io/ucdpR/reference/ucdp_to_priogrid.md)
+  : Assign UCDP events to PRIO-GRID cells
 - [`ucdp_precision()`](https://christianoswald.github.io/ucdpR/reference/ucdp_precision.md)
   : Summarize spatial and temporal precision in UCDP event data
 - [`ucdp_filter_precision()`](https://christianoswald.github.io/ucdpR/reference/ucdp_filter_precision.md)
   : Filter UCDP events by spatial and temporal precision
+
+## Interoperability
+
+- [`ucdp_country_crosswalk()`](https://christianoswald.github.io/ucdpR/reference/ucdp_country_crosswalk.md)
+  : Add year-sensitive CoW or Gleditsch-Ward country codes
+- [`ucdp_to_peacesciencer()`](https://christianoswald.github.io/ucdpR/reference/ucdp_to_peacesciencer.md)
+  : Prepare UCDP data for peacesciencer workflows
 
 ## Work with UCDP data
 

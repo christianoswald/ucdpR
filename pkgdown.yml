@@ -4,10 +4,11 @@ pkgdown_sha: ~
 articles:
   accessing-and-versioning: accessing-and-versioning.html
   getting-started: getting-started.html
+  interoperability: interoperability.html
   reproducible-research: reproducible-research.html
   spatial-workflows: spatial-workflows.html
   uncertainty-and-revisions: uncertainty-and-revisions.html
-last_built: 2026-11-05T22:45Z
+last_built: 2026-11-06T23:14Z
 urls:
   reference: https://christianoswald.github.io/ucdpR/reference
   article: https://christianoswald.github.io/ucdpR/articles

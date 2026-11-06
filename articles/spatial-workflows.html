@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -238,22 +238,24 @@ treated as an error:</p>
 <span><span class="co">#&gt; 5  5       B 2021      20.5     40.4          3         5 POINT (20.5 40.4)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="prepare-for-downstream-spatial-packages">Prepare for downstream spatial packages<a class="anchor" aria-label="anchor" href="#prepare-for-downstream-spatial-packages"></a>
+<h2 id="assign-events-to-prio-grid-cells">Assign events to PRIO-GRID cells<a class="anchor" aria-label="anchor" href="#assign-events-to-prio-grid-cells"></a>
 </h2>
-<p>The resulting object is an ordinary <code>sf</code> data frame. It
-can therefore be transformed, intersected, or spatially joined using
-standard <code>sf</code> operations. It also provides the appropriate
-input shape for workflows that attach grid identifiers or other
-geographic units.</p>
-<p>Direct examples for <code>priogridR</code> will be added after its
-current public API has been verified and a stable handoff has been
-implemented. For now, <code>ucdpR</code> deliberately stops at a
-standards-based <code>sf</code> object rather than claiming an
-integration that the package does not yet provide.</p>
+<p>The resulting object is an ordinary <code>sf</code> data frame and
+can be transformed, intersected, or joined using standard spatial
+operations. For the released <code>priogrid</code> package,
+<code><a href="../reference/ucdp_to_priogrid.html">ucdp_to_priogrid()</a></code> extracts the <code>pgid</code> from the
+grid created under its current configuration. The packages are optional,
+so this installation-dependent example is not evaluated in the
+vignette.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ged</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ucdp_get.html">ucdp_get</a></span><span class="op">(</span><span class="st">"ged"</span>, version <span class="op">=</span> <span class="st">"25.1"</span><span class="op">)</span></span>
 <span><span class="va">ged_precise</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ucdp_filter_precision.html">ucdp_filter_precision</a></span><span class="op">(</span><span class="va">ged</span>, where_prec <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span>
-<span><span class="va">ged_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ucdp_as_sf.html">ucdp_as_sf</a></span><span class="op">(</span><span class="va">ged_precise</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">ged_pg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ucdp_to_priogrid.html">ucdp_to_priogrid</a></span><span class="op">(</span><span class="va">ged_precise</span><span class="op">)</span></span>
+<span><span class="va">grid_year</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ucdp_aggregate.html">ucdp_aggregate</a></span><span class="op">(</span><span class="va">ged_pg</span>, unit <span class="op">=</span> <span class="st">"grid-year"</span>, id <span class="op">=</span> <span class="st">"pgid"</span><span class="op">)</span></span></code></pre></div>
+<p>A one-layer <code>SpatRaster</code> may be supplied through
+<code>grid</code> to freeze the exact grid definition. The conventional
+<code>pgid</code> output is designed to remain usable with the planned
+<code>priogridR</code> package as well.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

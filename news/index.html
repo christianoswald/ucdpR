@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,6 +33,14 @@
       <small>Source: <a href="https://github.com/christianoswald/ucdpR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.7.0" id="ucdpr-070">ucdpR 0.7.0<a class="anchor" aria-label="anchor" href="#ucdpr-070"></a></h2>
+<ul><li>Ensured <code><a href="../reference/ucdp_to_priogrid.html">ucdp_to_priogrid()</a></code> works across supported <code>terra</code> releases whose matrix-coordinate extraction method does not accept an <code>ID</code> argument.</li>
+<li>Added <code><a href="../reference/ucdp_to_priogrid.html">ucdp_to_priogrid()</a></code> to assign georeferenced UCDP observations to the <code>pgid</code> cells produced by the released <code>priogrid</code> package. Custom or frozen grid rasters are supported for reproducible and future-compatible workflows.</li>
+<li>Added <code><a href="../reference/ucdp_country_crosswalk.html">ucdp_country_crosswalk()</a></code> for explicit, year-sensitive conversion between Gleditsch-Ward and Correlates of War country identifiers, using <code>peacesciencer</code> or a user-supplied frozen crosswalk.</li>
+<li>Added <code><a href="../reference/ucdp_to_peacesciencer.html">ucdp_to_peacesciencer()</a></code> to standardize state-year and dyad-year keys, verify their uniqueness, and declare the attributes expected by <code>peacesciencer</code>.</li>
+<li>Added an interoperability vignette, help-page examples, and synthetic tests.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.6.0" id="ucdpr-060">ucdpR 0.6.0<a class="anchor" aria-label="anchor" href="#ucdpr-060"></a></h2>
 <ul><li>Added <code><a href="../reference/ucdp_aggregate.html">ucdp_aggregate()</a></code> for event counts and fatality-bound aggregation at country, PRIO-GRID, conflict, and dyad units with yearly or monthly periods.</li>

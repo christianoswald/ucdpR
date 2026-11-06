@@ -6,6 +6,7 @@
 <url><loc>https://christianoswald.github.io/ucdpR/articles/accessing-and-versioning.html</loc></url>
 <url><loc>https://christianoswald.github.io/ucdpR/articles/getting-started.html</loc></url>
 <url><loc>https://christianoswald.github.io/ucdpR/articles/index.html</loc></url>
+<url><loc>https://christianoswald.github.io/ucdpR/articles/interoperability.html</loc></url>
 <url><loc>https://christianoswald.github.io/ucdpR/articles/reproducible-research.html</loc></url>
 <url><loc>https://christianoswald.github.io/ucdpR/articles/spatial-workflows.html</loc></url>
 <url><loc>https://christianoswald.github.io/ucdpR/articles/uncertainty-and-revisions.html</loc></url>
@@ -24,6 +25,7 @@
 <url><loc>https://christianoswald.github.io/ucdpR/reference/ucdp_cite.html</loc></url>
 <url><loc>https://christianoswald.github.io/ucdpR/reference/ucdp_codebook.html</loc></url>
 <url><loc>https://christianoswald.github.io/ucdpR/reference/ucdp_compare_versions.html</loc></url>
+<url><loc>https://christianoswald.github.io/ucdpR/reference/ucdp_country_crosswalk.html</loc></url>
 <url><loc>https://christianoswald.github.io/ucdpR/reference/ucdp_download.html</loc></url>
 <url><loc>https://christianoswald.github.io/ucdpR/reference/ucdp_fatalities.html</loc></url>
 <url><loc>https://christianoswald.github.io/ucdpR/reference/ucdp_filter_precision.html</loc></url>
@@ -35,6 +37,8 @@
 <url><loc>https://christianoswald.github.io/ucdpR/reference/ucdp_replication_download.html</loc></url>
 <url><loc>https://christianoswald.github.io/ucdpR/reference/ucdp_schema.html</loc></url>
 <url><loc>https://christianoswald.github.io/ucdpR/reference/ucdp_search.html</loc></url>
+<url><loc>https://christianoswald.github.io/ucdpR/reference/ucdp_to_peacesciencer.html</loc></url>
+<url><loc>https://christianoswald.github.io/ucdpR/reference/ucdp_to_priogrid.html</loc></url>
 <url><loc>https://christianoswald.github.io/ucdpR/reference/ucdp_update_available.html</loc></url>
 <url><loc>https://christianoswald.github.io/ucdpR/reference/ucdp_validate.html</loc></url>
 <url><loc>https://christianoswald.github.io/ucdpR/reference/ucdp_version_history.html</loc></url>

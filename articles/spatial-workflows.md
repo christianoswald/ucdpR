@@ -191,21 +191,24 @@ ucdp_as_sf(events, missing = "drop")
 #> 5  5       B 2021      20.5     40.4          3         5 POINT (20.5 40.4)
 ```
 
-## Prepare for downstream spatial packages
+## Assign events to PRIO-GRID cells
 
-The resulting object is an ordinary `sf` data frame. It can therefore be
-transformed, intersected, or spatially joined using standard `sf`
-operations. It also provides the appropriate input shape for workflows
-that attach grid identifiers or other geographic units.
-
-Direct examples for `priogridR` will be added after its current public
-API has been verified and a stable handoff has been implemented. For
-now, `ucdpR` deliberately stops at a standards-based `sf` object rather
-than claiming an integration that the package does not yet provide.
+The resulting object is an ordinary `sf` data frame and can be
+transformed, intersected, or joined using standard spatial operations.
+For the released `priogrid` package,
+[`ucdp_to_priogrid()`](https://christianoswald.github.io/ucdpR/reference/ucdp_to_priogrid.md)
+extracts the `pgid` from the grid created under its current
+configuration. The packages are optional, so this installation-dependent
+example is not evaluated in the vignette.
 
 ``` r
 
 ged <- ucdp_get("ged", version = "25.1")
 ged_precise <- ucdp_filter_precision(ged, where_prec = 1:2)
-ged_sf <- ucdp_as_sf(ged_precise)
+ged_pg <- ucdp_to_priogrid(ged_precise)
+grid_year <- ucdp_aggregate(ged_pg, unit = "grid-year", id = "pgid")
 ```
+
+A one-layer `SpatRaster` may be supplied through `grid` to freeze the
+exact grid definition. The conventional `pgid` output is designed to
+remain usable with the planned `priogridR` package as well.

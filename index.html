@@ -11,8 +11,8 @@
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Access and Work with Uppsala Conflict Data Program Data">
-<meta name="description" content="Provides tools for reproducible research with datasets published by the Uppsala Conflict Data Program (UCDP) &lt;https://ucdp.uu.se/&gt;. It discovers the official download catalog at run time, downloads and imports current or historical releases, retrieves official codebooks, records and summarizes source metadata, validates common data structures and ranges, supports spatial and precision-aware workflows, aggregates events and fatality estimates, constructs explicitly labelled analytical panels, exposes official replication materials and version histories, and helps examine changes between dataset versions. UCDP data are not bundled or modified.">
-<meta property="og:description" content="Provides tools for reproducible research with datasets published by the Uppsala Conflict Data Program (UCDP) &lt;https://ucdp.uu.se/&gt;. It discovers the official download catalog at run time, downloads and imports current or historical releases, retrieves official codebooks, records and summarizes source metadata, validates common data structures and ranges, supports spatial and precision-aware workflows, aggregates events and fatality estimates, constructs explicitly labelled analytical panels, exposes official replication materials and version histories, and helps examine changes between dataset versions. UCDP data are not bundled or modified.">
+<meta name="description" content="Provides tools for reproducible research with datasets published by the Uppsala Conflict Data Program (UCDP) &lt;https://ucdp.uu.se/&gt;. It discovers the official download catalog at run time, downloads and imports current or historical releases, retrieves official codebooks, records and summarizes source metadata, validates common data structures and ranges, supports spatial and precision-aware workflows, aggregates events and fatality estimates, constructs explicitly labelled analytical panels, harmonizes country codes and prepares data for priogrid and peacesciencer workflows, exposes official replication materials and version histories, and helps examine changes between dataset versions. UCDP data are not bundled or modified.">
+<meta property="og:description" content="Provides tools for reproducible research with datasets published by the Uppsala Conflict Data Program (UCDP) &lt;https://ucdp.uu.se/&gt;. It discovers the official download catalog at run time, downloads and imports current or historical releases, retrieves official codebooks, records and summarizes source metadata, validates common data structures and ranges, supports spatial and precision-aware workflows, aggregates events and fatality estimates, constructs explicitly labelled analytical panels, harmonizes country codes and prepares data for priogrid and peacesciencer workflows, exposes official replication materials and version histories, and helps examine changes between dataset versions. UCDP data are not bundled or modified.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,7 +65,10 @@
 <li>inspect schemas and summarize or filter event precision;</li>
 <li>aggregate events and fatality bounds to common analytical units;</li>
 <li>construct complete, explicitly labelled yearly and monthly panels;</li>
-<li>create provenance-preserving <code>sf</code> point data; and</li>
+<li>create provenance-preserving <code>sf</code> point data;</li>
+<li>assign georeferenced events to cells from the released <code>priogrid</code> package;</li>
+<li>harmonize year-sensitive Gleditsch-Ward and CoW country codes;</li>
+<li>prepare state-year and dyad-year data for <code>peacesciencer</code>; and</li>
 <li>audit retrospective changes between two releases.</li>
 </ul>
 <p>Because the catalog is read from the official download center at run time, new UCDP releases generally do not require a package update. <code>ucdpR</code> does not bundle or redistribute UCDP data.</p>
@@ -79,13 +82,14 @@
 <div class="section level2">
 <h2 id="guides">Guides<a class="anchor" aria-label="anchor" href="#guides"></a>
 </h2>
-<p>The package includes a concise getting-started guide and four detailed vignettes:</p>
+<p>The package includes a concise getting-started guide and five detailed vignettes:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"getting-started"</span>, package <span class="op">=</span> <span class="st">"ucdpR"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"accessing-and-versioning"</span>, package <span class="op">=</span> <span class="st">"ucdpR"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"spatial-workflows"</span>, package <span class="op">=</span> <span class="st">"ucdpR"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"uncertainty-and-revisions"</span>, package <span class="op">=</span> <span class="st">"ucdpR"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"reproducible-research"</span>, package <span class="op">=</span> <span class="st">"ucdpR"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"reproducible-research"</span>, package <span class="op">=</span> <span class="st">"ucdpR"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"interoperability"</span>, package <span class="op">=</span> <span class="st">"ucdpR"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="find-and-import-data">Find and import data<a class="anchor" aria-label="anchor" href="#find-and-import-data"></a>
@@ -175,18 +179,44 @@
 <p>Inserted rows are marked with <code>.ucdp_observed = FALSE</code> and <code>.ucdp_fill = "zero_filled"</code>. This distinction is important: a zero-filled combination is an analytical construction and is not presented as an observed source record. Use <code>fill = "missing"</code> when absence should remain <code>NA</code>, and pass an explicit <code>universe</code> to include entities that never occur in the input.</p>
 </div>
 <div class="section level2">
+<h2 id="interoperate-with-priogrid-and-peacesciencer">Interoperate with priogrid and peacesciencer<a class="anchor" aria-label="anchor" href="#interoperate-with-priogrid-and-peacesciencer"></a>
+</h2>
+<p>Assign GED events to the configured half-degree grid from the released <a href="https://prio-data.github.io/priogrid/" class="external-link"><code>priogrid</code></a> package:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># priogrid is currently installed from GitHub; sf and terra are also required</span></span>
+<span><span class="co"># renv::install("prio-data/priogrid")</span></span>
+<span><span class="va">ged_pg</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ucdp_to_priogrid.html">ucdp_to_priogrid</a></span><span class="op">(</span><span class="va">ged</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">grid_year</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ucdp_aggregate.html">ucdp_aggregate</a></span><span class="op">(</span><span class="va">ged_pg</span>, unit <span class="op">=</span> <span class="st">"grid-year"</span>, id <span class="op">=</span> <span class="st">"pgid"</span><span class="op">)</span></span></code></pre></div>
+<p>Country-code conversion is year-sensitive. By default, the mapping is built from <code>peacesciencer</code>; a frozen <code>year</code>/<code>gwcode</code>/<code>ccode</code> table may instead be supplied through <code>crosswalk</code> for exact replication:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">country_year</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ucdp_country_crosswalk.html">ucdp_country_crosswalk</a></span><span class="op">(</span></span>
+<span>  <span class="va">country_year</span>,</span>
+<span>  from <span class="op">=</span> <span class="st">"gw"</span>,</span>
+<span>  code <span class="op">=</span> <span class="st">"country_id"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ps_country_year</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ucdp_to_peacesciencer.html">ucdp_to_peacesciencer</a></span><span class="op">(</span></span>
+<span>  <span class="va">country_year</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"state-year"</span>,</span>
+<span>  system <span class="op">=</span> <span class="st">"gw"</span>,</span>
+<span>  code <span class="op">=</span> <span class="st">"country_id"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>The bridge standardizes keys and declares <code>peacesciencer</code> attributes; it does not silently aggregate duplicate observations. This makes unit-of-analysis decisions visible in the research script. The output conventions (<code>pgid</code>, <code>gwcode</code>, <code>ccode</code>, and <code>year</code>) are intentionally simple so a future <code>priogridR</code> package can support them without breaking existing workflows.</p>
+</div>
+<div class="section level2">
 <h2 id="prepare-spatial-data">Prepare spatial data<a class="anchor" aria-label="anchor" href="#prepare-spatial-data"></a>
 </h2>
 <p>Convert event coordinates to an <code>sf</code> object while retaining UCDP provenance:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ged_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ucdp_as_sf.html">ucdp_as_sf</a></span><span class="op">(</span><span class="va">ged</span><span class="op">)</span></span></code></pre></div>
-<p><code>sf</code> is optional and is only required for spatial conversion. The resulting EPSG 4326 point data provide a stable basis for later spatial joins, including workflows with <code>priogridR</code>.</p>
+<p><code>sf</code> is optional and is only required for spatial conversion. The resulting EPSG 4326 point data provide a stable basis for later spatial joins, including workflows with the released <code>priogrid</code> package and the planned <code>priogridR</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="retrieve-publication-replication-files">Retrieve publication replication files<a class="anchor" aria-label="anchor" href="#retrieve-publication-replication-files"></a>
 </h2>
 <p>UCDP maintains a publication-specific archive containing frozen datasets, codebooks, version histories, appendices, and special data variants:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">replication</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ucdp_replication_catalog.html">ucdp_replication_catalog</a></span><span class="op">(</span>year <span class="op">=</span> <span class="fl">2025</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/ucdp_replication_download.html">ucdp_replication_download</a></span><span class="op">(</span></span>
@@ -200,7 +230,7 @@
 <h2 id="validate-imported-data">Validate imported data<a class="anchor" aria-label="anchor" href="#validate-imported-data"></a>
 </h2>
 <p><code><a href="reference/ucdp_validate.html">ucdp_validate()</a></code> performs transparent, non-destructive diagnostics:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">validation</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ucdp_validate.html">ucdp_validate</a></span><span class="op">(</span><span class="va">ged</span><span class="op">)</span></span>
 <span><span class="va">validation</span><span class="op">$</span><span class="va">summary</span></span>
 <span><span class="va">validation</span><span class="op">$</span><span class="va">issues</span></span></code></pre></div>
@@ -210,7 +240,7 @@
 <h2 id="compare-releases">Compare releases<a class="anchor" aria-label="anchor" href="#compare-releases"></a>
 </h2>
 <p>UCDP datasets can be retrospectively revised. <code><a href="reference/ucdp_compare_versions.html">ucdp_compare_versions()</a></code> turns two official releases into a structured revision audit:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ucdp_compare_versions.html">ucdp_compare_versions</a></span><span class="op">(</span></span>
 <span>  <span class="st">"ged"</span>,</span>
 <span>  old_version <span class="op">=</span> <span class="st">"24.1"</span>,</span>
