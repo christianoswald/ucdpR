@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,6 +83,12 @@
 <li>audit retrospective changes between two releases.</li>
 </ul>
 <p>Because the catalog is read from the official download center at run time, new UCDP releases generally do not require a package update. <code>ucdpR</code> does not bundle or redistribute UCDP data.</p>
+<div class="section level2">
+<h2 id="why-ucdpr">Why ucdpR?<a class="anchor" aria-label="anchor" href="#why-ucdpr"></a>
+</h2>
+<p>Applied researchers often download UCDP files manually, record versions in project notes, and repeat similar validation, aggregation, and spatial preparation steps across projects. This makes it easy for a later data release or an undocumented transformation to change an analysis. <code>ucdpR</code> brings these steps into a version-aware and testable workflow while preserving the official files and UCDP’s requested attribution.</p>
+<p>The package complements rather than replaces adjacent research tools. <code>peacesciencer</code> supports analysis-ready state and dyad workflows, while <code>priogrid</code> provides the PRIO-GRID structure and spatial data infrastructure. <code>ucdpR</code> focuses specifically on discovering, documenting, validating, and transforming official UCDP releases, with explicit bridges to those packages and ordinary <code>sf</code> workflows.</p>
+</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -269,6 +275,12 @@
 <h2 id="package-direction">Package direction<a class="anchor" aria-label="anchor" href="#package-direction"></a>
 </h2>
 <p>Future convenience functions will build on the same principles: reproducible inputs, explicit versions, transparent transformations, and outputs that fit ordinary R workflows. The aim is to reduce recurring data-management work for UCDP users while keeping analytical choices visible and under the researcher’s control.</p>
+</div>
+<div class="section level2">
+<h2 id="ai-assisted-development">AI-assisted development<a class="anchor" aria-label="anchor" href="#ai-assisted-development"></a>
+</h2>
+<p>This package has been developed with assistance from OpenAI’s ChatGPT and Codex. AI tools have been used to support code drafting and refactoring, test development, documentation, troubleshooting, and discussion of package design.</p>
+<p>All substantive design decisions, review of generated material, package testing, and responsibility for the correctness and maintenance of <code>ucdpR</code> remain with the package author. AI-assisted contributions are reviewed and validated through the package’s test suite, examples, and <code>R CMD check</code> before release.</p>
 </div>
 <div class="section level2">
 <h2 id="scope-and-attribution">Scope and attribution<a class="anchor" aria-label="anchor" href="#scope-and-attribution"></a>
