@@ -15,7 +15,16 @@
 #' }
 ucdp_cite <- function(dataset, quiet = FALSE) {
   if (!quiet) cli::cli_inform("Reading citation guidance from UCDP...")
-  response <- ucdp_request(.ucdp_base) |> httr2::req_perform()
+  response <- tryCatch(
+    ucdp_request(.ucdp_base) |> httr2::req_perform(),
+    error = function(e) cli::cli_abort(
+      c(
+        "Could not retrieve UCDP citation guidance.",
+        "i" = conditionMessage(e)
+      ),
+      parent = e
+    )
+  )
   page <- httr2::resp_body_html(response)
   headings <- rvest::html_elements(page, "h2, h3")
   query <- resolve_alias(dataset)

@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use ucdpR in research, please cite the package and the UCDP datasets used."
+type: software
+title: "ucdpR: Access and Work with Uppsala Conflict Data Program Data"
+version: 0.7.2
+date-released: 2026-11-09
+license: GPL-3.0-or-later
+authors:
+  - family-names: Oswald
+    given-names: Christian
+    email: christian.oswald@unibw.de
+    orcid: "https://orcid.org/0000-0001-8291-9544"
+    affiliation: "Center for Crisis Early Warning, University of the Bundeswehr Munich"
+repository-code: "https://github.com/christianoswald/ucdpR"
+url: "https://christianoswald.github.io/ucdpR/"
+abstract: >-
+  An R toolkit for reproducible access to and research with current and
+  historical datasets published by the Uppsala Conflict Data Program. It
+  supports discovery, downloading, provenance, validation, version comparison,
+  spatial preparation, aggregation, panel construction, and interoperability
+  with related peace and conflict research packages.
+keywords:
+  - R
+  - UCDP
+  - armed conflict
+  - political violence
+  - reproducible research
+  - conflict data

@@ -1,0 +1,45 @@
+name: Bug report
+description: Report a reproducible problem with ucdpR.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping improve ucdpR. Do not upload restricted data.
+  - type: textarea
+    id: description
+    attributes:
+      label: Problem
+      description: What happened, and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: reprex
+    attributes:
+      label: Minimal reproducible example
+      description: Include the smallest example that reproduces the problem.
+      render: r
+    validations:
+      required: true
+  - type: input
+    id: dataset
+    attributes:
+      label: UCDP dataset and version
+      placeholder: "GED 26.1"
+  - type: textarea
+    id: session
+    attributes:
+      label: Session information
+      description: Paste the output of sessionInfo() and, when relevant, rlang::last_trace().
+      render: text
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I am using the latest development version of ucdpR.
+          required: true
+        - label: I have not included restricted or confidential data.
+          required: true

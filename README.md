@@ -47,6 +47,23 @@ Because the catalog is read from the official download center at run
 time, new UCDP releases generally do not require a package update.
 `ucdpR` does not bundle or redistribute UCDP data.
 
+## Why ucdpR?
+
+Applied researchers often download UCDP files manually, record versions
+in project notes, and repeat similar validation, aggregation, and
+spatial preparation steps across projects. This makes it easy for a
+later data release or an undocumented transformation to change an
+analysis. `ucdpR` brings these steps into a version-aware and testable
+workflow while preserving the official files and UCDP’s requested
+attribution.
+
+The package complements rather than replaces adjacent research tools.
+`peacesciencer` supports analysis-ready state and dyad workflows, while
+`priogrid` provides the PRIO-GRID structure and spatial data
+infrastructure. `ucdpR` focuses specifically on discovering,
+documenting, validating, and transforming official UCDP releases, with
+explicit bridges to those packages and ordinary `sf` workflows.
+
 ## Installation
 
 ``` r
@@ -314,6 +331,19 @@ reproducible inputs, explicit versions, transparent transformations, and
 outputs that fit ordinary R workflows. The aim is to reduce recurring
 data-management work for UCDP users while keeping analytical choices
 visible and under the researcher’s control.
+
+## AI-assisted development
+
+This package has been developed with assistance from OpenAI’s ChatGPT
+and Codex. AI tools have been used to support code drafting and
+refactoring, test development, documentation, troubleshooting, and
+discussion of package design.
+
+All substantive design decisions, review of generated material, package
+testing, and responsibility for the correctness and maintenance of
+`ucdpR` remain with the package author. AI-assisted contributions are
+reviewed and validated through the package’s test suite, examples, and
+`R CMD check` before release.
 
 ## Scope and attribution
 

@@ -35,6 +35,7 @@ ucdp_get <- function(dataset, format = "csv", variant = NULL, version = NULL,
     dir.create(unpack_dir)
     on.exit(unlink(unpack_dir, recursive = TRUE), add = TRUE)
     members <- utils::unzip(path, list = TRUE)$Name
+    validate_archive_members(members)
     supported <- members[grepl("\\.(csv|xlsx?|dta|rds|rda|rdata)$", members, ignore.case = TRUE)]
     supported <- supported[!grepl("(^|/)(__MACOSX|\\.)", supported)]
     if (!length(supported)) cli::cli_abort("The archive does not contain a supported tabular file.")
@@ -73,6 +74,25 @@ ucdp_get <- function(dataset, format = "csv", variant = NULL, version = NULL,
   )
   attr(result, "ucdp_source") <- provenance
   result
+}
+
+validate_archive_members <- function(members) {
+  normalized <- gsub("\\\\", "/", members)
+  absolute <- grepl("^/|^[A-Za-z]:/", normalized)
+  traversal <- vapply(
+    strsplit(normalized, "/", fixed = TRUE),
+    function(parts) any(parts == ".."),
+    logical(1)
+  )
+  unsafe <- absolute | traversal
+  if (any(unsafe)) {
+    member <- members[which(unsafe)[[1L]]]
+    cli::cli_abort(c(
+      "The archive contains unsafe file paths.",
+      "x" = "Refusing to extract {.file {member}}."
+    ))
+  }
+  invisible(members)
 }
 
 read_ucdp_csv <- function(path, ...) {

@@ -1,0 +1,24 @@
+name: Feature request
+description: Suggest a research workflow or improvement for ucdpR.
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: Research need
+      description: What recurring research problem should this feature solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe the desired inputs, outputs, and analytical choices.
+    validations:
+      required: true
+  - type: input
+    id: related
+    attributes:
+      label: Related packages or functions
+      description: List any existing implementations or interoperability requirements.

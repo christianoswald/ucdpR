@@ -14,13 +14,10 @@ test_that("live UCDP catalog remains discoverable", {
     "UCDP Peace Agreement Dataset"
   )
   expect_true(all(expected_datasets %in% x$dataset))
-  expected_sections <- c(
-    "Disaggregated Event Datasets",
-    "Yearly Datasets covering 1946\u20132025",
-    "Yearly Datasets covering 1989\u20132025",
-    "Other UCDP Datasets"
-  )
-  expect_true(all(expected_sections %in% x$section))
+  expect_true("Disaggregated Event Datasets" %in% x$section)
+  expect_true("Other UCDP Datasets" %in% x$section)
+  expect_true(any(grepl("^Yearly Datasets covering 1946", x$section)))
+  expect_true(any(grepl("^Yearly Datasets covering 1989", x$section)))
   expect_true(all(grepl("^https://", x$url)))
 })
 

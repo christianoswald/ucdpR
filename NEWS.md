@@ -1,3 +1,18 @@
+# ucdpR 0.7.2
+
+* Restored the README disclosure describing the package's AI-assisted
+  development and human review process.
+* Added machine-readable citation metadata, GitHub issue and pull-request
+  templates, and automated Codecov test-coverage reporting.
+* Expanded the README with a statement of need and the package's relationship
+  to adjacent peace and conflict research tools.
+* Made live catalog tests robust to routine annual changes in UCDP's temporal
+  coverage labels.
+* Standardized network errors from `ucdp_cite()` and added offline tests for
+  citation, dataset, codebook, and replication-download failures.
+* Added validation that rejects unsafe paths in downloaded ZIP archives before
+  extraction.
+
 # ucdpR 0.7.1
 
 * Added the package author's ORCID identifier to the structured package

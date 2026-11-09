@@ -23,3 +23,22 @@ test_that("explicit readr type controls are respected", {
   )
   expect_type(out$id, "character")
 })
+
+test_that("archive member validation rejects unsafe extraction paths", {
+  expect_invisible(ucdpR:::validate_archive_members(c(
+    "data/events.csv", "documentation/codebook.pdf"
+  )))
+
+  unsafe <- c(
+    "../events.csv",
+    "data/../../events.csv",
+    "/absolute/events.csv",
+    "C:\\absolute\\events.csv"
+  )
+  for (member in unsafe) {
+    expect_error(
+      ucdpR:::validate_archive_members(member),
+      "unsafe file paths"
+    )
+  }
+})
