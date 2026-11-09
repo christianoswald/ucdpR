@@ -1,7 +1,12 @@
 Package: ucdpR
 Title: Access and Work with Uppsala Conflict Data Program Data
-Version: 0.7.0
-Authors@R: person("Christian", "Oswald", email = "christian.oswald@unibw.de", role = c("aut", "cre"))
+Version: 0.7.1
+Authors@R: person(
+    "Christian", "Oswald",
+    email = "christian.oswald@unibw.de",
+    role = c("aut", "cre"),
+    comment = c(ORCID = "0000-0001-8291-9544")
+  )
 Description: Provides tools for reproducible research with datasets published
     by the Uppsala Conflict Data Program ('UCDP') <https://ucdp.uu.se/>. It
     discovers the official download catalog at run time, downloads and imports

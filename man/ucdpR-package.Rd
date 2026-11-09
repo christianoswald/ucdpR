@@ -27,11 +27,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Christian Oswald \email{christian.oswald@unibw.de}
+\strong{Maintainer}: Christian Oswald \email{christian.oswald@unibw.de} (\href{https://orcid.org/0000-0001-8291-9544}{ORCID})
 
 Authors:
 \itemize{
-  \item Christian Oswald \email{christian.oswald@unibw.de}
+  \item Christian Oswald \email{christian.oswald@unibw.de} (\href{https://orcid.org/0000-0001-8291-9544}{ORCID})
 }
 
 }

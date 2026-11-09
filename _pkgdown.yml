@@ -1,6 +1,27 @@
 url: https://christianoswald.github.io/ucdpR/
 template:
   bootstrap: 5
+navbar:
+  structure:
+    left: [reference, articles, news]
+    right: [search, github, lightswitch]
+  components:
+    articles:
+      text: Articles
+      menu:
+      - text: Get started
+        href: articles/getting-started.html
+      - text: Research workflows
+      - text: Accessing data and managing versions
+        href: articles/accessing-and-versioning.html
+      - text: Spatial workflows
+        href: articles/spatial-workflows.html
+      - text: Uncertainty and revisions
+        href: articles/uncertainty-and-revisions.html
+      - text: Reproducible research
+        href: articles/reproducible-research.html
+      - text: Interoperability
+        href: articles/interoperability.html
 articles:
 - title: Get started
   contents: [getting-started]

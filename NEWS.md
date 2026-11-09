@@ -1,3 +1,13 @@
+# ucdpR 0.7.1
+
+* Added the package author's ORCID identifier to the structured package
+  metadata so it is displayed and linked by pkgdown.
+* Standardized the pkgdown navigation with an explicit Articles dropdown that
+  provides direct access to the getting-started guide and research-workflow
+  vignettes.
+* Added `README.Rmd` as the canonical README source so the rendered
+  `README.md` can be regenerated with `devtools::build_readme()`.
+
 # ucdpR 0.7.0
 
 * Ensured `ucdp_to_priogrid()` works across supported `terra` releases whose
