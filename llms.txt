@@ -321,19 +321,6 @@ outputs that fit ordinary R workflows. The aim is to reduce recurring
 data-management work for UCDP users while keeping analytical choices
 visible and under the researcher’s control.
 
-## AI-assisted development
-
-This package has been developed with assistance from OpenAI’s ChatGPT
-and Codex. AI tools have been used to support code drafting and
-refactoring, test development, documentation, troubleshooting, and
-discussion of package design.
-
-All substantive design decisions, review of generated material, package
-testing, and responsibility for the correctness and maintenance of
-`ucdpR` remain with the package author. AI-assisted contributions are
-reviewed and validated through the package’s test suite, examples, and
-`R CMD check` before release.
-
 ## Scope and attribution
 
 This package is an independent community client. It is not affiliated

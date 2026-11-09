@@ -25,7 +25,9 @@ Useful links:
 ## Author
 
 **Maintainer**: Christian Oswald <christian.oswald@unibw.de>
+([ORCID](https://orcid.org/0000-0001-8291-9544))
 
 Authors:
 
 - Christian Oswald <christian.oswald@unibw.de>
+  ([ORCID](https://orcid.org/0000-0001-8291-9544))

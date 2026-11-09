@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,7 +32,18 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
-<li class="nav-item"><a class="nav-link" href="articles/index.html">Articles</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="articles/getting-started.html">Get started</a></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Research workflows</h6></li>
+    <li><a class="dropdown-item" href="articles/accessing-and-versioning.html">Accessing data and managing versions</a></li>
+    <li><a class="dropdown-item" href="articles/spatial-workflows.html">Spatial workflows</a></li>
+    <li><a class="dropdown-item" href="articles/uncertainty-and-revisions.html">Uncertainty and revisions</a></li>
+    <li><a class="dropdown-item" href="articles/reproducible-research.html">Reproducible research</a></li>
+    <li><a class="dropdown-item" href="articles/interoperability.html">Interoperability</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -260,12 +271,6 @@
 <p>Future convenience functions will build on the same principles: reproducible inputs, explicit versions, transparent transformations, and outputs that fit ordinary R workflows. The aim is to reduce recurring data-management work for UCDP users while keeping analytical choices visible and under the researcher’s control.</p>
 </div>
 <div class="section level2">
-<h2 id="ai-assisted-development">AI-assisted development<a class="anchor" aria-label="anchor" href="#ai-assisted-development"></a>
-</h2>
-<p>This package has been developed with assistance from OpenAI’s ChatGPT and Codex. AI tools have been used to support code drafting and refactoring, test development, documentation, troubleshooting, and discussion of package design.</p>
-<p>All substantive design decisions, review of generated material, package testing, and responsibility for the correctness and maintenance of <code>ucdpR</code> remain with the package author. AI-assisted contributions are reviewed and validated through the package’s test suite, examples, and <code>R CMD check</code> before release.</p>
-</div>
-<div class="section level2">
 <h2 id="scope-and-attribution">Scope and attribution<a class="anchor" aria-label="anchor" href="#scope-and-attribution"></a>
 </h2>
 <p>This package is an independent community client. It is not affiliated with or endorsed by UCDP or Uppsala University, and it does not redistribute UCDP data. Data remain subject to UCDP’s documentation, citation guidance, and terms.</p>
@@ -305,7 +310,7 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Christian Oswald <br><small class="roles"> Author, maintainer </small>   </li>
+<li>Christian Oswald <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0001-8291-9544" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 </ul>
 </div>
 
