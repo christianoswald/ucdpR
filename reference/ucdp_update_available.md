@@ -5,7 +5,13 @@ Check whether a downloaded UCDP file has a newer catalog version
 ## Usage
 
 ``` r
-ucdp_update_available(dataset, version, catalog = NULL)
+ucdp_update_available(
+  dataset,
+  version,
+  variant = NULL,
+  format = NULL,
+  catalog = NULL
+)
 ```
 
 ## Arguments
@@ -17,6 +23,14 @@ ucdp_update_available(dataset, version, catalog = NULL)
 - version:
 
   The version used in an analysis.
+
+- variant:
+
+  Optional regular expression used to select a dataset variant.
+
+- format:
+
+  Optional file format used to identify the relevant release series.
 
 - catalog:
 

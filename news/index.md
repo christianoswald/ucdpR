@@ -1,5 +1,25 @@
 # Changelog
 
+## ucdpR 0.7.3
+
+- Downloads now complete in a temporary file before replacing their
+  final destination, so failed overwrite attempts preserve existing
+  files.
+- Integer-coded values are parsed strictly instead of silently
+  truncating fractional or non-finite values.
+- [`ucdp_update_available()`](https://christianoswald.github.io/ucdpR/reference/ucdp_update_available.md)
+  now selects the latest relevant current release independently of
+  catalog row order and supports `variant` and `format` filters.
+- [`ucdp_as_sf()`](https://christianoswald.github.io/ucdpR/reference/ucdp_as_sf.md)
+  now applies `missing = "keep"`, `"drop"`, or `"error"` consistently to
+  existing `sf` objects with empty geometries.
+- [`ucdp_cite()`](https://christianoswald.github.io/ucdpR/reference/ucdp_cite.md)
+  now reports an informative error when a dataset is found but its
+  citation guidance cannot be extracted.
+- Removed the Codecov workflow, badge, and unused `covr` suggestion
+  while retaining the package’s automated multi-platform checks and test
+  suite.
+
 ## ucdpR 0.7.2
 
 - Restored the README disclosure describing the package’s AI-assisted
