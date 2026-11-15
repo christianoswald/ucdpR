@@ -63,3 +63,25 @@ test_that("validation arguments fail informatively", {
   expect_error(ucdp_validate(data.frame(x = 1), checks = "unknown"), "unsupported")
   expect_error(ucdp_validate(data.frame(x = 1), key = "id"), "Missing columns")
 })
+
+test_that("integer-coded validation does not truncate fractional values", {
+  codes <- ucdp_validate(
+    data.frame(id = 1, type_of_violence = 1.5),
+    checks = "codes"
+  )
+  expect_true(any(codes$issues$row == 1L))
+  expect_match(codes$issues$message, "outside the documented range")
+
+  dates <- ucdp_validate(
+    data.frame(id = 1, year = 2020.5, date = "2020-01-01"),
+    checks = "dates"
+  )
+  expect_false(dates$valid)
+  expect_match(dates$issues$message, "finite whole number")
+})
+
+test_that("strict integer parsing rejects non-finite and fractional values", {
+  parsed <- ucdpR:::strict_integer_parse(c(1, "2", "", NA, 1.5, Inf, NaN))
+  expect_equal(parsed$value[1:4], c(1L, 2L, NA_integer_, NA_integer_))
+  expect_true(all(parsed$invalid[5:7]))
+})

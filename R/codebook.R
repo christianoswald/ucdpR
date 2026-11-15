@@ -27,6 +27,8 @@
 ucdp_codebook <- function(dataset, version = NULL, variant = NULL,
                           dest_dir = ".", overwrite = FALSE, open = FALSE,
                           quiet = FALSE, catalog = NULL) {
+  validate_flag(overwrite, "overwrite")
+  validate_flag(quiet, "quiet")
   if (!is.logical(open) || length(open) != 1L || is.na(open)) {
     cli::cli_abort("{.arg open} must be TRUE or FALSE.")
   }
@@ -50,35 +52,19 @@ ucdp_codebook <- function(dataset, version = NULL, variant = NULL,
   }
   choice <- select_codebook_record(choices, dataset, version, variant)
 
-  dir.create(dest_dir, recursive = TRUE, showWarnings = FALSE)
   file_name <- choice$file_name[[1L]]
   if (is.na(file_name) || !nzchar(file_name)) {
     file_name <- paste0(safe_name(choice$dataset[[1L]]), "-codebook.pdf")
   }
   destination <- file.path(dest_dir, file_name)
-  if (file.exists(destination) && !overwrite) {
-    cli::cli_abort(c(
-      "File already exists: {.path {destination}}",
-      "i" = "Set {.arg overwrite = TRUE} to replace it."
-    ))
-  }
   if (!quiet) {
     cli::cli_inform("Downloading the codebook for {.field {choice$dataset}} to {.path {destination}}...")
   }
-  tryCatch(
-    ucdp_request(choice$url[[1L]]) |> httr2::req_perform(path = destination),
-    error = function(e) {
-      if (file.exists(destination)) unlink(destination)
-      cli::cli_abort(c(
-        "The UCDP codebook could not be downloaded.",
-        "i" = conditionMessage(e)
-      ), parent = e)
-    }
+  result <- download_to_destination(
+    ucdp_request(choice$url[[1L]]), destination, overwrite,
+    "The UCDP codebook could not be downloaded.",
+    "The downloaded codebook is empty or missing."
   )
-  if (!file.exists(destination) || file.info(destination)$size == 0) {
-    cli::cli_abort("The downloaded codebook is empty or missing.")
-  }
-  result <- normalizePath(destination, winslash = "/", mustWork = TRUE)
   attr(result, "ucdp_record") <- choice
   attr(result, "ucdp_version") <- choice$version[[1L]]
   attr(result, "md5") <- unname(tools::md5sum(result))

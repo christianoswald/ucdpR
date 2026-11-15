@@ -135,7 +135,7 @@ data_coverage <- function(data) {
   if (is.null(data) || !nrow(data)) return(empty)
   year_name <- first_name(data, c("year", "Year"))
   if (!is.na(year_name)) {
-    years <- suppressWarnings(as.integer(as.character(data[[year_name]])))
+    years <- strict_integer_parse(data[[year_name]])$value
     years <- years[is.finite(years)]
     if (length(years)) {
       empty$year_min <- min(years)

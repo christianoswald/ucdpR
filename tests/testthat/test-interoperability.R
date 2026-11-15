@@ -57,3 +57,21 @@ test_that("peacesciencer bridge catches duplicate analytical keys", {
   x <- data.frame(country_id = c(2, 2), year = c(2020, 2020))
   expect_error(ucdp_to_peacesciencer(x), "not unique")
 })
+
+test_that("country crosswalk rejects fractional identifiers", {
+  map <- data.frame(year = 2020L, gwcode = 2L, ccode = 2L)
+  expect_error(
+    ucdp_country_crosswalk(
+      data.frame(country_id = 2.5, year = 2020),
+      from = "gw", crosswalk = map
+    ),
+    "non-integer"
+  )
+  expect_error(
+    ucdp_country_crosswalk(
+      data.frame(country_id = 2, year = 2020.5),
+      from = "gw", crosswalk = map
+    ),
+    "non-integer"
+  )
+})

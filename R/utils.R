@@ -17,6 +17,95 @@ ucdp_timestamp <- function() {
   format(Sys.time(), tz = "UTC", usetz = TRUE)
 }
 
+download_to_destination <- function(request, destination, overwrite,
+                                    error_message, empty_message) {
+  validate_flag(overwrite, "overwrite")
+  directory <- dirname(destination)
+  dir.create(directory, recursive = TRUE, showWarnings = FALSE)
+  if (!dir.exists(directory)) {
+    cli::cli_abort("Could not create destination directory: {.path {directory}}.")
+  }
+  if (file.exists(destination) && !overwrite) {
+    cli::cli_abort(c(
+      "File already exists: {.path {destination}}",
+      "i" = "Set {.arg overwrite = TRUE} to replace it."
+    ))
+  }
+
+  temporary <- tempfile(
+    pattern = paste0(".", basename(destination), "-"),
+    tmpdir = directory,
+    fileext = ".download"
+  )
+  on.exit(if (file.exists(temporary)) unlink(temporary), add = TRUE)
+  tryCatch(
+    httr2::req_perform(request, path = temporary),
+    error = function(e) {
+      cli::cli_abort(c(error_message, "i" = conditionMessage(e)), parent = e)
+    }
+  )
+  if (!file.exists(temporary) || is.na(file.info(temporary)$size) ||
+      file.info(temporary)$size == 0) {
+    cli::cli_abort(empty_message)
+  }
+
+  backup <- NULL
+  if (file.exists(destination)) {
+    backup <- tempfile(
+      pattern = paste0(".", basename(destination), "-backup-"),
+      tmpdir = directory
+    )
+    if (!file.rename(destination, backup)) {
+      cli::cli_abort(
+        "Could not prepare the existing file for replacement: {.path {destination}}."
+      )
+    }
+    on.exit({
+      if (!is.null(backup) && file.exists(backup) && !file.exists(destination)) {
+        file.rename(backup, destination)
+      }
+    }, add = TRUE)
+  }
+
+  if (!file.rename(temporary, destination)) {
+    if (!is.null(backup) && file.exists(backup)) file.rename(backup, destination)
+    cli::cli_abort("Could not move the completed download to {.path {destination}}.")
+  }
+  if (!is.null(backup) && file.exists(backup)) unlink(backup)
+  normalizePath(destination, winslash = "/", mustWork = TRUE)
+}
+
+strict_integer_parse <- function(x) {
+  text <- trimws(as.character(x))
+  nan <- if (is.numeric(x)) is.nan(x) else rep(FALSE, length(x))
+  present <- (!is.na(x) | nan) & nzchar(text)
+  number <- suppressWarnings(as.numeric(text))
+  minimum <- -.Machine$integer.max - 1
+  invalid <- present & (
+    !is.finite(number) |
+      number != floor(number) |
+      number < minimum |
+      number > .Machine$integer.max
+  )
+  value <- suppressWarnings(as.integer(number))
+  value[!present | invalid] <- NA_integer_
+  list(value = value, invalid = invalid, present = present)
+}
+
+strict_integer_value <- function(x, name) {
+  parsed <- strict_integer_parse(x)
+  if (any(parsed$invalid)) {
+    cli::cli_abort(
+      "Column {.field {name}} contains non-integer values in rows: {which(parsed$invalid)}."
+    )
+  }
+  parsed$value
+}
+
+normalize_version_id <- function(x) {
+  sub("^[[:space:]]*[Vv][[:space:]]*", "", trimws(as.character(x)))
+}
+
 ucdp_package_version <- function() {
   as.character(utils::packageVersion("ucdpR"))
 }

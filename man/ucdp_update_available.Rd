@@ -4,12 +4,23 @@
 \alias{ucdp_update_available}
 \title{Check whether a downloaded UCDP file has a newer catalog version}
 \usage{
-ucdp_update_available(dataset, version, catalog = NULL)
+ucdp_update_available(
+  dataset,
+  version,
+  variant = NULL,
+  format = NULL,
+  catalog = NULL
+)
 }
 \arguments{
 \item{dataset}{Dataset name or alias.}
 
 \item{version}{The version used in an analysis.}
+
+\item{variant}{Optional regular expression used to select a dataset variant.}
+
+\item{format}{Optional file format used to identify the relevant release
+series.}
 
 \item{catalog}{Optional current catalog.}
 }

@@ -25,6 +25,30 @@ test_that("dataset download failures are informative and leave no file", {
   expect_length(list.files(destination, all.files = TRUE, no.. = TRUE), 0L)
 })
 
+test_that("failed overwrite downloads preserve the existing file", {
+  skip_if_not_installed("httptest2")
+  destination <- withr::local_tempdir()
+  path <- file.path(destination, "ged261.csv")
+  writeLines("original contents", path)
+
+  httptest2::without_internet({
+    expect_error(
+      ucdp_download(
+        "ged", version = "26.1", format = "csv",
+        catalog = fixture_catalog(), dest_dir = destination,
+        overwrite = TRUE, quiet = TRUE
+      ),
+      "UCDP file could not be downloaded"
+    )
+  })
+
+  expect_equal(readLines(path), "original contents")
+  expect_equal(
+    list.files(destination, all.files = TRUE, no.. = TRUE),
+    "ged261.csv"
+  )
+})
+
 test_that("codebook download failures are informative and leave no file", {
   skip_if_not_installed("httptest2")
   destination <- withr::local_tempdir()

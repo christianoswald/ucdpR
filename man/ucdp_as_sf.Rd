@@ -24,8 +24,8 @@ coordinates use EPSG 4326.}
 
 \item{remove}{Remove the source coordinate columns?}
 
-\item{missing}{How to handle missing coordinates: retain them as empty
-geometries, drop their rows, or raise an error.}
+\item{missing}{How to handle missing coordinates or empty geometries: retain
+them, drop their rows, or raise an error.}
 }
 \value{
 An \code{sf} object with point geometry.

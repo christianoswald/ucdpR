@@ -191,7 +191,8 @@ ucdp_replication_download <- function(dataset, version = NULL, year = NULL,
 }
 
 download_archive_records <- function(records, dest_dir, overwrite, quiet) {
-  dir.create(dest_dir, recursive = TRUE, showWarnings = FALSE)
+  validate_flag(overwrite, "overwrite")
+  validate_flag(quiet, "quiet")
   paths <- character(nrow(records))
   checksums <- character(nrow(records))
   for (i in seq_len(nrow(records))) {
@@ -201,27 +202,12 @@ download_archive_records <- function(records, dest_dir, overwrite, quiet) {
       file_name <- paste0(safe_name(records$title[[i]]), ".", extension)
     }
     destination <- file.path(dest_dir, file_name)
-    if (file.exists(destination) && !overwrite) {
-      cli::cli_abort(c(
-        "File already exists: {.path {destination}}",
-        "i" = "Set {.arg overwrite = TRUE} to replace it."
-      ))
-    }
     if (!quiet) cli::cli_inform("Downloading {.field {records$title[[i]]}} to {.path {destination}}...")
-    tryCatch(
-      ucdp_request(records$url[[i]]) |> httr2::req_perform(path = destination),
-      error = function(e) {
-        if (file.exists(destination)) unlink(destination)
-        cli::cli_abort(c(
-          "A UCDP archive file could not be downloaded.",
-          "i" = conditionMessage(e)
-        ), parent = e)
-      }
+    paths[[i]] <- download_to_destination(
+      ucdp_request(records$url[[i]]), destination, overwrite,
+      "A UCDP archive file could not be downloaded.",
+      "The downloaded archive file is empty or missing."
     )
-    if (!file.exists(destination) || file.info(destination)$size == 0) {
-      cli::cli_abort("The downloaded archive file is empty or missing.")
-    }
-    paths[[i]] <- normalizePath(destination, winslash = "/", mustWork = TRUE)
     checksums[[i]] <- unname(tools::md5sum(paths[[i]]))
   }
   attr(paths, "ucdp_records") <- records

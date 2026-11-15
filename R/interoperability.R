@@ -263,8 +263,5 @@ scalar_name <- function(value, argument) {
 }
 
 integer_value <- function(x, name) {
-  out <- suppressWarnings(as.integer(as.character(x)))
-  invalid <- !is.na(x) & nzchar(trimws(as.character(x))) & is.na(out)
-  if (any(invalid)) cli::cli_abort("Column {.field {name}} contains non-integer values.")
-  out
+  strict_integer_value(x, name)
 }

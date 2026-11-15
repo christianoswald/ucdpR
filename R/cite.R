@@ -26,6 +26,10 @@ ucdp_cite <- function(dataset, quiet = FALSE) {
     )
   )
   page <- httr2::resp_body_html(response)
+  extract_ucdp_citation(page, dataset)
+}
+
+extract_ucdp_citation <- function(page, dataset) {
   headings <- rvest::html_elements(page, "h2, h3")
   query <- resolve_alias(dataset)
   heading_text <- vapply(headings, node_text, character(1))
@@ -37,7 +41,13 @@ ucdp_cite <- function(dataset, quiet = FALSE) {
   if (!is.na(next_heading)) nodes <- nodes[seq_len(next_heading - 1L)]
   txt <- vapply(nodes, node_text, character(1))
   start <- which(grepl("Please cite", txt, ignore.case = TRUE))[1L]
-  if (is.na(start)) return(character())
+  if (is.na(start)) {
+    cli::cli_abort(c(
+      "Citation guidance could not be extracted for this dataset.",
+      "i" = "The UCDP download-page structure or citation wording may have changed.",
+      "i" = "Consult the official dataset codebook or UCDP download page: {.url {(.ucdp_base)}}"
+    ))
+  }
   unique(txt[seq.int(start, length(txt))][nzchar(txt[seq.int(start, length(txt))])])
 }
 
@@ -45,6 +55,9 @@ ucdp_cite <- function(dataset, quiet = FALSE) {
 #'
 #' @param version The version used in an analysis.
 #' @param dataset Dataset name or alias.
+#' @param variant Optional regular expression used to select a dataset variant.
+#' @param format Optional file format used to identify the relevant release
+#'   series.
 #' @param catalog Optional current catalog.
 #' @return A one-row tibble with the supplied and current versions and a
 #'   logical `update_available` value.
@@ -57,14 +70,40 @@ ucdp_cite <- function(dataset, quiet = FALSE) {
 #'   file_name = "ged.csv", source = "current"
 #' )
 #' ucdp_update_available("ged", version = "24.1", catalog = catalog)
-ucdp_update_available <- function(dataset, version, catalog = NULL) {
+ucdp_update_available <- function(dataset, version, variant = NULL,
+                                  format = NULL, catalog = NULL) {
+  if (length(version) != 1L || is.na(version) || !nzchar(as.character(version))) {
+    cli::cli_abort("{.arg version} must be one non-empty version identifier.")
+  }
   if (is.null(catalog)) catalog <- ucdp_catalog(quiet = TRUE)
   x <- ucdp_search(resolve_alias(dataset), catalog)
-  versions <- unique(stats::na.omit(x$version))
+  if (!is.null(variant)) {
+    x <- x[grepl(
+      variant, ifelse(is.na(x$variant), "", x$variant),
+      ignore.case = TRUE
+    ), , drop = FALSE]
+  }
+  if (!is.null(format)) {
+    if (!is.character(format) || !length(format) || anyNA(format) ||
+        any(!nzchar(format))) {
+      cli::cli_abort("{.arg format} must contain one or more non-empty format names.")
+    }
+    x <- x[x$format %in% tolower(format), , drop = FALSE]
+  }
+  if ("source" %in% names(x) && any(x$source == "current", na.rm = TRUE)) {
+    x <- x[!is.na(x$source) & x$source == "current", , drop = FALSE]
+  }
+  versions <- unique(stats::na.omit(normalize_version_id(x$version)))
   if (!length(versions)) cli::cli_abort("No version information was found for {.val {dataset}}.")
-  current <- versions[[1L]]
+  keys <- numeric_version_key(versions)
+  current <- if (any(!is.na(keys))) {
+    versions[[which.max(keys)]]
+  } else {
+    sort(versions, decreasing = TRUE)[[1L]]
+  }
+  installed <- normalize_version_id(version)
   tibble::tibble(dataset = dataset, installed_version = as.character(version),
                  current_version = current,
-                 update_available = !identical(as.character(version), current))
+                 update_available = !identical(installed, current))
 }
 

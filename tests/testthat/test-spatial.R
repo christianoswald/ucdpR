@@ -37,6 +37,10 @@ test_that("precision summaries validate their inputs", {
     ucdp_precision(data.frame(where_prec = "exact")),
     "non-integer"
   )
+  expect_error(
+    ucdp_precision(data.frame(where_prec = 1.5)),
+    "non-integer"
+  )
 })
 
 test_that("precision filtering combines spatial and temporal criteria", {
@@ -67,6 +71,14 @@ test_that("precision filtering validates requested columns and codes", {
   expect_error(
     ucdp_filter_precision(data.frame(where_prec = 1), where_prec = NA),
     "non-missing numeric"
+  )
+  expect_error(
+    ucdp_filter_precision(data.frame(where_prec = 1.5), where_prec = 1),
+    "non-integer"
+  )
+  expect_error(
+    ucdp_filter_precision(data.frame(where_prec = 1), where_prec = 1.5),
+    "whole-number"
   )
 })
 
@@ -104,4 +116,24 @@ test_that("ucdp_as_sf supports explicit alternative coordinate names", {
   x <- data.frame(x_coord = 10, y_coord = 50)
   out <- ucdp_as_sf(x, longitude = "x_coord", latitude = "y_coord")
   expect_s3_class(out, "sf")
+})
+
+test_that("ucdp_as_sf applies missing handling to existing sf objects", {
+  skip_if_not_installed("sf")
+  geometry <- sf::st_sfc(
+    sf::st_point(c(10, 50)),
+    sf::st_point(),
+    crs = 4326
+  )
+  x <- sf::st_sf(id = 1:2, geometry = geometry)
+  attr(x, "ucdp_source") <- list(ucdp_version = "26.1")
+
+  expect_equal(nrow(ucdp_as_sf(x, missing = "keep")), 2L)
+  dropped <- ucdp_as_sf(x, missing = "drop")
+  expect_equal(dropped$id, 1L)
+  expect_equal(attr(dropped, "ucdp_source")$ucdp_version, "26.1")
+  expect_error(
+    ucdp_as_sf(x, missing = "error"),
+    "Missing or empty geometries"
+  )
 })

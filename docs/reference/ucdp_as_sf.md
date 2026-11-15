@@ -42,7 +42,7 @@ ucdp_as_sf(
 
 - missing:
 
-  How to handle missing coordinates: retain them as empty geometries,
+  How to handle missing coordinates or empty geometries: retain them,
   drop their rows, or raise an error.
 
 ## Value

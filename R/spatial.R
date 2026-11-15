@@ -12,8 +12,8 @@
 #' @param crs Coordinate reference system passed to [sf::st_as_sf()]. UCDP GED
 #'   coordinates use EPSG 4326.
 #' @param remove Remove the source coordinate columns?
-#' @param missing How to handle missing coordinates: retain them as empty
-#'   geometries, drop their rows, or raise an error.
+#' @param missing How to handle missing coordinates or empty geometries: retain
+#'   them, drop their rows, or raise an error.
 #' @return An `sf` object with point geometry.
 #' @export
 #' @examples
@@ -43,6 +43,12 @@ ucdp_as_sf <- function(data, longitude = NULL, latitude = NULL, crs = 4326,
     } else {
       data
     }
+    empty <- sf::st_is_empty(result)
+    empty[is.na(empty)] <- TRUE
+    if (missing == "error" && any(empty)) {
+      cli::cli_abort("Missing or empty geometries occur in rows: {which(empty)}.")
+    }
+    if (missing == "drop") result <- result[!empty, , drop = FALSE]
     if (!is.null(provenance)) attr(result, "ucdp_source") <- provenance
     return(result)
   }
@@ -164,8 +170,9 @@ precision_summary <- function(data, variable, by, include_missing) {
   parts <- lapply(keys, function(key) {
     rows <- which(group_key == key)
     raw <- data[[variable]][rows]
-    code <- suppressWarnings(as.integer(as.character(raw)))
-    invalid <- which(!is.na(raw) & is.na(code))
+    parsed <- strict_integer_parse(raw)
+    code <- parsed$value
+    invalid <- which(parsed$invalid)
     if (length(invalid)) {
       cli::cli_abort("{.field {variable}} contains non-integer values in rows: {rows[invalid]}.")
     }
@@ -265,12 +272,22 @@ ucdp_filter_precision <- function(data, where_prec = NULL, date_prec = NULL,
     if (!is.numeric(accepted) || !length(accepted) || anyNA(accepted)) {
       cli::cli_abort("{.arg {name}} must contain one or more non-missing numeric codes.")
     }
-    value <- suppressWarnings(as.integer(as.character(data[[name]])))
+    accepted_parsed <- strict_integer_parse(accepted)
+    if (any(accepted_parsed$invalid)) {
+      cli::cli_abort("{.arg {name}} must contain whole-number precision codes.")
+    }
+    parsed <- strict_integer_parse(data[[name]])
+    if (any(parsed$invalid)) {
+      cli::cli_abort(
+        "{.field {name}} contains non-integer values in rows: {which(parsed$invalid)}."
+      )
+    }
+    value <- parsed$value
     missing_rows <- is.na(value)
     if (missing == "error" && any(missing_rows)) {
       cli::cli_abort("Missing values occur in {.field {name}} at rows: {which(missing_rows)}.")
     }
-    selected <- value %in% as.integer(accepted)
+    selected <- value %in% accepted_parsed$value
     if (missing == "keep") selected[missing_rows] <- TRUE
     keep <- keep & selected
   }

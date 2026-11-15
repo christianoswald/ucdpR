@@ -173,7 +173,14 @@ validate_dates <- function(data) {
   reference_date <- first_name(data, c("date_start", "date"))
   if (!is.na(year_name) && !is.na(reference_date)) {
     date <- parse_ucdp_date(data[[reference_date]])
-    year <- suppressWarnings(as.integer(as.character(data[[year_name]])))
+    parsed_year <- strict_integer_parse(data[[year_name]])
+    year <- parsed_year$value
+    bad_year <- which(parsed_year$invalid)
+    issues[[length(issues) + 1L]] <- validation_issue(
+      "dates", "error", bad_year, year_name,
+      data[[year_name]][bad_year],
+      "Year must be a finite whole number."
+    )
     rows <- which(!is.na(date) & !is.na(year) &
                     as.integer(format(date, "%Y")) != year)
     issues[[length(issues) + 1L]] <- validation_issue(
@@ -261,9 +268,12 @@ validate_codes <- function(data) {
   definitions <- definitions[names(definitions) %in% names(data)]
   if (!length(definitions)) return(validation_result(applicable = FALSE))
   issues <- lapply(names(definitions), function(name) {
-    value <- suppressWarnings(as.integer(as.character(data[[name]])))
     raw <- data[[name]]
-    rows <- which(!is.na(raw) & (is.na(value) | !value %in% definitions[[name]]))
+    parsed <- strict_integer_parse(raw)
+    value <- parsed$value
+    rows <- which(parsed$invalid |
+                    (parsed$present & !is.na(value) &
+                       !value %in% definitions[[name]]))
     validation_issue(
       "codes", "warning", rows, name, raw[rows],
       paste0("Value is outside the documented range for ", name, ".")

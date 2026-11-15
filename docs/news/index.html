@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,6 +42,18 @@
       <small>Source: <a href="https://github.com/christianoswald/ucdpR/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.7.3" id="ucdpr-073">ucdpR 0.7.3<a class="anchor" aria-label="anchor" href="#ucdpr-073"></a></h2>
+<ul><li>Downloads now complete in a temporary file before replacing their final destination, so failed overwrite attempts preserve existing files.</li>
+<li>Integer-coded values are parsed strictly instead of silently truncating fractional or non-finite values.</li>
+<li>
+<code><a href="../reference/ucdp_update_available.html">ucdp_update_available()</a></code> now selects the latest relevant current release independently of catalog row order and supports <code>variant</code> and <code>format</code> filters.</li>
+<li>
+<code><a href="../reference/ucdp_as_sf.html">ucdp_as_sf()</a></code> now applies <code>missing = "keep"</code>, <code>"drop"</code>, or <code>"error"</code> consistently to existing <code>sf</code> objects with empty geometries.</li>
+<li>
+<code><a href="../reference/ucdp_cite.html">ucdp_cite()</a></code> now reports an informative error when a dataset is found but its citation guidance cannot be extracted.</li>
+<li>Removed the Codecov workflow, badge, and unused <code>covr</code> suggestion while retaining the package’s automated multi-platform checks and test suite.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.7.2" id="ucdpr-072">ucdpR 0.7.2<a class="anchor" aria-label="anchor" href="#ucdpr-072"></a></h2>
 <ul><li>Restored the README disclosure describing the package’s AI-assisted development and human review process.</li>
