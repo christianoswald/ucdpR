@@ -6,6 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Access and Work with Uppsala Conflict Data Program Data • ucdpR</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" sizes="any" href="favicon.ico">
+<link rel="manifest" href="site.webmanifest">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -13,6 +18,7 @@
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Access and Work with Uppsala Conflict Data Program Data">
 <meta name="description" content="Provides tools for reproducible research with datasets published by the Uppsala Conflict Data Program (UCDP) &lt;https://ucdp.uu.se/&gt;. It discovers the official download catalog at run time, downloads and imports current or historical releases, retrieves official codebooks, records and summarizes source metadata, validates common data structures and ranges, supports spatial and precision-aware workflows, aggregates events and fatality estimates, constructs explicitly labelled analytical panels, harmonizes country codes and prepares data for priogrid and peacesciencer workflows, exposes official replication materials and version histories, and helps examine changes between dataset versions. UCDP data are not bundled or modified.">
 <meta property="og:description" content="Provides tools for reproducible research with datasets published by the Uppsala Conflict Data Program (UCDP) &lt;https://ucdp.uu.se/&gt;. It discovers the official download catalog at run time, downloads and imports current or historical releases, retrieves official codebooks, records and summarizes source metadata, validates common data structures and ranges, supports spatial and precision-aware workflows, aggregates events and fatality estimates, constructs explicitly labelled analytical panels, harmonizes country codes and prepares data for priogrid and peacesciencer workflows, exposes official replication materials and version histories, and helps examine changes between dataset versions. UCDP data are not bundled or modified.">
+<meta property="og:image" content="https://christianoswald.github.io/ucdpR/logo.svg">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -59,8 +65,10 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="ucdpr">ucdpR<a class="anchor" aria-label="anchor" href="#ucdpr"></a>
-</h1></div>
+<div class="page-header">
+<img src="logo.svg" class="logo" alt=""><h1 id="ucdpr-">ucdpR <a class="anchor" aria-label="anchor" href="#ucdpr-"></a>
+</h1>
+</div>
 <!-- badges: start -->
 
 <p><code>ucdpR</code> is a toolkit for reproducible research with data from the <a href="https://ucdp.uu.se/" class="external-link">Uppsala Conflict Data Program</a>. It provides a consistent R interface for finding, downloading, importing, documenting, validating, spatially preparing, and comparing UCDP datasets. Downloading data is the foundation, but the package is designed to grow around the wider tasks that applied researchers repeatedly encounter when working with UCDP data.</p>

@@ -11,6 +11,7 @@
 ^CONTRIBUTING\.md$
 ^LICENSE\.md$
 ^ucdpR\.Rproj$
+^data-raw$
 
 ^\.Rproj\.user$
 ^\.positai$
