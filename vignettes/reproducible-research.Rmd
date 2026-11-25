@@ -71,18 +71,31 @@ Fatality estimates should be aggregated as a low, best, and high triplet rather
 than reducing every observation to its best estimate alone.
 
 ```{r}
-ucdp_fatalities(conflicts, by = "year")
+ucdp_fatalities(
+  conflicts,
+  by = "year",
+  fatality_missing = "propagate"
+)
 
 conflict_year <- ucdp_aggregate(
   conflicts,
-  unit = "conflict-year"
+  unit = "conflict-year",
+  fatality_missing = "propagate"
 )
 conflict_year
 ```
 
 `ucdp_aggregate()` also supports country, PRIO-GRID, and dyad units with yearly
 or monthly periods. Common entity and fatality columns are detected, while
-`id`, `date`, `low`, `best`, and `high` provide explicit overrides.
+`id`, `date`, `low`, `best`, and `high` provide explicit overrides. If
+`event_id` or `id` is present, duplicated event identifiers stop aggregation by
+default; `event_id` can name a compound key. This protects event counts and
+fatality totals from accidental double counting.
+
+The fatality policy is explicit. `fatality_missing = "propagate"` treats a
+group total as unknown if any contributing estimate is missing;
+`"remove"` produces a partial total and reports completeness counts; and
+`"error"` stops when missing estimates occur.
 
 ## Construct complete panels transparently
 
@@ -96,18 +109,26 @@ panel_events <- data.frame(
 panel <- ucdp_panel(
   panel_events,
   unit = "conflict-year",
-  start = 2020,
-  end = 2022,
+  start = 2019,
+  end = 2023,
+  coverage = c(2020, 2022),
   fill = "zero"
 )
-panel[c("conflict_id", "year", "n_events", ".ucdp_observed", ".ucdp_fill")]
+panel[c(
+  "conflict_id", "year", "n_events", ".ucdp_observed",
+  ".ucdp_in_coverage", ".ucdp_fill"
+)]
 ```
 
 Rows introduced to complete the panel remain identifiable. A zero-filled row
 does not prove that UCDP observed a true zero; it records the analyst's chosen
-completion rule. Use `fill = "missing"` when unobserved combinations should
-remain missing, and supply `universe` when the panel must include entities that
-never appear in the event data.
+completion rule. Supplying `coverage` prevents periods outside the dataset's
+declared observational window from being turned into structural zeroes. These
+rows have `.ucdp_in_coverage = FALSE`, `.ucdp_fill = "outside_coverage"`, and
+missing measures. Coverage can be global, as above, or entity-specific. Use
+`fill = "missing"` when unobserved combinations inside coverage should remain
+missing, and supply `universe` when the panel must include entities that never
+appear in the event data.
 
 ## Retain provenance with live data
 

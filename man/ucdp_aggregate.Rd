@@ -15,6 +15,9 @@ ucdp_aggregate(
   best = NULL,
   high = NULL,
   na_rm = TRUE,
+  fatality_missing = NULL,
+  event_id = NULL,
+  duplicates = c("error", "warn", "allow"),
   missing = c("drop", "error")
 )
 }
@@ -41,8 +44,16 @@ recognized triplet is present?}
 \item{low, best, high}{Optional fatality columns passed to the same detection
 logic as \code{\link[=ucdp_fatalities]{ucdp_fatalities()}}.}
 
-\item{na_rm}{Missing-value behavior for fatality sums; see
+\item{na_rm, fatality_missing}{Missing-value behavior for fatality sums; see
 \code{\link[=ucdp_fatalities]{ucdp_fatalities()}}.}
+
+\item{event_id}{Optional event-identifier column or columns used to detect
+accidental duplicates before aggregation. When omitted, \code{event_id} or
+\code{id} is detected when present.}
+
+\item{duplicates}{How to handle duplicated event keys: stop, warn and
+continue, or allow them explicitly. The check is skipped when no event key
+can be identified.}
 
 \item{missing}{How to handle missing entity, time, or additional grouping
 values: drop their rows or raise an error.}
@@ -60,9 +71,12 @@ explicitly.
 }
 \examples{
 events <- data.frame(
+  event_id = 1:4,
   country_id = c(1, 1, 1, 2), country = c("A", "A", "A", "B"),
   year = c(2020, 2020, 2021, 2020),
   low = c(0, 1, 2, 1), best = c(1, 2, 3, 2), high = c(2, 3, 4, 3)
 )
-ucdp_aggregate(events, unit = "country-year")
+ucdp_aggregate(
+  events, unit = "country-year", fatality_missing = "propagate"
+)
 }

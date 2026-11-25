@@ -7,7 +7,8 @@
 ucdp_catalog(
   include_documentation = FALSE,
   include_historical = FALSE,
-  quiet = FALSE
+  quiet = FALSE,
+  validate = TRUE
 )
 }
 \arguments{
@@ -17,6 +18,10 @@ ucdp_catalog(
 adds earlier annual releases and archived monthly Candidate releases.}
 
 \item{quiet}{Suppress status messages?}
+
+\item{validate}{Validate the parsed catalog and report empty, malformed, or
+suspiciously incomplete results? Set to \code{FALSE} only for troubleshooting
+upstream page changes.}
 }
 \value{
 A tibble with one row per downloadable file.

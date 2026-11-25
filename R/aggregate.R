@@ -9,9 +9,14 @@
 #' @param by Optional grouping columns.
 #' @param low,best,high Optional column names for the three estimates. Supply
 #'   all three or none. When omitted, common UCDP names are detected.
-#' @param na_rm If `TRUE`, sum the available estimates, but return `NA` when a
-#'   group contains no observed value for an estimate. If `FALSE`, any missing
-#'   value makes the corresponding group total `NA`.
+#' @param na_rm Backward-compatible logical control for missing fatality
+#'   values. `TRUE` corresponds to `fatality_missing = "remove"`; `FALSE`
+#'   corresponds to `fatality_missing = "propagate"`.
+#' @param fatality_missing Explicit missing-value policy for fatality sums.
+#'   `"remove"` returns partial totals together with completeness counts,
+#'   `"propagate"` returns `NA` when any contributing estimate is missing, and
+#'   `"error"` stops before aggregation. When `NULL`, `na_rm` determines the
+#'   policy.
 #' @param missing How to handle missing grouping values: drop their rows or
 #'   raise an error.
 #' @return A tibble containing grouping variables, observation counts,
@@ -26,16 +31,19 @@
 #' ucdp_fatalities(events, by = "country")
 ucdp_fatalities <- function(data, by = NULL, low = NULL, best = NULL,
                             high = NULL, na_rm = TRUE,
+                            fatality_missing = NULL,
                             missing = c("drop", "error")) {
   if (!is.data.frame(data)) cli::cli_abort("{.arg data} must be a data frame.")
   if (!nrow(data)) cli::cli_abort("{.arg data} must contain at least one row.")
   validate_flag(na_rm, "na_rm")
+  fatality_missing <- resolve_fatality_missing(na_rm, fatality_missing)
   missing <- match.arg(missing)
   source <- attr(data, "ucdp_source", exact = TRUE)
   data <- as.data.frame(data, stringsAsFactors = FALSE)
   by <- aggregation_columns(data, by, "by")
   columns <- resolve_fatality_columns(data, low, best, high, required = TRUE)
   values <- fatality_values(data, columns)
+  check_fatality_missing(values, fatality_missing)
 
   keep <- complete_group_rows(data, by)
   dropped <- sum(!keep)
@@ -46,9 +54,11 @@ ucdp_fatalities <- function(data, by = NULL, low = NULL, best = NULL,
   values <- lapply(values, `[`, keep)
   if (!nrow(data)) cli::cli_abort("No rows remain after removing missing grouping values.")
 
-  out <- summarize_fatality_groups(data, by, values, na_rm)
+  out <- summarize_fatality_groups(data, by, values, fatality_missing)
+  check_aggregated_fatality_bounds(out)
   if (!is.null(source)) attr(out, "ucdp_source") <- source
   attr(out, "ucdp_fatality_columns") <- columns
+  attr(out, "ucdp_fatality_missing") <- fatality_missing
   attr(out, "ucdp_rows_dropped") <- dropped
   out
 }
@@ -75,8 +85,14 @@ ucdp_fatalities <- function(data, by = NULL, low = NULL, best = NULL,
 #'   recognized triplet is present?
 #' @param low,best,high Optional fatality columns passed to the same detection
 #'   logic as [ucdp_fatalities()].
-#' @param na_rm Missing-value behavior for fatality sums; see
+#' @param na_rm,fatality_missing Missing-value behavior for fatality sums; see
 #'   [ucdp_fatalities()].
+#' @param event_id Optional event-identifier column or columns used to detect
+#'   accidental duplicates before aggregation. When omitted, `event_id` or
+#'   `id` is detected when present.
+#' @param duplicates How to handle duplicated event keys: stop, warn and
+#'   continue, or allow them explicitly. The check is skipped when no event key
+#'   can be identified.
 #' @param missing How to handle missing entity, time, or additional grouping
 #'   values: drop their rows or raise an error.
 #' @return A tibble with one row per unit-period combination, `n_events`, and,
@@ -85,22 +101,33 @@ ucdp_fatalities <- function(data, by = NULL, low = NULL, best = NULL,
 #' @export
 #' @examples
 #' events <- data.frame(
+#'   event_id = 1:4,
 #'   country_id = c(1, 1, 1, 2), country = c("A", "A", "A", "B"),
 #'   year = c(2020, 2020, 2021, 2020),
 #'   low = c(0, 1, 2, 1), best = c(1, 2, 3, 2), high = c(2, 3, 4, 3)
 #' )
-#' ucdp_aggregate(events, unit = "country-year")
+#' ucdp_aggregate(
+#'   events, unit = "country-year", fatality_missing = "propagate"
+#' )
 ucdp_aggregate <- function(data, unit, id = NULL, date = NULL, by = NULL,
                            include_fatalities = TRUE, low = NULL, best = NULL,
                            high = NULL, na_rm = TRUE,
+                           fatality_missing = NULL, event_id = NULL,
+                           duplicates = c("error", "warn", "allow"),
                            missing = c("drop", "error")) {
   if (!is.data.frame(data)) cli::cli_abort("{.arg data} must be a data frame.")
   if (!nrow(data)) cli::cli_abort("{.arg data} must contain at least one row.")
   validate_flag(include_fatalities, "include_fatalities")
   validate_flag(na_rm, "na_rm")
+  fatality_missing <- resolve_fatality_missing(na_rm, fatality_missing)
+  duplicates <- match.arg(duplicates)
   missing <- match.arg(missing)
 
   spec <- resolve_aggregation_spec(data, unit, id, date, by)
+  event_id <- resolve_event_id(
+    data, event_id, excluded = unique(c(spec$entity, spec$by))
+  )
+  duplicate_report <- check_event_duplicates(data, event_id, duplicates)
   working <- as.data.frame(data, stringsAsFactors = FALSE)
   working$year <- spec$year
   if (identical(spec$period, "month")) working$month <- spec$month
@@ -125,12 +152,14 @@ ucdp_aggregate <- function(data, unit, id = NULL, date = NULL, by = NULL,
     )
     if (!is.null(fatality_columns)) {
       fatality_data <- fatality_values(working, fatality_columns)
+      check_fatality_missing(fatality_data, fatality_missing)
     }
   }
 
   out <- summarize_aggregation_groups(
-    working, groups, fatality_data, na_rm
+    working, groups, fatality_data, fatality_missing
   )
+  check_aggregated_fatality_bounds(out)
   source <- attr(data, "ucdp_source", exact = TRUE)
   if (!is.null(source)) attr(out, "ucdp_source") <- source
   attr(out, "ucdp_aggregation") <- list(
@@ -140,6 +169,10 @@ ucdp_aggregate <- function(data, unit, id = NULL, date = NULL, by = NULL,
     time = c("year", if (identical(spec$period, "month")) "month"),
     period = spec$period,
     fatality_columns = fatality_columns,
+    fatality_missing = fatality_missing,
+    event_id = event_id,
+    duplicates = duplicates,
+    duplicate_report = duplicate_report,
     rows_dropped = dropped
   )
   out
@@ -157,18 +190,27 @@ ucdp_aggregate <- function(data, unit, id = NULL, date = NULL, by = NULL,
 #'   `data` retains the `ucdp_aggregation` attribute.
 #' @param id,date,by,include_fatalities,low,best,high,na_rm Passed to
 #'   [ucdp_aggregate()] when raw data are supplied.
+#' @param fatality_missing,event_id,duplicates Passed to
+#'   [ucdp_aggregate()] when raw data are supplied.
 #' @param start,end Panel boundaries. Use four-digit years for yearly panels
 #'   and `"YYYY-MM"` strings or dates for monthly panels. Defaults to the
 #'   observed range.
 #' @param universe Optional entity universe. Supply a vector for a one-column
 #'   entity key or a data frame containing all entity and `by` columns. The
 #'   default uses combinations observed at least once in `data`.
+#' @param coverage Optional observational coverage. Supply a two-element vector
+#'   containing global start and end boundaries, or a data frame containing all
+#'   entity columns plus `coverage_start` and `coverage_end`. Rows outside
+#'   declared coverage remain missing even when `fill = "zero"`. When `NULL`,
+#'   the complete requested panel window is assumed to be covered for backward
+#'   compatibility.
 #' @param fill Should inserted combinations contain explicit zeroes in numeric
 #'   aggregate columns or missing values?
 #' @param missing Passed to [ucdp_aggregate()] for raw data.
 #' @return A complete panel tibble. `.ucdp_observed` is `TRUE` only for groups
-#'   present in the aggregated input; `.ucdp_fill` is `"observed"`,
-#'   `"zero_filled"`, or `"missing"`.
+#'   present in the aggregated input; `.ucdp_in_coverage` records declared
+#'   observational coverage; and `.ucdp_fill` is `"observed"`,
+#'   `"zero_filled"`, `"missing"`, or `"outside_coverage"`.
 #' @export
 #' @examples
 #' events <- data.frame(
@@ -176,17 +218,23 @@ ucdp_aggregate <- function(data, unit, id = NULL, date = NULL, by = NULL,
 #'   low = c(0, 1, 2), best = c(1, 2, 3), high = c(2, 3, 4)
 #' )
 #' panel <- ucdp_panel(
-#'   events, unit = "country-year", start = 2020, end = 2022
+#'   events, unit = "country-year", start = 2019, end = 2023,
+#'   coverage = c(2020, 2022)
 #' )
-#' panel[c("country_id", "year", "n_events", ".ucdp_fill")]
+#' panel[c("country_id", "year", "n_events", ".ucdp_in_coverage",
+#'         ".ucdp_fill")]
 ucdp_panel <- function(data, unit = NULL, id = NULL, date = NULL, by = NULL,
                        start = NULL, end = NULL, universe = NULL,
+                       coverage = NULL,
                        fill = c("zero", "missing"),
                        include_fatalities = TRUE, low = NULL, best = NULL,
                        high = NULL, na_rm = TRUE,
+                       fatality_missing = NULL, event_id = NULL,
+                       duplicates = c("error", "warn", "allow"),
                        missing = c("drop", "error")) {
   if (!is.data.frame(data)) cli::cli_abort("{.arg data} must be a data frame.")
   fill <- match.arg(fill)
+  duplicates <- match.arg(duplicates)
   missing <- match.arg(missing)
   aggregation <- attr(data, "ucdp_aggregation", exact = TRUE)
 
@@ -207,6 +255,8 @@ ucdp_panel <- function(data, unit = NULL, id = NULL, date = NULL, by = NULL,
       data, unit = unit, id = id, date = date, by = by,
       include_fatalities = include_fatalities,
       low = low, best = best, high = high, na_rm = na_rm,
+      fatality_missing = fatality_missing, event_id = event_id,
+      duplicates = duplicates,
       missing = missing
     )
     aggregation <- attr(aggregated, "ucdp_aggregation", exact = TRUE)
@@ -234,10 +284,20 @@ ucdp_panel <- function(data, unit = NULL, id = NULL, date = NULL, by = NULL,
   entities <- panel_universe(aggregated, entity, universe)
   periods <- panel_periods(aggregated, aggregation$period, start, end)
   skeleton <- cross_panel(entities, periods)
+  coverage_result <- panel_coverage(
+    skeleton, entities, entity, aggregation$period, coverage
+  )
+  in_coverage <- coverage_result$in_coverage
   source_key <- composite_key(aggregated, keys)
   target_key <- composite_key(skeleton, keys)
   matched <- match(target_key, source_key)
   observed <- !is.na(matched)
+  if (any(observed & !in_coverage)) {
+    cli::cli_abort(c(
+      "Observed panel rows fall outside the declared {.arg coverage}.",
+      "i" = "Expand the coverage boundaries or correct the coverage table."
+    ))
+  }
 
   measures <- setdiff(names(aggregated), keys)
   out <- skeleton
@@ -247,15 +307,18 @@ ucdp_panel <- function(data, unit = NULL, id = NULL, date = NULL, by = NULL,
       "^(n_events|n_fatality_complete|n_fatality_missing|fatalities_(low|best|high))$",
       name
     )
+    fill_rows <- !observed & in_coverage
     if (fill == "zero" && zero_measure && is.numeric(values)) {
-      values[!observed] <- if (is.integer(values)) 0L else 0
+      values[fill_rows] <- if (is.integer(values)) 0L else 0
     }
     out[[name]] <- values
   }
   out$.ucdp_observed <- observed
-  out$.ucdp_fill <- ifelse(
-    observed, "observed", if (fill == "zero") "zero_filled" else "missing"
-  )
+  out$.ucdp_in_coverage <- in_coverage
+  out$.ucdp_fill <- ifelse(observed, "observed", ifelse(
+    !in_coverage, "outside_coverage",
+    if (fill == "zero") "zero_filled" else "missing"
+  ))
   out <- tibble::as_tibble(out)
 
   source <- attr(data, "ucdp_source", exact = TRUE)
@@ -264,7 +327,8 @@ ucdp_panel <- function(data, unit = NULL, id = NULL, date = NULL, by = NULL,
   attr(out, "ucdp_aggregation") <- aggregation
   attr(out, "ucdp_panel") <- list(
     fill = fill, start = start, end = end,
-    universe_rows = nrow(entities)
+    universe_rows = nrow(entities),
+    coverage = coverage_result$specification
   )
   out
 }
@@ -345,13 +409,93 @@ fatality_values <- function(data, columns) {
   values
 }
 
-sum_fatality <- function(x, na_rm) {
-  if (!length(x) || all(is.na(x))) return(NA_real_)
-  if (!na_rm && anyNA(x)) return(NA_real_)
-  sum(x, na.rm = na_rm)
+resolve_fatality_missing <- function(na_rm, fatality_missing) {
+  if (is.null(fatality_missing)) {
+    return(if (isTRUE(na_rm)) "remove" else "propagate")
+  }
+  match.arg(fatality_missing, c("remove", "propagate", "error"))
 }
 
-summarize_fatality_groups <- function(data, by, values, na_rm) {
+check_fatality_missing <- function(values, policy) {
+  missing <- Reduce(`|`, lapply(values, is.na))
+  if (policy == "error" && any(missing)) {
+    cli::cli_abort(c(
+      "Missing fatality estimates occur in row(s): {which(missing)}.",
+      "i" = "Choose {.code fatality_missing = 'remove'} for partial totals or {.code fatality_missing = 'propagate'} for unknown totals."
+    ))
+  }
+  invisible(missing)
+}
+
+sum_fatality <- function(x, policy) {
+  if (!length(x) || all(is.na(x))) return(NA_real_)
+  if (policy == "propagate" && anyNA(x)) return(NA_real_)
+  sum(x, na.rm = policy == "remove")
+}
+
+check_aggregated_fatality_bounds <- function(data) {
+  columns <- c("fatalities_low", "fatalities_best", "fatalities_high")
+  if (!all(columns %in% names(data))) return(invisible(data))
+  complete <- stats::complete.cases(data[columns])
+  inconsistent <- complete & (
+    data$fatalities_low > data$fatalities_best |
+      data$fatalities_best > data$fatalities_high
+  )
+  if (any(inconsistent)) {
+    cli::cli_warn(c(
+      "Aggregated fatality bounds are inconsistent in {sum(inconsistent)} group(s).",
+      "i" = "This can occur when partial totals are based on different missing observations; inspect completeness counts or use {.code fatality_missing = 'propagate'}."
+    ))
+  }
+  invisible(data)
+}
+
+resolve_event_id <- function(data, event_id, excluded = character()) {
+  if (!is.null(event_id)) return(aggregation_columns(data, event_id, "event_id"))
+  candidates <- setdiff(c("event_id", "id"), excluded)
+  found <- candidates[candidates %in% names(data)]
+  if (!length(found)) return(character())
+  found[[1L]]
+}
+
+check_event_duplicates <- function(data, event_id, policy) {
+  empty <- list(
+    duplicate_keys = 0L, duplicate_rows = 0L,
+    exact_keys = 0L, conflicting_keys = 0L
+  )
+  if (!length(event_id)) return(empty)
+  if (anyNA(data[event_id])) {
+    cli::cli_abort("Event identifier columns must not contain missing values: {event_id}.")
+  }
+  key <- composite_key(data, event_id)
+  duplicated_key <- duplicated(key) | duplicated(key, fromLast = TRUE)
+  if (!any(duplicated_key)) return(empty)
+
+  groups <- split(which(duplicated_key), key[duplicated_key])
+  exact <- vapply(groups, function(rows) {
+    nrow(unique(data[rows, , drop = FALSE])) == 1L
+  }, logical(1))
+  report <- list(
+    duplicate_keys = length(groups),
+    duplicate_rows = sum(lengths(groups)),
+    exact_keys = sum(exact),
+    conflicting_keys = sum(!exact)
+  )
+  message <- c(
+    "Duplicate event keys detected: {report$duplicate_keys} key(s) across {report$duplicate_rows} row(s).",
+    "i" = "{report$exact_keys} key(s) are exact duplicate rows; {report$conflicting_keys} key(s) contain conflicting rows.",
+    "i" = "Identifier: {paste(event_id, collapse = ', ')}."
+  )
+  if (policy == "error") {
+    cli::cli_abort(c(message,
+      "i" = "Resolve the duplicates or set {.code duplicates = 'warn'} or {.code duplicates = 'allow'} explicitly."
+    ))
+  }
+  if (policy == "warn") cli::cli_warn(message)
+  report
+}
+
+summarize_fatality_groups <- function(data, by, values, fatality_missing) {
   key <- if (length(by)) composite_key(data, by) else rep("all", nrow(data))
   keys <- unique(key)
   group_id <- match(key, keys)
@@ -367,9 +511,9 @@ summarize_fatality_groups <- function(data, by, values, na_rm) {
       n_observations = length(rows),
       n_complete = sum(complete),
       n_missing = sum(!complete),
-      fatalities_low = sum_fatality(values$low[rows], na_rm),
-      fatalities_best = sum_fatality(values$best[rows], na_rm),
-      fatalities_high = sum_fatality(values$high[rows], na_rm),
+      fatalities_low = sum_fatality(values$low[rows], fatality_missing),
+      fatalities_best = sum_fatality(values$best[rows], fatality_missing),
+      fatalities_high = sum_fatality(values$high[rows], fatality_missing),
       stringsAsFactors = FALSE
     )
     if (length(by)) cbind(groups, metrics) else metrics
@@ -492,7 +636,8 @@ complete_group_rows <- function(data, groups) {
   stats::complete.cases(data[groups])
 }
 
-summarize_aggregation_groups <- function(data, groups, fatalities, na_rm) {
+summarize_aggregation_groups <- function(data, groups, fatalities,
+                                         fatality_missing) {
   key <- composite_key(data, groups)
   keys <- unique(key)
   group_id <- match(key, keys)
@@ -508,13 +653,107 @@ summarize_aggregation_groups <- function(data, groups, fatalities, na_rm) {
       ))
       metrics$n_fatality_complete <- sum(complete)
       metrics$n_fatality_missing <- sum(!complete)
-      metrics$fatalities_low <- sum_fatality(fatalities$low[rows], na_rm)
-      metrics$fatalities_best <- sum_fatality(fatalities$best[rows], na_rm)
-      metrics$fatalities_high <- sum_fatality(fatalities$high[rows], na_rm)
+      metrics$fatalities_low <- sum_fatality(
+        fatalities$low[rows], fatality_missing
+      )
+      metrics$fatalities_best <- sum_fatality(
+        fatalities$best[rows], fatality_missing
+      )
+      metrics$fatalities_high <- sum_fatality(
+        fatalities$high[rows], fatality_missing
+      )
     }
     cbind(group, metrics)
   })
   tibble::as_tibble(do.call(rbind, parts))
+}
+
+panel_coverage <- function(skeleton, entities, entity, period, coverage) {
+  if (is.null(coverage)) {
+    return(list(
+      in_coverage = rep(TRUE, nrow(skeleton)),
+      specification = list(mode = "assumed_panel_window")
+    ))
+  }
+
+  period_value <- panel_period_value(skeleton, period)
+  if (!is.data.frame(coverage)) {
+    if (length(coverage) != 2L || anyNA(coverage)) {
+      cli::cli_abort(
+        "A vector {.arg coverage} must contain one start and one end boundary."
+      )
+    }
+    first <- panel_coverage_boundary(coverage[[1L]], period, "coverage start")
+    last <- panel_coverage_boundary(coverage[[2L]], period, "coverage end")
+    if (first > last) {
+      cli::cli_abort("The {.arg coverage} start must not be later than its end.")
+    }
+    return(list(
+      in_coverage = period_value >= first & period_value <= last,
+      specification = list(
+        mode = "global", start = coverage[[1L]], end = coverage[[2L]]
+      )
+    ))
+  }
+
+  required <- c(entity, "coverage_start", "coverage_end")
+  absent <- setdiff(required, names(coverage))
+  if (length(absent)) {
+    cli::cli_abort("The {.arg coverage} table is missing columns: {absent}.")
+  }
+  coverage <- as.data.frame(coverage[required], stringsAsFactors = FALSE)
+  if (!nrow(coverage) || anyNA(coverage[entity])) {
+    cli::cli_abort("The {.arg coverage} table must contain non-missing entity keys.")
+  }
+  coverage_key <- composite_key(coverage, entity)
+  if (anyDuplicated(coverage_key)) {
+    cli::cli_abort("Entity keys in the {.arg coverage} table must be unique.")
+  }
+  entity_key <- composite_key(entities, entity)
+  matched_entity <- match(entity_key, coverage_key)
+  if (anyNA(matched_entity)) {
+    cli::cli_abort(c(
+      "The {.arg coverage} table does not describe every panel entity.",
+      "i" = "Missing coverage for {sum(is.na(matched_entity))} entity combination(s)."
+    ))
+  }
+
+  first <- vapply(seq_len(nrow(coverage)), function(i) {
+    panel_coverage_boundary(
+      coverage$coverage_start[i], period, "coverage_start"
+    )
+  }, numeric(1))
+  last <- vapply(seq_len(nrow(coverage)), function(i) {
+    panel_coverage_boundary(
+      coverage$coverage_end[i], period, "coverage_end"
+    )
+  }, numeric(1))
+  if (any(first > last)) {
+    cli::cli_abort("Coverage starts after coverage ends in row(s): {which(first > last)}.")
+  }
+  skeleton_entity <- match(composite_key(skeleton, entity), entity_key)
+  coverage_row <- matched_entity[skeleton_entity]
+  list(
+    in_coverage = period_value >= first[coverage_row] &
+      period_value <= last[coverage_row],
+    specification = list(mode = "entity", rows = nrow(coverage))
+  )
+}
+
+panel_period_value <- function(data, period) {
+  if (period == "year") return(as.numeric(integer_time(data$year, "year")))
+  as.numeric(integer_time(data$year, "year") * 12L +
+               integer_time(data$month, "month"))
+}
+
+panel_coverage_boundary <- function(x, period, argument) {
+  if (length(x) != 1L || is.na(x)) {
+    cli::cli_abort("{.arg {argument}} must contain one non-missing boundary.")
+  }
+  if (period == "year") return(as.numeric(panel_year(x, argument)))
+  value <- panel_month(x, argument)
+  as.numeric(as.integer(format(value, "%Y")) * 12L +
+               as.integer(format(value, "%m")))
 }
 
 panel_universe <- function(data, entity, universe) {

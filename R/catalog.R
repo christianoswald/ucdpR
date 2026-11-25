@@ -7,6 +7,9 @@
 #' @param include_historical Also inspect UCDP's historical-download page? This
 #'   adds earlier annual releases and archived monthly Candidate releases.
 #' @param quiet Suppress status messages?
+#' @param validate Validate the parsed catalog and report empty, malformed, or
+#'   suspiciously incomplete results? Set to `FALSE` only for troubleshooting
+#'   upstream page changes.
 #' @return A tibble with one row per downloadable file.
 #' @export
 #' @examples
@@ -18,15 +21,16 @@
 #' }
 ucdp_catalog <- function(include_documentation = FALSE,
                          include_historical = FALSE,
-                         quiet = FALSE) {
+                         quiet = FALSE, validate = TRUE) {
   stopifnot(is.logical(include_documentation), length(include_documentation) == 1L,
-            is.logical(include_historical), length(include_historical) == 1L)
+            is.logical(include_historical), length(include_historical) == 1L,
+            is.logical(validate), length(validate) == 1L, !is.na(validate))
   pages <- c(current = .ucdp_base)
   if (isTRUE(include_historical)) pages <- c(pages, historical = .ucdp_history)
 
   out <- lapply(names(pages), function(source) {
     if (!quiet) cli::cli_inform("Reading the UCDP {.val {source}} catalog...")
-    parse_catalog_page(pages[[source]], source)
+    parse_catalog_page(pages[[source]], source, validate = validate)
   })
   out <- do.call(rbind, out)
   rownames(out) <- NULL
@@ -37,7 +41,7 @@ ucdp_catalog <- function(include_documentation = FALSE,
   out
 }
 
-parse_catalog_page <- function(url, source = "current") {
+parse_catalog_page <- function(url, source = "current", validate = TRUE) {
   response <- tryCatch(
     ucdp_request(url) |> httr2::req_perform(),
     error = function(e) cli::cli_abort(
@@ -46,8 +50,16 @@ parse_catalog_page <- function(url, source = "current") {
     )
   )
   page <- httr2::resp_body_html(response)
+  parse_catalog_html(page, url, source, validate = validate)
+}
+
+parse_catalog_html <- function(page, url, source = "current", validate = TRUE) {
   links <- rvest::html_elements(page, "a[href]")
-  if (!length(links)) return(empty_catalog())
+  if (!length(links)) {
+    out <- empty_catalog()
+    if (validate) validate_catalog_result(out, source, url)
+    return(out)
+  }
 
   rows <- lapply(links, function(link) {
     label <- clean_text(xml2::xml_text(link))
@@ -89,8 +101,57 @@ parse_catalog_page <- function(url, source = "current") {
     )
   })
   rows <- Filter(Negate(is.null), rows)
-  if (!length(rows)) return(empty_catalog())
-  unique(do.call(rbind, rows))
+  out <- if (!length(rows)) empty_catalog() else unique(do.call(rbind, rows))
+  out <- tibble::as_tibble(out)
+  if (validate) validate_catalog_result(out, source, url)
+  out
+}
+
+validate_catalog_result <- function(catalog, source, url,
+                                    minimum = if (source == "current") 5L else 2L) {
+  required <- c(
+    "dataset", "version", "variant", "section", "format", "url",
+    "file_name", "source"
+  )
+  absent <- setdiff(required, names(catalog))
+  if (length(absent)) {
+    cli::cli_abort(c(
+      "The parsed UCDP {.val {source}} catalog has an invalid structure.",
+      "x" = "Missing columns: {paste(absent, collapse = ', ')}.",
+      "i" = "Source page: {.url {url}}"
+    ))
+  }
+  if (!nrow(catalog)) {
+    cli::cli_abort(c(
+      "The UCDP {.val {source}} catalog did not contain any usable downloads.",
+      "i" = "The upstream page structure may have changed: {.url {url}}",
+      "i" = "Please report the page and package version at {.url https://github.com/christianoswald/ucdpR/issues}."
+    ))
+  }
+
+  invalid_dataset <- is.na(catalog$dataset) | !nzchar(trimws(catalog$dataset))
+  invalid_url <- is.na(catalog$url) | !grepl("^https?://", catalog$url)
+  invalid_file <- is.na(catalog$file_name) | !nzchar(trimws(catalog$file_name))
+  invalid_format <- is.na(catalog$format) | catalog$format %in% c("", "other")
+  invalid_source <- is.na(catalog$source) | catalog$source != source
+  invalid <- invalid_dataset | invalid_url | invalid_file | invalid_format |
+    invalid_source
+  if (any(invalid)) {
+    cli::cli_abort(c(
+      "The parsed UCDP {.val {source}} catalog contains malformed rows.",
+      "x" = "Invalid rows: {paste(which(invalid), collapse = ', ')}.",
+      "i" = "Source page: {.url {url}}"
+    ))
+  }
+
+  if (nrow(catalog) < minimum) {
+    cli::cli_warn(c(
+      "The UCDP {.val {source}} catalog appears unexpectedly small ({nrow(catalog)} rows).",
+      "i" = "At least {minimum} usable download rows were expected.",
+      "i" = "The upstream page structure may have changed: {.url {url}}"
+    ))
+  }
+  invisible(catalog)
 }
 
 canonical_dataset <- function(dataset, url) {

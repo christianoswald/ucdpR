@@ -35,10 +35,43 @@ test_that("fatality summaries expose missing-value behavior", {
   x <- data.frame(low = c(1, NA), best = c(2, 3), high = c(3, 4))
   removed <- ucdp_fatalities(x, na_rm = TRUE)
   retained <- ucdp_fatalities(x, na_rm = FALSE)
+  explicit <- ucdp_fatalities(x, fatality_missing = "propagate")
 
   expect_equal(removed$fatalities_low, 1)
   expect_true(is.na(retained$fatalities_low))
+  expect_true(is.na(explicit$fatalities_low))
   expect_equal(removed$n_complete, 1)
+  expect_equal(attr(removed, "ucdp_fatality_missing"), "remove")
+  expect_equal(attr(explicit, "ucdp_fatality_missing"), "propagate")
+  expect_error(
+    ucdp_fatalities(x, fatality_missing = "error"),
+    "Missing fatality estimates"
+  )
+})
+
+test_that("all-missing fatality groups remain unknown", {
+  x <- data.frame(
+    group = c("A", "A"), low = c(NA, NA),
+    best = c(NA, NA), high = c(NA, NA)
+  )
+  out <- ucdp_fatalities(x, by = "group", fatality_missing = "remove")
+  expect_true(all(is.na(out[c(
+    "fatalities_low", "fatalities_best", "fatalities_high"
+  )])))
+  expect_equal(out$n_missing, 2)
+})
+
+test_that("partial totals report inconsistent aggregated bounds", {
+  x <- data.frame(
+    low = c(4, 4), best = c(5, NA), high = c(6, 6)
+  )
+  expect_warning(
+    out <- ucdp_fatalities(x, fatality_missing = "remove"),
+    "Aggregated fatality bounds are inconsistent"
+  )
+  expect_equal(out$fatalities_low, 8)
+  expect_equal(out$fatalities_best, 5)
+  expect_equal(out$n_missing, 1)
 })
 
 test_that("fatality summaries validate columns and intervals", {
@@ -112,6 +145,63 @@ test_that("aggregation handles incomplete keys explicitly", {
   )
 })
 
+test_that("aggregation detects exact and conflicting duplicate event keys", {
+  exact <- data.frame(
+    event_id = c(1, 1), country_id = c(1, 1), year = c(2020, 2020)
+  )
+  expect_error(
+    ucdp_aggregate(exact, "country-year", include_fatalities = FALSE),
+    "1 key.*2 row"
+  )
+
+  conflicting <- data.frame(
+    event_id = c(1, 1), country_id = c(1, 1), year = c(2020, 2020),
+    note = c("first", "revised")
+  )
+  expect_error(
+    ucdp_aggregate(conflicting, "country-year", include_fatalities = FALSE),
+    "conflicting"
+  )
+})
+
+test_that("duplicate policy is explicit and recorded", {
+  x <- data.frame(
+    event_id = c(1, 1), country_id = c(1, 1), year = c(2020, 2020),
+    note = c("first", "revised")
+  )
+  expect_warning(
+    warned <- ucdp_aggregate(
+      x, "country-year", include_fatalities = FALSE, duplicates = "warn"
+    ),
+    "Duplicate event keys"
+  )
+  allowed <- ucdp_aggregate(
+    x, "country-year", include_fatalities = FALSE, duplicates = "allow"
+  )
+  expect_equal(warned$n_events, 2)
+  expect_equal(allowed$n_events, 2)
+  report <- attr(allowed, "ucdp_aggregation")$duplicate_report
+  expect_equal(report$duplicate_keys, 1)
+  expect_equal(report$conflicting_keys, 1)
+})
+
+test_that("compound event keys are supported and entity IDs are not inferred", {
+  x <- data.frame(
+    source = c("A", "B", "A"), event = c(1, 1, 2),
+    country_id = c(1, 1, 1), year = c(2020, 2020, 2021)
+  )
+  out <- ucdp_aggregate(
+    x, "country-year", event_id = c("source", "event"),
+    include_fatalities = FALSE
+  )
+  expect_equal(out$n_events, c(2, 1))
+
+  entity <- data.frame(id = c(1, 1), year = c(2020, 2021))
+  expect_no_error(ucdp_aggregate(
+    entity, "conflict-year", id = "id", include_fatalities = FALSE
+  ))
+})
+
 test_that("yearly panels insert labelled zero-filled periods", {
   x <- data.frame(
     country_id = c(1, 1, 2), year = c(2020, 2022, 2021),
@@ -158,6 +248,83 @@ test_that("monthly panels accept explicit boundaries", {
   )
   expect_equal(out$month, 1:3)
   expect_equal(out$n_events, c(1, 0, 1))
+})
+
+test_that("global coverage separates structural zeroes from unavailable periods", {
+  x <- data.frame(country_id = c(1, 1), year = c(2020, 2022))
+  out <- ucdp_panel(
+    x, "country-year", start = 2019, end = 2023,
+    coverage = c(2020, 2022), include_fatalities = FALSE
+  )
+  expect_equal(
+    out$.ucdp_fill,
+    c("outside_coverage", "observed", "zero_filled", "observed",
+      "outside_coverage")
+  )
+  expect_true(all(is.na(out$n_events[out$year %in% c(2019, 2023)])))
+  expect_equal(out$n_events[out$year == 2021], 0)
+  expect_equal(out$.ucdp_in_coverage, c(FALSE, TRUE, TRUE, TRUE, FALSE))
+})
+
+test_that("entity-specific coverage is respected", {
+  x <- data.frame(country_id = c(1, 2), year = c(2020, 2021))
+  coverage <- data.frame(
+    country_id = c(1, 2),
+    coverage_start = c(2020, 2021), coverage_end = c(2021, 2022)
+  )
+  out <- ucdp_panel(
+    x, "country-year", start = 2020, end = 2022,
+    coverage = coverage, include_fatalities = FALSE
+  )
+  one <- out[out$country_id == 1, ]
+  two <- out[out$country_id == 2, ]
+  expect_equal(one$.ucdp_fill, c("observed", "zero_filled", "outside_coverage"))
+  expect_equal(two$.ucdp_fill, c("outside_coverage", "observed", "zero_filled"))
+})
+
+test_that("monthly coverage preserves Date boundaries", {
+  x <- data.frame(
+    dyad_id = c(1, 1), year = c(2020, 2020), month = c(2, 4)
+  )
+  coverage <- data.frame(
+    dyad_id = 1,
+    coverage_start = as.Date("2020-02-01"),
+    coverage_end = as.Date("2020-04-01")
+  )
+  out <- ucdp_panel(
+    x, "dyad-month", start = "2020-01", end = "2020-05",
+    coverage = coverage, include_fatalities = FALSE
+  )
+  expect_equal(
+    out$.ucdp_fill,
+    c("outside_coverage", "observed", "zero_filled", "observed",
+      "outside_coverage")
+  )
+})
+
+test_that("declared coverage is validated", {
+  x <- data.frame(country_id = c(1, 1), year = c(2020, 2022))
+  expect_error(
+    ucdp_panel(
+      x, "country-year", start = 2020, end = 2022,
+      coverage = c(2021, 2022), include_fatalities = FALSE
+    ),
+    "Observed panel rows fall outside"
+  )
+  expect_error(
+    ucdp_panel(
+      x, "country-year", coverage = data.frame(country_id = 1),
+      include_fatalities = FALSE
+    ),
+    "missing columns"
+  )
+  expect_error(
+    ucdp_panel(
+      x, "country-year", coverage = c(2022, 2020),
+      include_fatalities = FALSE
+    ),
+    "start must not be later"
+  )
 })
 
 test_that("panel construction validates its specification", {

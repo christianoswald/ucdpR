@@ -13,12 +13,16 @@ ucdp_panel(
   start = NULL,
   end = NULL,
   universe = NULL,
+  coverage = NULL,
   fill = c("zero", "missing"),
   include_fatalities = TRUE,
   low = NULL,
   best = NULL,
   high = NULL,
   na_rm = TRUE,
+  fatality_missing = NULL,
+  event_id = NULL,
+  duplicates = c("error", "warn", "allow"),
   missing = c("drop", "error")
 )
 }
@@ -39,15 +43,26 @@ observed range.}
 entity key or a data frame containing all entity and \code{by} columns. The
 default uses combinations observed at least once in \code{data}.}
 
+\item{coverage}{Optional observational coverage. Supply a two-element vector
+containing global start and end boundaries, or a data frame containing all
+entity columns plus \code{coverage_start} and \code{coverage_end}. Rows outside
+declared coverage remain missing even when \code{fill = "zero"}. When \code{NULL},
+the complete requested panel window is assumed to be covered for backward
+compatibility.}
+
 \item{fill}{Should inserted combinations contain explicit zeroes in numeric
 aggregate columns or missing values?}
+
+\item{fatality_missing, event_id, duplicates}{Passed to
+\code{\link[=ucdp_aggregate]{ucdp_aggregate()}} when raw data are supplied.}
 
 \item{missing}{Passed to \code{\link[=ucdp_aggregate]{ucdp_aggregate()}} for raw data.}
 }
 \value{
 A complete panel tibble. \code{.ucdp_observed} is \code{TRUE} only for groups
-present in the aggregated input; \code{.ucdp_fill} is \code{"observed"},
-\code{"zero_filled"}, or \code{"missing"}.
+present in the aggregated input; \code{.ucdp_in_coverage} records declared
+observational coverage; and \code{.ucdp_fill} is \code{"observed"},
+\code{"zero_filled"}, \code{"missing"}, or \code{"outside_coverage"}.
 }
 \description{
 \code{ucdp_panel()} completes the entity-period combinations in an aggregated
@@ -61,7 +76,9 @@ events <- data.frame(
   low = c(0, 1, 2), best = c(1, 2, 3), high = c(2, 3, 4)
 )
 panel <- ucdp_panel(
-  events, unit = "country-year", start = 2020, end = 2022
+  events, unit = "country-year", start = 2019, end = 2023,
+  coverage = c(2020, 2022)
 )
-panel[c("country_id", "year", "n_events", ".ucdp_fill")]
+panel[c("country_id", "year", "n_events", ".ucdp_in_coverage",
+        ".ucdp_fill")]
 }

@@ -1,3 +1,21 @@
+# ucdpR 0.7.4
+
+* Added explicit global and entity-specific observational coverage to
+  `ucdp_panel()`. Panel rows outside declared coverage remain missing and are
+  labelled `"outside_coverage"`, preventing them from being mistaken for
+  structural zeroes.
+* Added pre-aggregation duplicate event-key detection to `ucdp_aggregate()`.
+  Exact and conflicting duplicate records are distinguished, with explicit
+  error, warning, and allow policies.
+* Defined missing-value semantics for fatality aggregation through
+  `fatality_missing = "remove"`, `"propagate"`, or `"error"`, while retaining
+  `na_rm` for backward compatibility and reporting partial-total diagnostics.
+* Added defensive validation of live catalog discovery. Empty or malformed
+  catalogs now fail informatively, while unexpectedly small results warn about
+  possible upstream page changes.
+* Expanded offline fixtures, regression tests, examples, and vignette guidance
+  for these data-integrity safeguards.
+
 # ucdpR 0.7.3
 
 * Downloads now complete in a temporary file before replacing their final

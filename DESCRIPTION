@@ -1,6 +1,6 @@
 Package: ucdpR
 Title: Access and Work with Uppsala Conflict Data Program Data
-Version: 0.7.3
+Version: 0.7.4
 Authors@R: person(
     "Christian", "Oswald",
     email = "christian.oswald@unibw.de",

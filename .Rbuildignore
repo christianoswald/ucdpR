@@ -12,6 +12,7 @@
 ^LICENSE\.md$
 ^ucdpR\.Rproj$
 ^data-raw$
+^pkgdown$
 
 ^\.Rproj\.user$
 ^\.positai$

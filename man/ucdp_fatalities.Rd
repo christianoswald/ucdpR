@@ -11,6 +11,7 @@ ucdp_fatalities(
   best = NULL,
   high = NULL,
   na_rm = TRUE,
+  fatality_missing = NULL,
   missing = c("drop", "error")
 )
 }
@@ -22,9 +23,15 @@ ucdp_fatalities(
 \item{low, best, high}{Optional column names for the three estimates. Supply
 all three or none. When omitted, common UCDP names are detected.}
 
-\item{na_rm}{If \code{TRUE}, sum the available estimates, but return \code{NA} when a
-group contains no observed value for an estimate. If \code{FALSE}, any missing
-value makes the corresponding group total \code{NA}.}
+\item{na_rm}{Backward-compatible logical control for missing fatality
+values. \code{TRUE} corresponds to \code{fatality_missing = "remove"}; \code{FALSE}
+corresponds to \code{fatality_missing = "propagate"}.}
+
+\item{fatality_missing}{Explicit missing-value policy for fatality sums.
+\code{"remove"} returns partial totals together with completeness counts,
+\code{"propagate"} returns \code{NA} when any contributing estimate is missing, and
+\code{"error"} stops before aggregation. When \code{NULL}, \code{na_rm} determines the
+policy.}
 
 \item{missing}{How to handle missing grouping values: drop their rows or
 raise an error.}

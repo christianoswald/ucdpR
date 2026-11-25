@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: "If you use ucdpR in research, please cite the package and the UCDP datasets used."
 type: software
 title: "ucdpR: Access and Work with Uppsala Conflict Data Program Data"
-version: 0.7.3
-date-released: 2026-11-15
+version: 0.7.4
+date-released: 2026-11-25
 license: GPL-3.0-or-later
 authors:
   - family-names: Oswald
