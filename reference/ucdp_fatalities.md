@@ -15,6 +15,7 @@ ucdp_fatalities(
   best = NULL,
   high = NULL,
   na_rm = TRUE,
+  fatality_missing = NULL,
   missing = c("drop", "error")
 )
 ```
@@ -36,9 +37,16 @@ ucdp_fatalities(
 
 - na_rm:
 
-  If `TRUE`, sum the available estimates, but return `NA` when a group
-  contains no observed value for an estimate. If `FALSE`, any missing
-  value makes the corresponding group total `NA`.
+  Backward-compatible logical control for missing fatality values.
+  `TRUE` corresponds to `fatality_missing = "remove"`; `FALSE`
+  corresponds to `fatality_missing = "propagate"`.
+
+- fatality_missing:
+
+  Explicit missing-value policy for fatality sums. `"remove"` returns
+  partial totals together with completeness counts, `"propagate"`
+  returns `NA` when any contributing estimate is missing, and `"error"`
+  stops before aggregation. When `NULL`, `na_rm` determines the policy.
 
 - missing:
 

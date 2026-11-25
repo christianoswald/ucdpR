@@ -13,7 +13,7 @@ zero-filled combinations are never indistinguishable from source groups."><meta 
 
     <a class="navbar-brand me-2" href="../index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,12 +66,16 @@ zero-filled combinations are never indistinguishable from source groups.</p>
 <span>  start <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  end <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  universe <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  coverage <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"zero"</span>, <span class="st">"missing"</span><span class="op">)</span>,</span>
 <span>  include_fatalities <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  low <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  best <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  high <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  na_rm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  fatality_missing <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  event_id <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  duplicates <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"error"</span>, <span class="st">"warn"</span>, <span class="st">"allow"</span><span class="op">)</span>,</span>
 <span>  missing <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"drop"</span>, <span class="st">"error"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -106,9 +110,23 @@ entity key or a data frame containing all entity and <code>by</code> columns. Th
 default uses combinations observed at least once in <code>data</code>.</p></dd>
 
 
+<dt id="arg-coverage">coverage<a class="anchor" aria-label="anchor" href="#arg-coverage"></a></dt>
+<dd><p>Optional observational coverage. Supply a two-element vector
+containing global start and end boundaries, or a data frame containing all
+entity columns plus <code>coverage_start</code> and <code>coverage_end</code>. Rows outside
+declared coverage remain missing even when <code>fill = "zero"</code>. When <code>NULL</code>,
+the complete requested panel window is assumed to be covered for backward
+compatibility.</p></dd>
+
+
 <dt id="arg-fill">fill<a class="anchor" aria-label="anchor" href="#arg-fill"></a></dt>
 <dd><p>Should inserted combinations contain explicit zeroes in numeric
 aggregate columns or missing values?</p></dd>
+
+
+<dt id="arg-fatality-missing-event-id-duplicates">fatality_missing, event_id, duplicates<a class="anchor" aria-label="anchor" href="#arg-fatality-missing-event-id-duplicates"></a></dt>
+<dd><p>Passed to
+<code><a href="ucdp_aggregate.html">ucdp_aggregate()</a></code> when raw data are supplied.</p></dd>
 
 
 <dt id="arg-missing">missing<a class="anchor" aria-label="anchor" href="#arg-missing"></a></dt>
@@ -118,8 +136,9 @@ aggregate columns or missing values?</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A complete panel tibble. <code>.ucdp_observed</code> is <code>TRUE</code> only for groups
-present in the aggregated input; <code>.ucdp_fill</code> is <code>"observed"</code>,
-<code>"zero_filled"</code>, or <code>"missing"</code>.</p>
+present in the aggregated input; <code>.ucdp_in_coverage</code> records declared
+observational coverage; and <code>.ucdp_fill</code> is <code>"observed"</code>,
+<code>"zero_filled"</code>, <code>"missing"</code>, or <code>"outside_coverage"</code>.</p>
     </div>
 
     <div class="section level2">
@@ -129,18 +148,24 @@ present in the aggregated input; <code>.ucdp_fill</code> is <code>"observed"</co
 <span class="r-in"><span>  low <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, best <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>, high <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">panel</span> <span class="op">&lt;-</span> <span class="fu">ucdp_panel</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">events</span>, unit <span class="op">=</span> <span class="st">"country-year"</span>, start <span class="op">=</span> <span class="fl">2020</span>, end <span class="op">=</span> <span class="fl">2022</span></span></span>
+<span class="r-in"><span>  <span class="va">events</span>, unit <span class="op">=</span> <span class="st">"country-year"</span>, start <span class="op">=</span> <span class="fl">2019</span>, end <span class="op">=</span> <span class="fl">2023</span>,</span></span>
+<span class="r-in"><span>  coverage <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2020</span>, <span class="fl">2022</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">panel</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"country_id"</span>, <span class="st">"year"</span>, <span class="st">"n_events"</span>, <span class="st">".ucdp_fill"</span><span class="op">)</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   country_id  year n_events .ucdp_fill </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>          1  <span style="text-decoration: underline;">2</span>020        1 observed   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>          1  <span style="text-decoration: underline;">2</span>021        0 zero_filled</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>          1  <span style="text-decoration: underline;">2</span>022        1 observed   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>          2  <span style="text-decoration: underline;">2</span>020        0 zero_filled</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>          2  <span style="text-decoration: underline;">2</span>021        1 observed   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>          2  <span style="text-decoration: underline;">2</span>022        0 zero_filled</span>
+<span class="r-in"><span><span class="va">panel</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"country_id"</span>, <span class="st">"year"</span>, <span class="st">"n_events"</span>, <span class="st">".ucdp_in_coverage"</span>,</span></span>
+<span class="r-in"><span>        <span class="st">".ucdp_fill"</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 10 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    country_id  year n_events .ucdp_in_coverage .ucdp_fill      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>          1  <span style="text-decoration: underline;">2</span>019       <span style="color: #BB0000;">NA</span> FALSE             outside_coverage</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>          1  <span style="text-decoration: underline;">2</span>020        1 TRUE              observed        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>          1  <span style="text-decoration: underline;">2</span>021        0 TRUE              zero_filled     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>          1  <span style="text-decoration: underline;">2</span>022        1 TRUE              observed        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>          1  <span style="text-decoration: underline;">2</span>023       <span style="color: #BB0000;">NA</span> FALSE             outside_coverage</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>          2  <span style="text-decoration: underline;">2</span>019       <span style="color: #BB0000;">NA</span> FALSE             outside_coverage</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>          2  <span style="text-decoration: underline;">2</span>020        0 TRUE              zero_filled     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>          2  <span style="text-decoration: underline;">2</span>021        1 TRUE              observed        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>          2  <span style="text-decoration: underline;">2</span>022        0 TRUE              zero_filled     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>          2  <span style="text-decoration: underline;">2</span>023       <span style="color: #BB0000;">NA</span> FALSE             outside_coverage</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

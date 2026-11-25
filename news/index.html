@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,6 +41,14 @@
       <small>Source: <a href="https://github.com/christianoswald/ucdpR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.7.4" id="ucdpr-074">ucdpR 0.7.4<a class="anchor" aria-label="anchor" href="#ucdpr-074"></a></h2>
+<ul><li>Added explicit global and entity-specific observational coverage to <code><a href="../reference/ucdp_panel.html">ucdp_panel()</a></code>. Panel rows outside declared coverage remain missing and are labelled <code>"outside_coverage"</code>, preventing them from being mistaken for structural zeroes.</li>
+<li>Added pre-aggregation duplicate event-key detection to <code><a href="../reference/ucdp_aggregate.html">ucdp_aggregate()</a></code>. Exact and conflicting duplicate records are distinguished, with explicit error, warning, and allow policies.</li>
+<li>Defined missing-value semantics for fatality aggregation through <code>fatality_missing = "remove"</code>, <code>"propagate"</code>, or <code>"error"</code>, while retaining <code>na_rm</code> for backward compatibility and reporting partial-total diagnostics.</li>
+<li>Added defensive validation of live catalog discovery. Empty or malformed catalogs now fail informatively, while unexpectedly small results warn about possible upstream page changes.</li>
+<li>Expanded offline fixtures, regression tests, examples, and vignette guidance for these data-integrity safeguards.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.7.3" id="ucdpr-073">ucdpR 0.7.3<a class="anchor" aria-label="anchor" href="#ucdpr-073"></a></h2>
 <ul><li>Downloads now complete in a temporary file before replacing their final destination, so failed overwrite attempts preserve existing files.</li>

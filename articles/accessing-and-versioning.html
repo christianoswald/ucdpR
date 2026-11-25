@@ -24,7 +24,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -110,6 +110,10 @@ access.</p>
 rather than relying on a hard-coded package inventory. A
 regular-expression search can then narrow the catalog by dataset,
 variant, version, or section.</p>
+<p>Catalog discovery is checked for empty, malformed, and unexpectedly
+small results so that upstream page changes are reported instead of
+silently returning a misleading inventory. <code>validate = FALSE</code>
+is intended only for diagnosing such upstream changes.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/ucdp_search.html">ucdp_search</a></span><span class="op">(</span><span class="st">"Georeferenced|GED"</span>, <span class="va">catalog</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 8</span></span></span>

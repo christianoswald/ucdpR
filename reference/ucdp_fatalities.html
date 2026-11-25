@@ -13,7 +13,7 @@ bd_low/bd_best/bd_high."><meta property="og:image" content="https://christianosw
 
     <a class="navbar-brand me-2" href="../index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,6 +64,7 @@ common UCDP triplets such as <code>low</code>/<code>best</code>/<code>high</code
 <span>  best <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  high <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  na_rm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  fatality_missing <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  missing <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"drop"</span>, <span class="st">"error"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -86,9 +87,17 @@ all three or none. When omitted, common UCDP names are detected.</p></dd>
 
 
 <dt id="arg-na-rm">na_rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>
-<dd><p>If <code>TRUE</code>, sum the available estimates, but return <code>NA</code> when a
-group contains no observed value for an estimate. If <code>FALSE</code>, any missing
-value makes the corresponding group total <code>NA</code>.</p></dd>
+<dd><p>Backward-compatible logical control for missing fatality
+values. <code>TRUE</code> corresponds to <code>fatality_missing = "remove"</code>; <code>FALSE</code>
+corresponds to <code>fatality_missing = "propagate"</code>.</p></dd>
+
+
+<dt id="arg-fatality-missing">fatality_missing<a class="anchor" aria-label="anchor" href="#arg-fatality-missing"></a></dt>
+<dd><p>Explicit missing-value policy for fatality sums.
+<code>"remove"</code> returns partial totals together with completeness counts,
+<code>"propagate"</code> returns <code>NA</code> when any contributing estimate is missing, and
+<code>"error"</code> stops before aggregation. When <code>NULL</code>, <code>na_rm</code> determines the
+policy.</p></dd>
 
 
 <dt id="arg-missing">missing<a class="anchor" aria-label="anchor" href="#arg-missing"></a></dt>

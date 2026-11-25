@@ -19,6 +19,9 @@ ucdp_aggregate(
   best = NULL,
   high = NULL,
   na_rm = TRUE,
+  fatality_missing = NULL,
+  event_id = NULL,
+  duplicates = c("error", "warn", "allow"),
   missing = c("drop", "error")
 )
 ```
@@ -60,10 +63,22 @@ ucdp_aggregate(
   Optional fatality columns passed to the same detection logic as
   [`ucdp_fatalities()`](https://christianoswald.github.io/ucdpR/reference/ucdp_fatalities.md).
 
-- na_rm:
+- na_rm, fatality_missing:
 
   Missing-value behavior for fatality sums; see
   [`ucdp_fatalities()`](https://christianoswald.github.io/ucdpR/reference/ucdp_fatalities.md).
+
+- event_id:
+
+  Optional event-identifier column or columns used to detect accidental
+  duplicates before aggregation. When omitted, `event_id` or `id` is
+  detected when present.
+
+- duplicates:
+
+  How to handle duplicated event keys: stop, warn and continue, or allow
+  them explicitly. The check is skipped when no event key can be
+  identified.
 
 - missing:
 
@@ -80,11 +95,14 @@ aggregation specification are attached as attributes.
 
 ``` r
 events <- data.frame(
+  event_id = 1:4,
   country_id = c(1, 1, 1, 2), country = c("A", "A", "A", "B"),
   year = c(2020, 2020, 2021, 2020),
   low = c(0, 1, 2, 1), best = c(1, 2, 3, 2), high = c(2, 3, 4, 3)
 )
-ucdp_aggregate(events, unit = "country-year")
+ucdp_aggregate(
+  events, unit = "country-year", fatality_missing = "propagate"
+)
 #> # A tibble: 3 × 9
 #>   country_id country  year n_events n_fatality_complete n_fatality_missing
 #>        <dbl> <chr>   <int>    <int>               <int>              <int>

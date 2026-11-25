@@ -177,17 +177,25 @@ estimates to country, PRIO-GRID, conflict, or dyad units:
 
 ``` r
 
-country_year <- ucdp_aggregate(ged, unit = "country-year")
+country_year <- ucdp_aggregate(
+  ged,
+  unit = "country-year",
+  fatality_missing = "propagate"
+)
 
 fatalities <- ucdp_fatalities(
   ged,
-  by = c("country_id", "country", "year")
+  by = c("country_id", "country", "year"),
+  fatality_missing = "propagate"
 )
 ```
 
 Yearly and monthly units are supported. For monthly aggregation,
 existing `year` and `month` columns are used when available; otherwise
-the period can be derived from a date column.
+the period can be derived from a date column. Duplicate event
+identifiers are rejected by default to prevent accidental double
+counting. Fatality missingness can be propagated, removed with
+completeness counts, or treated as an error.
 
 Construct a complete panel directly from raw data or from an
 aggregation:
@@ -199,9 +207,15 @@ country_panel <- ucdp_panel(
   unit = "country-year",
   start = 1989,
   end = 2025,
+  coverage = c(1989, 2025),
   fill = "zero"
 )
 ```
+
+The `.ucdp_in_coverage` and `.ucdp_fill` columns distinguish inserted
+structural zeroes from periods outside declared observational coverage.
+An entity-specific coverage table can be supplied when coverage differs
+across panel units.
 
 Inserted rows are marked with `.ucdp_observed = FALSE` and
 `.ucdp_fill = "zero_filled"`. This distinction is important: a

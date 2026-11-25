@@ -39,6 +39,11 @@ reads UCDP’s official download pages rather than relying on a hard-coded
 package inventory. A regular-expression search can then narrow the
 catalog by dataset, variant, version, or section.
 
+Catalog discovery is checked for empty, malformed, and unexpectedly
+small results so that upstream page changes are reported instead of
+silently returning a misleading inventory. `validate = FALSE` is
+intended only for diagnosing such upstream changes.
+
 ``` r
 
 ucdp_search("Georeferenced|GED", catalog)

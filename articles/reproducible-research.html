@@ -24,7 +24,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -160,7 +160,11 @@ automated pipelines.</p>
 triplet rather than reducing every observation to its best estimate
 alone.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/ucdp_fatalities.html">ucdp_fatalities</a></span><span class="op">(</span><span class="va">conflicts</span>, by <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/ucdp_fatalities.html">ucdp_fatalities</a></span><span class="op">(</span></span>
+<span>  <span class="va">conflicts</span>,</span>
+<span>  by <span class="op">=</span> <span class="st">"year"</span>,</span>
+<span>  fatality_missing <span class="op">=</span> <span class="st">"propagate"</span></span>
+<span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 7</span></span></span>
 <span><span class="co">#&gt;    year n_observations n_complete n_missing fatalities_low fatalities_best</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
@@ -170,7 +174,8 @@ alone.</p>
 <span></span>
 <span><span class="va">conflict_year</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ucdp_aggregate.html">ucdp_aggregate</a></span><span class="op">(</span></span>
 <span>  <span class="va">conflicts</span>,</span>
-<span>  unit <span class="op">=</span> <span class="st">"conflict-year"</span></span>
+<span>  unit <span class="op">=</span> <span class="st">"conflict-year"</span>,</span>
+<span>  fatality_missing <span class="op">=</span> <span class="st">"propagate"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">conflict_year</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 8</span></span></span>
@@ -185,7 +190,15 @@ alone.</p>
 dyad units with yearly or monthly periods. Common entity and fatality
 columns are detected, while <code>id</code>, <code>date</code>,
 <code>low</code>, <code>best</code>, and <code>high</code> provide
-explicit overrides.</p>
+explicit overrides. If <code>event_id</code> or <code>id</code> is
+present, duplicated event identifiers stop aggregation by default;
+<code>event_id</code> can name a compound key. This protects event
+counts and fatality totals from accidental double counting.</p>
+<p>The fatality policy is explicit.
+<code>fatality_missing = "propagate"</code> treats a group total as
+unknown if any contributing estimate is missing; <code>"remove"</code>
+produces a partial total and reports completeness counts; and
+<code>"error"</code> stops when missing estimates occur.</p>
 </div>
 <div class="section level2">
 <h2 id="construct-complete-panels-transparently">Construct complete panels transparently<a class="anchor" aria-label="anchor" href="#construct-complete-panels-transparently"></a>
@@ -200,26 +213,39 @@ explicit overrides.</p>
 <span><span class="va">panel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ucdp_panel.html">ucdp_panel</a></span><span class="op">(</span></span>
 <span>  <span class="va">panel_events</span>,</span>
 <span>  unit <span class="op">=</span> <span class="st">"conflict-year"</span>,</span>
-<span>  start <span class="op">=</span> <span class="fl">2020</span>,</span>
-<span>  end <span class="op">=</span> <span class="fl">2022</span>,</span>
+<span>  start <span class="op">=</span> <span class="fl">2019</span>,</span>
+<span>  end <span class="op">=</span> <span class="fl">2023</span>,</span>
+<span>  coverage <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2020</span>, <span class="fl">2022</span><span class="op">)</span>,</span>
 <span>  fill <span class="op">=</span> <span class="st">"zero"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">panel</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"conflict_id"</span>, <span class="st">"year"</span>, <span class="st">"n_events"</span>, <span class="st">".ucdp_observed"</span>, <span class="st">".ucdp_fill"</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 5</span></span></span>
-<span><span class="co">#&gt;   conflict_id  year n_events .ucdp_observed .ucdp_fill </span></span>
-<span><span class="co">#&gt;         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>           1  <span style="text-decoration: underline;">2</span>020        1 TRUE           observed   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>           1  <span style="text-decoration: underline;">2</span>021        0 FALSE          zero_filled</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>           1  <span style="text-decoration: underline;">2</span>022        1 TRUE           observed   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>           2  <span style="text-decoration: underline;">2</span>020        0 FALSE          zero_filled</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>           2  <span style="text-decoration: underline;">2</span>021        1 TRUE           observed   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>           2  <span style="text-decoration: underline;">2</span>022        0 FALSE          zero_filled</span></span></code></pre></div>
+<span><span class="va">panel</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"conflict_id"</span>, <span class="st">"year"</span>, <span class="st">"n_events"</span>, <span class="st">".ucdp_observed"</span>,</span>
+<span>  <span class="st">".ucdp_in_coverage"</span>, <span class="st">".ucdp_fill"</span></span>
+<span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 10 × 6</span></span></span>
+<span><span class="co">#&gt;    conflict_id  year n_events .ucdp_observed .ucdp_in_coverage .ucdp_fill      </span></span>
+<span><span class="co">#&gt;          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>           1  <span style="text-decoration: underline;">2</span>019       <span style="color: #BB0000;">NA</span> FALSE          FALSE             outside_coverage</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>           1  <span style="text-decoration: underline;">2</span>020        1 TRUE           TRUE              observed        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>           1  <span style="text-decoration: underline;">2</span>021        0 FALSE          TRUE              zero_filled     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>           1  <span style="text-decoration: underline;">2</span>022        1 TRUE           TRUE              observed        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>           1  <span style="text-decoration: underline;">2</span>023       <span style="color: #BB0000;">NA</span> FALSE          FALSE             outside_coverage</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>           2  <span style="text-decoration: underline;">2</span>019       <span style="color: #BB0000;">NA</span> FALSE          FALSE             outside_coverage</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>           2  <span style="text-decoration: underline;">2</span>020        0 FALSE          TRUE              zero_filled     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>           2  <span style="text-decoration: underline;">2</span>021        1 TRUE           TRUE              observed        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>           2  <span style="text-decoration: underline;">2</span>022        0 FALSE          TRUE              zero_filled     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>           2  <span style="text-decoration: underline;">2</span>023       <span style="color: #BB0000;">NA</span> FALSE          FALSE             outside_coverage</span></span></code></pre></div>
 <p>Rows introduced to complete the panel remain identifiable. A
 zero-filled row does not prove that UCDP observed a true zero; it
-records the analyst’s chosen completion rule. Use
-<code>fill = "missing"</code> when unobserved combinations should remain
-missing, and supply <code>universe</code> when the panel must include
-entities that never appear in the event data.</p>
+records the analyst’s chosen completion rule. Supplying
+<code>coverage</code> prevents periods outside the dataset’s declared
+observational window from being turned into structural zeroes. These
+rows have <code>.ucdp_in_coverage = FALSE</code>,
+<code>.ucdp_fill = "outside_coverage"</code>, and missing measures.
+Coverage can be global, as above, or entity-specific. Use
+<code>fill = "missing"</code> when unobserved combinations inside
+coverage should remain missing, and supply <code>universe</code> when
+the panel must include entities that never appear in the event data.</p>
 </div>
 <div class="section level2">
 <h2 id="retain-provenance-with-live-data">Retain provenance with live data<a class="anchor" aria-label="anchor" href="#retain-provenance-with-live-data"></a>

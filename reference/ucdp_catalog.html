@@ -9,7 +9,7 @@ so newly released datasets can be discovered without a package update."><meta pr
 
     <a class="navbar-brand me-2" href="../index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,8 @@ so newly released datasets can be discovered without a package update.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ucdp_catalog</span><span class="op">(</span></span>
 <span>  include_documentation <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  include_historical <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  validate <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -73,6 +74,12 @@ adds earlier annual releases and archived monthly Candidate releases.</p></dd>
 
 <dt id="arg-quiet">quiet<a class="anchor" aria-label="anchor" href="#arg-quiet"></a></dt>
 <dd><p>Suppress status messages?</p></dd>
+
+
+<dt id="arg-validate">validate<a class="anchor" aria-label="anchor" href="#arg-validate"></a></dt>
+<dd><p>Validate the parsed catalog and report empty, malformed, or
+suspiciously incomplete results? Set to <code>FALSE</code> only for troubleshooting
+upstream page changes.</p></dd>
 
 </dl></div>
     <div class="section level2">

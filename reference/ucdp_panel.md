@@ -18,12 +18,16 @@ ucdp_panel(
   start = NULL,
   end = NULL,
   universe = NULL,
+  coverage = NULL,
   fill = c("zero", "missing"),
   include_fatalities = TRUE,
   low = NULL,
   best = NULL,
   high = NULL,
   na_rm = TRUE,
+  fatality_missing = NULL,
+  event_id = NULL,
+  duplicates = c("error", "warn", "allow"),
   missing = c("drop", "error")
 )
 ```
@@ -58,10 +62,25 @@ ucdp_panel(
   or a data frame containing all entity and `by` columns. The default
   uses combinations observed at least once in `data`.
 
+- coverage:
+
+  Optional observational coverage. Supply a two-element vector
+  containing global start and end boundaries, or a data frame containing
+  all entity columns plus `coverage_start` and `coverage_end`. Rows
+  outside declared coverage remain missing even when `fill = "zero"`.
+  When `NULL`, the complete requested panel window is assumed to be
+  covered for backward compatibility.
+
 - fill:
 
   Should inserted combinations contain explicit zeroes in numeric
   aggregate columns or missing values?
+
+- fatality_missing, event_id, duplicates:
+
+  Passed to
+  [`ucdp_aggregate()`](https://christianoswald.github.io/ucdpR/reference/ucdp_aggregate.md)
+  when raw data are supplied.
 
 - missing:
 
@@ -72,8 +91,9 @@ ucdp_panel(
 ## Value
 
 A complete panel tibble. `.ucdp_observed` is `TRUE` only for groups
-present in the aggregated input; `.ucdp_fill` is `"observed"`,
-`"zero_filled"`, or `"missing"`.
+present in the aggregated input; `.ucdp_in_coverage` records declared
+observational coverage; and `.ucdp_fill` is `"observed"`,
+`"zero_filled"`, `"missing"`, or `"outside_coverage"`.
 
 ## Examples
 
@@ -83,16 +103,22 @@ events <- data.frame(
   low = c(0, 1, 2), best = c(1, 2, 3), high = c(2, 3, 4)
 )
 panel <- ucdp_panel(
-  events, unit = "country-year", start = 2020, end = 2022
+  events, unit = "country-year", start = 2019, end = 2023,
+  coverage = c(2020, 2022)
 )
-panel[c("country_id", "year", "n_events", ".ucdp_fill")]
-#> # A tibble: 6 × 4
-#>   country_id  year n_events .ucdp_fill 
-#>        <dbl> <int>    <int> <chr>      
-#> 1          1  2020        1 observed   
-#> 2          1  2021        0 zero_filled
-#> 3          1  2022        1 observed   
-#> 4          2  2020        0 zero_filled
-#> 5          2  2021        1 observed   
-#> 6          2  2022        0 zero_filled
+panel[c("country_id", "year", "n_events", ".ucdp_in_coverage",
+        ".ucdp_fill")]
+#> # A tibble: 10 × 5
+#>    country_id  year n_events .ucdp_in_coverage .ucdp_fill      
+#>         <dbl> <int>    <int> <lgl>             <chr>           
+#>  1          1  2019       NA FALSE             outside_coverage
+#>  2          1  2020        1 TRUE              observed        
+#>  3          1  2021        0 TRUE              zero_filled     
+#>  4          1  2022        1 TRUE              observed        
+#>  5          1  2023       NA FALSE             outside_coverage
+#>  6          2  2019       NA FALSE             outside_coverage
+#>  7          2  2020        0 TRUE              zero_filled     
+#>  8          2  2021        1 TRUE              observed        
+#>  9          2  2022        0 TRUE              zero_filled     
+#> 10          2  2023       NA FALSE             outside_coverage
 ```

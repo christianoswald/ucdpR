@@ -10,7 +10,8 @@ update.
 ucdp_catalog(
   include_documentation = FALSE,
   include_historical = FALSE,
-  quiet = FALSE
+  quiet = FALSE,
+  validate = TRUE
 )
 ```
 
@@ -28,6 +29,12 @@ ucdp_catalog(
 - quiet:
 
   Suppress status messages?
+
+- validate:
+
+  Validate the parsed catalog and report empty, malformed, or
+  suspiciously incomplete results? Set to `FALSE` only for
+  troubleshooting upstream page changes.
 
 ## Value
 
