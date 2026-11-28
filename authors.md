@@ -8,7 +8,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/christianoswald/ucdpR/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/christianoswald/ucdpR/blob/v0.8.0/inst/CITATION)
 
 Oswald C (2026). *ucdpR: Access and Work with Uppsala Conflict Data
 Program Data*. R package version 0.8.0,
