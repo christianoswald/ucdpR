@@ -15,8 +15,8 @@
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Access and Work with Uppsala Conflict Data Program Data">
-<meta name="description" content="Provides tools for reproducible research with datasets published by the Uppsala Conflict Data Program (UCDP) &lt;https://ucdp.uu.se/&gt;. It discovers the official download catalog at run time, downloads and imports current or historical releases, retrieves official codebooks, records and summarizes source metadata, validates common data structures and ranges, supports spatial and precision-aware workflows, aggregates events and fatality estimates, constructs explicitly labelled analytical panels, harmonizes country codes and prepares data for priogrid and peacesciencer workflows, exposes official replication materials and version histories, and helps examine changes between dataset versions. UCDP data are not bundled or modified.">
-<meta property="og:description" content="Provides tools for reproducible research with datasets published by the Uppsala Conflict Data Program (UCDP) &lt;https://ucdp.uu.se/&gt;. It discovers the official download catalog at run time, downloads and imports current or historical releases, retrieves official codebooks, records and summarizes source metadata, validates common data structures and ranges, supports spatial and precision-aware workflows, aggregates events and fatality estimates, constructs explicitly labelled analytical panels, harmonizes country codes and prepares data for priogrid and peacesciencer workflows, exposes official replication materials and version histories, and helps examine changes between dataset versions. UCDP data are not bundled or modified.">
+<meta name="description" content="Provides tools for reproducible research with datasets published by the Uppsala Conflict Data Program (UCDP) &lt;https://ucdp.uu.se/&gt;. It discovers the official download catalog at run time, downloads and imports current or historical releases, retrieves official codebooks, records and summarizes source metadata, validates common data structures and ranges, supports spatial and precision-aware workflows, inventories uncertainty, constructs fatality scenarios and sensitivity analyses, aggregates events and fatality estimates, constructs explicitly labelled analytical panels, harmonizes country codes, prepares data for priogrid, peacesciencer, and uncertainUCDP workflows, exposes official replication materials and version histories, and helps examine changes between dataset versions. UCDP data are not bundled or modified.">
+<meta property="og:description" content="Provides tools for reproducible research with datasets published by the Uppsala Conflict Data Program (UCDP) &lt;https://ucdp.uu.se/&gt;. It discovers the official download catalog at run time, downloads and imports current or historical releases, retrieves official codebooks, records and summarizes source metadata, validates common data structures and ranges, supports spatial and precision-aware workflows, inventories uncertainty, constructs fatality scenarios and sensitivity analyses, aggregates events and fatality estimates, constructs explicitly labelled analytical panels, harmonizes country codes, prepares data for priogrid, peacesciencer, and uncertainUCDP workflows, exposes official replication materials and version histories, and helps examine changes between dataset versions. UCDP data are not bundled or modified.">
 <meta property="og:image" content="https://christianoswald.github.io/ucdpR/logo.svg">
 </head>
 <body>
@@ -27,7 +27,7 @@
 
     <a class="navbar-brand me-2" href="index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,6 +45,7 @@
     <li><a class="dropdown-item" href="articles/accessing-and-versioning.html">Accessing data and managing versions</a></li>
     <li><a class="dropdown-item" href="articles/spatial-workflows.html">Spatial workflows</a></li>
     <li><a class="dropdown-item" href="articles/uncertainty-and-revisions.html">Uncertainty and revisions</a></li>
+    <li><a class="dropdown-item" href="articles/uncertainty-workflows.html">Uncertainty workflows</a></li>
     <li><a class="dropdown-item" href="articles/reproducible-research.html">Reproducible research</a></li>
     <li><a class="dropdown-item" href="articles/interoperability.html">Interoperability</a></li>
   </ul>
@@ -81,13 +82,16 @@
 <li>discover official version histories and publication replication materials;</li>
 <li>validate common identifiers, dates, fatality estimates, coordinates, and codes;</li>
 <li>inspect schemas and summarize or filter event precision;</li>
+<li>inventory fatality-bound and precision uncertainty without conflating them;</li>
+<li>run explicit fatality scenarios, assumption-based sampling, and sensitivity analyses;</li>
 <li>aggregate events and fatality bounds to common analytical units;</li>
 <li>construct complete, explicitly labelled yearly and monthly panels;</li>
 <li>create provenance-preserving <code>sf</code> point data;</li>
 <li>assign georeferenced events to cells from the released <code>priogrid</code> package;</li>
 <li>harmonize year-sensitive Gleditsch-Ward and CoW country codes;</li>
 <li>prepare state-year and dyad-year data for <code>peacesciencer</code>; and</li>
-<li>audit retrospective changes between two releases.</li>
+<li>audit retrospective changes between two releases; and</li>
+<li>prepare validated inputs for the external <code>uncertainUCDP</code> model.</li>
 </ul>
 <p>Because the catalog is read from the official download center at run time, new UCDP releases generally do not require a package update. <code>ucdpR</code> does not bundle or redistribute UCDP data.</p>
 <div class="section level2">
@@ -106,12 +110,13 @@
 <div class="section level2">
 <h2 id="guides">Guides<a class="anchor" aria-label="anchor" href="#guides"></a>
 </h2>
-<p>The package includes a concise getting-started guide and five detailed vignettes:</p>
+<p>The package includes a concise getting-started guide and six detailed vignettes:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"getting-started"</span>, package <span class="op">=</span> <span class="st">"ucdpR"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"accessing-and-versioning"</span>, package <span class="op">=</span> <span class="st">"ucdpR"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"spatial-workflows"</span>, package <span class="op">=</span> <span class="st">"ucdpR"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"uncertainty-and-revisions"</span>, package <span class="op">=</span> <span class="st">"ucdpR"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"uncertainty-workflows"</span>, package <span class="op">=</span> <span class="st">"ucdpR"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"reproducible-research"</span>, package <span class="op">=</span> <span class="st">"ucdpR"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"interoperability"</span>, package <span class="op">=</span> <span class="st">"ucdpR"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -284,6 +289,23 @@
 <span><span class="va">comparison</span><span class="op">$</span><span class="va">removed</span>    <span class="co"># complete removed observations</span></span>
 <span><span class="va">comparison</span><span class="op">$</span><span class="va">modified</span>   <span class="co"># keys and variables changed in matched observations</span></span></code></pre></div>
 <p>For cell-level old and new values, set <code>detail = "cells"</code>. For large releases where only counts are required, use <code>detail = "summary"</code> to limit memory use.</p>
+</div>
+<div class="section level2">
+<h2 id="evaluate-uncertainty-assumptions">Evaluate uncertainty assumptions<a class="anchor" aria-label="anchor" href="#evaluate-uncertainty-assumptions"></a>
+</h2>
+<p>Inventory fatality-bound completeness and spatial and temporal precision without collapsing them into a single score:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/ucdp_uncertainty.html">ucdp_uncertainty</a></span><span class="op">(</span><span class="va">ged</span>, by <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span></span></code></pre></div>
+<p>Construct low, best, and high fatality scenarios, or run a systematic sensitivity grid across scenarios and precision rules:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">scenarios</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ucdp_scenarios.html">ucdp_scenarios</a></span><span class="op">(</span><span class="va">ged</span>, by <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">sensitivity</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ucdp_sensitivity.html">ucdp_sensitivity</a></span><span class="op">(</span></span>
+<span>  <span class="va">ged</span>,</span>
+<span>  where_prec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>all <span class="op">=</span> <span class="cn">NULL</span>, precise <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span>,</span>
+<span>  analysis <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">.ucdp_fatalities</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><code><a href="reference/ucdp_sample_fatalities.html">ucdp_sample_fatalities()</a></code> can generate reproducible integer draws under an explicit uniform or triangular distribution. This function is experimental: UCDP’s reported bounds do not define a probability distribution, so the chosen distribution is an analyst-imposed assumption. <code><a href="reference/ucdp_to_uncertainUCDP.html">ucdp_to_uncertainUCDP()</a></code> prepares validated input for the external <code>uncertainUCDP</code> model without reimplementing it. See <code><a href="articles/uncertainty-workflows.html">vignette("uncertainty-workflows", package = "ucdpR")</a></code> for a complete offline workflow and interpretation guidance.</p>
 </div>
 <div class="section level2">
 <h2 id="package-direction">Package direction<a class="anchor" aria-label="anchor" href="#package-direction"></a>

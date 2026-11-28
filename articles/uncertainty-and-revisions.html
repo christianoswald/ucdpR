@@ -24,7 +24,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,6 +42,7 @@
     <li><a class="dropdown-item" href="../articles/accessing-and-versioning.html">Accessing data and managing versions</a></li>
     <li><a class="dropdown-item" href="../articles/spatial-workflows.html">Spatial workflows</a></li>
     <li><a class="dropdown-item" href="../articles/uncertainty-and-revisions.html">Uncertainty and revisions</a></li>
+    <li><a class="dropdown-item" href="../articles/uncertainty-workflows.html">Uncertainty workflows</a></li>
     <li><a class="dropdown-item" href="../articles/reproducible-research.html">Reproducible research</a></li>
     <li><a class="dropdown-item" href="../articles/interoperability.html">Interoperability</a></li>
   </ul>
@@ -68,7 +69,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Uncertainty, precision, and retrospective revisions</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/christianoswald/ucdpR/blob/v0.7.4/vignettes/uncertainty-and-revisions.Rmd" class="external-link"><code>vignettes/uncertainty-and-revisions.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/christianoswald/ucdpR/blob/main/vignettes/uncertainty-and-revisions.Rmd" class="external-link"><code>vignettes/uncertainty-and-revisions.Rmd</code></a></small>
       <div class="d-none name"><code>uncertainty-and-revisions.Rmd</code></div>
     </div>
 
@@ -222,11 +223,13 @@ may reflect new information, corrected coding, altered definitions, or
 expanded coverage. The comparison identifies what changed; substantive
 interpretation still requires the relevant codebooks and version
 histories.</p>
-<p>Direct integration with <code>uncertainUCDP</code> will be documented
-after its current API and the meaning of the exchanged objects have been
-verified. Until then, the outputs remain ordinary tibbles that can be
-inspected or transformed by downstream uncertainty workflows without an
-undocumented dependency.</p>
+<p>For systematic analyses of fatality bounds and precision assumptions,
+see <code><a href="../articles/uncertainty-workflows.html">vignette("uncertainty-workflows", package = "ucdpR")</a></code>.
+It documents explicit low, best, and high scenarios, assumption-based
+sampling, sensitivity grids, and the validated
+<code><a href="../reference/ucdp_to_uncertainUCDP.html">ucdp_to_uncertainUCDP()</a></code> adapter. The adapter prepares input
+for the external model; it does not reproduce or alter that package’s
+model.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

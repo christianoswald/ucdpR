@@ -20,6 +20,10 @@ The package currently helps researchers:
 - validate common identifiers, dates, fatality estimates, coordinates,
   and codes;
 - inspect schemas and summarize or filter event precision;
+- inventory fatality-bound and precision uncertainty without conflating
+  them;
+- run explicit fatality scenarios, assumption-based sampling, and
+  sensitivity analyses;
 - aggregate events and fatality bounds to common analytical units;
 - construct complete, explicitly labelled yearly and monthly panels;
 - create provenance-preserving `sf` point data;
@@ -27,7 +31,8 @@ The package currently helps researchers:
   package;
 - harmonize year-sensitive Gleditsch-Ward and CoW country codes;
 - prepare state-year and dyad-year data for `peacesciencer`; and
-- audit retrospective changes between two releases.
+- audit retrospective changes between two releases; and
+- prepare validated inputs for the external `uncertainUCDP` model.
 
 Because the catalog is read from the official download center at run
 time, new UCDP releases generally do not require a package update.
@@ -60,7 +65,7 @@ explicit bridges to those packages and ordinary `sf` workflows.
 
 ## Guides
 
-The package includes a concise getting-started guide and five detailed
+The package includes a concise getting-started guide and six detailed
 vignettes:
 
 ``` r
@@ -69,6 +74,7 @@ vignette("getting-started", package = "ucdpR")
 vignette("accessing-and-versioning", package = "ucdpR")
 vignette("spatial-workflows", package = "ucdpR")
 vignette("uncertainty-and-revisions", package = "ucdpR")
+vignette("uncertainty-workflows", package = "ucdpR")
 vignette("reproducible-research", package = "ucdpR")
 vignette("interoperability", package = "ucdpR")
 ```
@@ -344,6 +350,41 @@ For cell-level old and new values, set `detail = "cells"`. For large
 releases where only counts are required, use `detail = "summary"` to
 limit memory use.
 
+## Evaluate uncertainty assumptions
+
+Inventory fatality-bound completeness and spatial and temporal precision
+without collapsing them into a single score:
+
+``` r
+
+ucdp_uncertainty(ged, by = "year")
+```
+
+Construct low, best, and high fatality scenarios, or run a systematic
+sensitivity grid across scenarios and precision rules:
+
+``` r
+
+scenarios <- ucdp_scenarios(ged, by = "year")
+
+sensitivity <- ucdp_sensitivity(
+  ged,
+  where_prec = list(all = NULL, precise = 1:2),
+  analysis = function(x) sum(x$.ucdp_fatalities, na.rm = TRUE)
+)
+```
+
+[`ucdp_sample_fatalities()`](https://christianoswald.github.io/ucdpR/reference/ucdp_sample_fatalities.md)
+can generate reproducible integer draws under an explicit uniform or
+triangular distribution. This function is experimental: UCDP’s reported
+bounds do not define a probability distribution, so the chosen
+distribution is an analyst-imposed assumption.
+[`ucdp_to_uncertainUCDP()`](https://christianoswald.github.io/ucdpR/reference/ucdp_to_uncertainUCDP.md)
+prepares validated input for the external `uncertainUCDP` model without
+reimplementing it. See
+[`vignette("uncertainty-workflows", package = "ucdpR")`](https://christianoswald.github.io/ucdpR/articles/uncertainty-workflows.md)
+for a complete offline workflow and interpretation guidance.
+
 ## Package direction
 
 Future convenience functions will build on the same principles:
@@ -420,6 +461,21 @@ citation guidance, and terms.
 - [`ucdp_filter_precision()`](https://christianoswald.github.io/ucdpR/reference/ucdp_filter_precision.md)
   : Filter UCDP events by spatial and temporal precision
 
+## Uncertainty and sensitivity
+
+- [`ucdp_uncertainty()`](https://christianoswald.github.io/ucdpR/reference/ucdp_uncertainty.md)
+  : Inventory uncertainty-related information in UCDP data
+- [`ucdp_scenarios()`](https://christianoswald.github.io/ucdpR/reference/ucdp_scenarios.md)
+  : Construct low, best, and high fatality scenarios
+- [`ucdp_sample_fatalities()`](https://christianoswald.github.io/ucdpR/reference/ucdp_sample_fatalities.md)
+  : Sample assumption-based fatality realizations within UCDP bounds
+- [`ucdp_sensitivity()`](https://christianoswald.github.io/ucdpR/reference/ucdp_sensitivity.md)
+  : Evaluate UCDP results across explicit analytical assumptions
+- [`ucdp_compare_scenarios()`](https://christianoswald.github.io/ucdpR/reference/ucdp_compare_scenarios.md)
+  : Compare fatality scenarios or sensitivity results
+- [`ucdp_to_uncertainUCDP()`](https://christianoswald.github.io/ucdpR/reference/ucdp_to_uncertainUCDP.md)
+  : Prepare UCDP event data for uncertainUCDP
+
 ## Interoperability
 
 - [`ucdp_country_crosswalk()`](https://christianoswald.github.io/ucdpR/reference/ucdp_country_crosswalk.md)
@@ -457,6 +513,8 @@ Convenience functions for recurring research tasks.
   workflows](https://christianoswald.github.io/ucdpR/articles/spatial-workflows.md):
 - [Uncertainty, precision, and retrospective
   revisions](https://christianoswald.github.io/ucdpR/articles/uncertainty-and-revisions.md):
+- [Uncertainty
+  workflows](https://christianoswald.github.io/ucdpR/articles/uncertainty-workflows.md):
 - [Reproducible research with UCDP
   data](https://christianoswald.github.io/ucdpR/articles/reproducible-research.md):
 - [Interoperability with priogrid and

@@ -4,20 +4,24 @@ Data Program (UCDP). It discovers, downloads, and imports current and
 historical releases from the official UCDP download center, preserves
 provenance information, retrieves official codebooks, and provides
 convenience functions for inspecting, validating, spatially preparing,
-aggregating, panelizing, harmonizing country codes, preparing data for
-priogrid and peacesciencer, and comparing UCDP data. It also exposes
-official version histories and publication-specific replication materials. The
-package is intended to grow into a broader toolkit for common UCDP research
-workflows. It does not redistribute UCDP data."><meta property="og:description" content="ucdpR supports reproducible research with data from the Uppsala Conflict
+aggregating, panelizing, inventorying uncertainty, evaluating fatality and
+precision assumptions, harmonizing country codes, preparing data for
+priogrid, peacesciencer, and uncertainUCDP, and comparing UCDP data.
+It also exposes official version histories and publication-specific
+replication materials. The package is intended to grow into a broader
+toolkit for common UCDP research workflows. It does not redistribute UCDP
+data."><meta property="og:description" content="ucdpR supports reproducible research with data from the Uppsala Conflict
 Data Program (UCDP). It discovers, downloads, and imports current and
 historical releases from the official UCDP download center, preserves
 provenance information, retrieves official codebooks, and provides
 convenience functions for inspecting, validating, spatially preparing,
-aggregating, panelizing, harmonizing country codes, preparing data for
-priogrid and peacesciencer, and comparing UCDP data. It also exposes
-official version histories and publication-specific replication materials. The
-package is intended to grow into a broader toolkit for common UCDP research
-workflows. It does not redistribute UCDP data."><meta property="og:image" content="https://christianoswald.github.io/ucdpR/logo.svg"></head><body>
+aggregating, panelizing, inventorying uncertainty, evaluating fatality and
+precision assumptions, harmonizing country codes, preparing data for
+priogrid, peacesciencer, and uncertainUCDP, and comparing UCDP data.
+It also exposes official version histories and publication-specific
+replication materials. The package is intended to grow into a broader
+toolkit for common UCDP research workflows. It does not redistribute UCDP
+data."><meta property="og:image" content="https://christianoswald.github.io/ucdpR/logo.svg"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -25,7 +29,7 @@ workflows. It does not redistribute UCDP data."><meta property="og:image" conten
 
     <a class="navbar-brand me-2" href="../index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,6 +45,7 @@ workflows. It does not redistribute UCDP data."><meta property="og:image" conten
     <li><a class="dropdown-item" href="../articles/accessing-and-versioning.html">Accessing data and managing versions</a></li>
     <li><a class="dropdown-item" href="../articles/spatial-workflows.html">Spatial workflows</a></li>
     <li><a class="dropdown-item" href="../articles/uncertainty-and-revisions.html">Uncertainty and revisions</a></li>
+    <li><a class="dropdown-item" href="../articles/uncertainty-workflows.html">Uncertainty workflows</a></li>
     <li><a class="dropdown-item" href="../articles/reproducible-research.html">Reproducible research</a></li>
     <li><a class="dropdown-item" href="../articles/interoperability.html">Interoperability</a></li>
   </ul></li>
@@ -56,7 +61,7 @@ workflows. It does not redistribute UCDP data."><meta property="og:image" conten
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>ucdpR: Tools for working with UCDP data</h1>
-      <small class="dont-index">Source: <a href="https://github.com/christianoswald/ucdpR/blob/v0.7.4/R/ucdpR-package.R" class="external-link"><code>R/ucdpR-package.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/christianoswald/ucdpR/blob/main/R/ucdpR-package.R" class="external-link"><code>R/ucdpR-package.R</code></a></small>
       <div class="d-none name"><code>ucdpR-package.Rd</code></div>
     </div>
 
@@ -66,11 +71,13 @@ Data Program (UCDP). It discovers, downloads, and imports current and
 historical releases from the official UCDP download center, preserves
 provenance information, retrieves official codebooks, and provides
 convenience functions for inspecting, validating, spatially preparing,
-aggregating, panelizing, harmonizing country codes, preparing data for
-<code>priogrid</code> and <code>peacesciencer</code>, and comparing UCDP data. It also exposes
-official version histories and publication-specific replication materials. The
-package is intended to grow into a broader toolkit for common UCDP research
-workflows. It does not redistribute UCDP data.</p>
+aggregating, panelizing, inventorying uncertainty, evaluating fatality and
+precision assumptions, harmonizing country codes, preparing data for
+<code>priogrid</code>, <code>peacesciencer</code>, and <code>uncertainUCDP</code>, and comparing UCDP data.
+It also exposes official version histories and publication-specific
+replication materials. The package is intended to grow into a broader
+toolkit for common UCDP research workflows. It does not redistribute UCDP
+data.</p>
     </div>
 
 

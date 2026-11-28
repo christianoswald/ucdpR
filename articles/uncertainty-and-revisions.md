@@ -170,8 +170,11 @@ expanded coverage. The comparison identifies what changed; substantive
 interpretation still requires the relevant codebooks and version
 histories.
 
-Direct integration with `uncertainUCDP` will be documented after its
-current API and the meaning of the exchanged objects have been verified.
-Until then, the outputs remain ordinary tibbles that can be inspected or
-transformed by downstream uncertainty workflows without an undocumented
-dependency.
+For systematic analyses of fatality bounds and precision assumptions,
+see
+[`vignette("uncertainty-workflows", package = "ucdpR")`](https://christianoswald.github.io/ucdpR/articles/uncertainty-workflows.md).
+It documents explicit low, best, and high scenarios, assumption-based
+sampling, sensitivity grids, and the validated
+[`ucdp_to_uncertainUCDP()`](https://christianoswald.github.io/ucdpR/reference/ucdp_to_uncertainUCDP.md)
+adapter. The adapter prepares input for the external model; it does not
+reproduce or alter that package’s model.

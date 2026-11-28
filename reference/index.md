@@ -46,6 +46,21 @@
 - [`ucdp_filter_precision()`](https://christianoswald.github.io/ucdpR/reference/ucdp_filter_precision.md)
   : Filter UCDP events by spatial and temporal precision
 
+## Uncertainty and sensitivity
+
+- [`ucdp_uncertainty()`](https://christianoswald.github.io/ucdpR/reference/ucdp_uncertainty.md)
+  : Inventory uncertainty-related information in UCDP data
+- [`ucdp_scenarios()`](https://christianoswald.github.io/ucdpR/reference/ucdp_scenarios.md)
+  : Construct low, best, and high fatality scenarios
+- [`ucdp_sample_fatalities()`](https://christianoswald.github.io/ucdpR/reference/ucdp_sample_fatalities.md)
+  : Sample assumption-based fatality realizations within UCDP bounds
+- [`ucdp_sensitivity()`](https://christianoswald.github.io/ucdpR/reference/ucdp_sensitivity.md)
+  : Evaluate UCDP results across explicit analytical assumptions
+- [`ucdp_compare_scenarios()`](https://christianoswald.github.io/ucdpR/reference/ucdp_compare_scenarios.md)
+  : Compare fatality scenarios or sensitivity results
+- [`ucdp_to_uncertainUCDP()`](https://christianoswald.github.io/ucdpR/reference/ucdp_to_uncertainUCDP.md)
+  : Prepare UCDP event data for uncertainUCDP
+
 ## Interoperability
 
 - [`ucdp_country_crosswalk()`](https://christianoswald.github.io/ucdpR/reference/ucdp_country_crosswalk.md)

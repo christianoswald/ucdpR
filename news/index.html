@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ucdpR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,6 +23,7 @@
     <li><a class="dropdown-item" href="../articles/accessing-and-versioning.html">Accessing data and managing versions</a></li>
     <li><a class="dropdown-item" href="../articles/spatial-workflows.html">Spatial workflows</a></li>
     <li><a class="dropdown-item" href="../articles/uncertainty-and-revisions.html">Uncertainty and revisions</a></li>
+    <li><a class="dropdown-item" href="../articles/uncertainty-workflows.html">Uncertainty workflows</a></li>
     <li><a class="dropdown-item" href="../articles/reproducible-research.html">Reproducible research</a></li>
     <li><a class="dropdown-item" href="../articles/interoperability.html">Interoperability</a></li>
   </ul></li>
@@ -38,9 +39,17 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/christianoswald/ucdpR/blob/v0.7.4/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/christianoswald/ucdpR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.8.0" id="ucdpr-080">ucdpR 0.8.0<a class="anchor" aria-label="anchor" href="#ucdpr-080"></a></h2>
+<ul><li>Added <code><a href="../reference/ucdp_uncertainty.html">ucdp_uncertainty()</a></code> to inventory fatality-bound completeness and spatial and temporal precision without collapsing distinct uncertainty dimensions into a single score.</li>
+<li>Added <code><a href="../reference/ucdp_scenarios.html">ucdp_scenarios()</a></code> and the experimental <code><a href="../reference/ucdp_sample_fatalities.html">ucdp_sample_fatalities()</a></code> for explicit low, best, and high analyses and reproducible assumption-based draws within reported fatality bounds.</li>
+<li>Added <code><a href="../reference/ucdp_sensitivity.html">ucdp_sensitivity()</a></code> and <code><a href="../reference/ucdp_compare_scenarios.html">ucdp_compare_scenarios()</a></code> to evaluate and compare analyses across fatality scenarios and alternative precision rules.</li>
+<li>Added <code><a href="../reference/ucdp_to_uncertainUCDP.html">ucdp_to_uncertainUCDP()</a></code> as a narrow, validated adapter to the external <code>uncertainUCDP</code> model interface.</li>
+<li>Added an offline uncertainty-workflows vignette, examples, tests, and pkgdown reference organization. Documentation distinguishes reported UCDP bounds from probability intervals and analyst-imposed sampling assumptions.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.7.4" id="ucdpr-074">ucdpR 0.7.4<a class="anchor" aria-label="anchor" href="#ucdpr-074"></a></h2>
 <ul><li>Added explicit global and entity-specific observational coverage to <code><a href="../reference/ucdp_panel.html">ucdp_panel()</a></code>. Panel rows outside declared coverage remain missing and are labelled <code>"outside_coverage"</code>, preventing them from being mistaken for structural zeroes.</li>
