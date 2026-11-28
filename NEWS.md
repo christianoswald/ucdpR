@@ -1,3 +1,19 @@
+# ucdpR 0.8.0
+
+* Added `ucdp_uncertainty()` to inventory fatality-bound completeness and
+  spatial and temporal precision without collapsing distinct uncertainty
+  dimensions into a single score.
+* Added `ucdp_scenarios()` and the experimental
+  `ucdp_sample_fatalities()` for explicit low, best, and high analyses and
+  reproducible assumption-based draws within reported fatality bounds.
+* Added `ucdp_sensitivity()` and `ucdp_compare_scenarios()` to evaluate and
+  compare analyses across fatality scenarios and alternative precision rules.
+* Added `ucdp_to_uncertainUCDP()` as a narrow, validated adapter to the
+  external `uncertainUCDP` model interface.
+* Added an offline uncertainty-workflows vignette, examples, tests, and
+  pkgdown reference organization. Documentation distinguishes reported UCDP
+  bounds from probability intervals and analyst-imposed sampling assumptions.
+
 # ucdpR 0.7.4
 
 * Added explicit global and entity-specific observational coverage to

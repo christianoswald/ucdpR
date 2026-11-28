@@ -18,6 +18,8 @@ navbar:
         href: articles/spatial-workflows.html
       - text: Uncertainty and revisions
         href: articles/uncertainty-and-revisions.html
+      - text: Uncertainty workflows
+        href: articles/uncertainty-workflows.html
       - text: Reproducible research
         href: articles/reproducible-research.html
       - text: Interoperability
@@ -30,6 +32,7 @@ articles:
   - accessing-and-versioning
   - spatial-workflows
   - uncertainty-and-revisions
+  - uncertainty-workflows
   - reproducible-research
   - interoperability
 reference:
@@ -44,6 +47,10 @@ reference:
 - title: Spatial and precision workflows
   contents: [ucdp_as_sf, ucdp_to_priogrid, ucdp_precision,
              ucdp_filter_precision]
+- title: Uncertainty and sensitivity
+  contents: [ucdp_uncertainty, ucdp_scenarios, ucdp_sample_fatalities,
+             ucdp_sensitivity, ucdp_compare_scenarios,
+             ucdp_to_uncertainUCDP]
 - title: Interoperability
   contents: [ucdp_country_crosswalk, ucdp_to_peacesciencer]
 - title: Work with UCDP data

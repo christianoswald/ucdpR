@@ -1,0 +1,165 @@
+---
+title: "Uncertainty workflows"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Uncertainty workflows}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+Uncertainty in UCDP data is multidimensional. Fatality bounds describe the
+reported low, best, and high estimates. Spatial and temporal precision codes
+describe how precisely an event is located in place and time. Retrospective
+revisions describe changes between releases. These quantities answer different
+questions, and `ucdpR` does not collapse them into a single score.
+
+The examples below are fully offline and use small synthetic data.
+
+```{r}
+library(ucdpR)
+
+events <- data.frame(
+  id = 1:6,
+  year = c(2020, 2020, 2020, 2021, 2021, 2021),
+  low = c(1, 2, 0, 4, 1, NA),
+  best = c(2, 3, 1, 5, 2, NA),
+  high = c(4, 5, 2, 8, 4, NA),
+  where_prec = c(1, 2, 3, 1, 6, 2),
+  date_prec = c(1, 2, 4, 1, 5, 2),
+  type_of_violence = c(1, 1, 2, 3, 1, 2)
+)
+```
+
+## Inventory reported uncertainty
+
+Begin with a descriptive inventory. This reveals incomplete fatality triplets,
+the width of complete fatality bounds, and the distribution of precision codes.
+
+```{r}
+ucdp_uncertainty(events)
+ucdp_uncertainty(events, by = "year")
+```
+
+The output keeps fatality, spatial, and temporal dimensions separate. A wider
+fatality range is not interchangeable with a less precise location.
+
+## Treat reported bounds as scenarios
+
+`ucdp_scenarios()` creates explicit low, best, and high analytical scenarios.
+The bounds are not treated as confidence or credible intervals.
+
+```{r}
+scenario_rows <- ucdp_scenarios(events)
+head(scenario_rows)
+
+year_scenarios <- ucdp_scenarios(
+  events,
+  by = "year",
+  format = "wide",
+  fatality_missing = "remove"
+)
+year_scenarios
+```
+
+Scenario differences can be made explicit:
+
+```{r}
+ucdp_compare_scenarios(scenario_rows, by = "id")
+```
+
+## Sample only under a stated assumption
+
+`ucdp_sample_fatalities()` is experimental. It samples integer fatalities
+between the reported bounds under a user-selected uniform or triangular
+distribution. UCDP does not imply either distribution: it is an analytical
+assumption that must be reported and defended.
+
+```{r}
+complete_events <- events[stats::complete.cases(
+  events[c("low", "best", "high")]
+), ]
+
+draws <- ucdp_sample_fatalities(
+  complete_events,
+  n = 5,
+  distribution = "triangular",
+  seed = 2026,
+  id = "id"
+)
+head(draws)
+attr(draws, "ucdp_sampling_spec")
+```
+
+Supplying a seed makes the result reproducible without replacing the caller's
+existing random-number state. The returned specification records the chosen
+distribution and column mapping.
+
+## Run a sensitivity grid
+
+`ucdp_sensitivity()` crosses fatality scenarios with named precision rules. An
+analysis function can return one number, a named vector, or a one-row data
+frame for each specification.
+
+```{r}
+sensitivity <- ucdp_sensitivity(
+  complete_events,
+  scenarios = c("low", "best", "high"),
+  where_prec = list(all = NULL, precise = 1:2),
+  date_prec = list(all = NULL, precise = 1:2),
+  analysis = function(x) {
+    c(events = nrow(x), fatalities = sum(x$.ucdp_fatalities))
+  }
+)
+
+sensitivity$specifications
+sensitivity$results
+```
+
+Compare the fatality result with the best estimate within each precision rule:
+
+```{r}
+ucdp_compare_scenarios(
+  sensitivity,
+  value = "fatalities",
+  by = c(".where_precision", ".date_precision")
+)
+```
+
+These comparisons show sensitivity to specified analytical decisions; they do
+not estimate the probability that any scenario is true.
+
+## Prepare input for uncertainUCDP
+
+`ucdp_to_uncertainUCDP()` is a narrow adapter. It maps a fatality column and
+UCDP type-of-violence codes to the `fatalities` and `tov` arguments used by
+`uncertainUCDP`. It validates the mapping but does not fit or reproduce the
+external package's statistical model.
+
+```{r}
+prepared <- ucdp_to_uncertainUCDP(
+  complete_events,
+  fatalities = "best",
+  type_of_violence = "type_of_violence",
+  check_package = FALSE
+)
+prepared[c(".ucdp_fatalities", ".ucdp_tov")]
+```
+
+After installing `uncertainUCDP`, the prepared columns can be passed explicitly
+to its simulation function:
+
+```{r, eval = FALSE}
+simulated <- uncertainUCDP::runcertainUCDP(
+  n = nrow(prepared),
+  fatalities = prepared$.ucdp_fatalities,
+  tov = prepared$.ucdp_tov
+)
+```
+
+Consult the `uncertainUCDP` documentation and cite that package when using its
+model. Preserve the exact UCDP release, source metadata, and all assumptions in
+the research record.

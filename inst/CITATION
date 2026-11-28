@@ -6,7 +6,7 @@ bibentry(
     comment = c(ORCID = "0000-0001-8291-9544")
   ),
   year = "2026",
-  note = "R package version 0.7.4",
+  note = "R package version 0.8.0",
   url = "https://christianoswald.github.io/ucdpR/"
 )
 

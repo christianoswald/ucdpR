@@ -1,6 +1,6 @@
 Package: ucdpR
 Title: Access and Work with Uppsala Conflict Data Program Data
-Version: 0.7.4
+Version: 0.8.0
 Authors@R: person(
     "Christian", "Oswald",
     email = "christian.oswald@unibw.de",
@@ -12,13 +12,13 @@ Description: Provides tools for reproducible research with datasets published
     discovers the official download catalog at run time, downloads and imports
     current or historical releases, retrieves official codebooks, records and
     summarizes source metadata, validates common data structures and ranges,
-    supports spatial and precision-aware workflows, aggregates events and
-    fatality estimates, constructs explicitly labelled analytical panels,
-    harmonizes country codes and prepares data for 'priogrid' and
-    'peacesciencer' workflows, exposes official replication materials and
-    version histories, and helps
-    examine changes between dataset versions. UCDP data are not bundled or
-    modified.
+    supports spatial and precision-aware workflows, inventories uncertainty,
+    constructs fatality scenarios and sensitivity analyses, aggregates events
+    and fatality estimates, constructs explicitly labelled analytical panels,
+    harmonizes country codes, prepares data for 'priogrid', 'peacesciencer',
+    and 'uncertainUCDP' workflows, exposes official replication materials and
+    version histories, and helps examine changes between dataset versions.
+    UCDP data are not bundled or modified.
 License: GPL (>= 3)
 URL: https://github.com/christianoswald/ucdpR, https://christianoswald.github.io/ucdpR/
 BugReports: https://github.com/christianoswald/ucdpR/issues
@@ -43,6 +43,7 @@ Suggests:
     sf,
     terra,
     testthat (>= 3.0.0),
+    uncertainUCDP (>= 0.7.6),
     withr
 Config/testthat/edition: 3
 VignetteBuilder: knitr
